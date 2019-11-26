@@ -1,6 +1,6 @@
 import os
 from ctbn.generative_ctbn import GenerativeCTBN
-import ctbn.config as cfg
+from ctbn.config import graph_config
 import numpy as np
 import matplotlib.pyplot as plt
 import constants
@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
     n_traj = 20
 
-    ctbn = GenerativeCTBN(cfg)
+    ctbn = GenerativeCTBN(graph_config)
 
     df_traj_hist = ctbn.sample_and_save_trajectories(n_traj=n_traj)
 

@@ -9,9 +9,11 @@ import constants
 
 class GenerativeCTBN:
     def __init__(self, cfg):
-        self.graph_dict = cfg.graph_dict
-        self.t_max = cfg.t_max
-        self.n_values = cfg.n_values
+
+        self.graph_dict = cfg[constants.PARENTS]
+        self.t_max = cfg[constants.T_MAX]
+        self.n_values = cfg[constants.N_VALUES]
+
         self.node_list = list(self.graph_dict.keys())
         self.num_nodes = len(self.node_list)
         self.net_struct = [[par, node] for node in self.node_list for par in self.graph_dict[node] if

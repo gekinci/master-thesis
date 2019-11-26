@@ -1,7 +1,6 @@
 from ctbn.utils import *
 import numpy as np
 import pandas as pd
-import ctbn.config as cfg
 from sklearn.metrics import mean_squared_error
 import constants
 
@@ -31,7 +30,7 @@ def get_number_of_transitions(df_traj, node):
     return M0, M1
 
 
-def get_sufficient_statistics(df_all):
+def get_sufficient_statistics(ctbn, df_all):
     stats = {}
 
     for traj in df_all.trajectory_id.unique():
@@ -39,11 +38,11 @@ def get_sufficient_statistics(df_all):
 
         stats[traj] = {}
 
-        for node in cfg.node_list:
+        for node in ctbn.node_list:
 
             stats[traj][node] = {}
 
-            parents_list = cfg.graph_dict[node]
+            parents_list = ctbn.graph_dict[node]
             n_parents = len(parents_list)
             if n_parents == 0:
                 stats[traj][node]['M0'], stats[traj][node]['M1'] = get_number_of_transitions(df_traj, node)
@@ -69,11 +68,11 @@ def get_sufficient_statistics(df_all):
     return stats
 
 
-def learn_ctbn_parameters(stats):
+def learn_ctbn_parameters(ctbn, stats):
     Q_pred = {}
 
-    for node in cfg.node_list:
-        parents_list = cfg.graph_dict[node]
+    for node in ctbn.node_list:
+        parents_list = ctbn.graph_dict[node]
         n_parents = len(parents_list)
 
         if n_parents == 0:
@@ -99,15 +98,15 @@ def learn_ctbn_parameters(stats):
     return Q_pred
 
 
-def calculate_log_likelihood(df_all, Q):
-    stats = get_sufficient_statistics(df_all)
+def calculate_log_likelihood(ctbn, df_all, Q):
+    stats = get_sufficient_statistics(ctbn, df_all)
 
     L_list = []
     for traj in stats.keys():
         L = 0
         stats_traj = stats[traj]
-        for node in cfg.node_list:
-            parents_list = cfg.graph_dict[node]
+        for node in ctbn.node_list:
+            parents_list = ctbn.graph_dict[node]
             n_parents = len(parents_list)
             if n_parents == 0:
                 L += (stats_traj[node]['M0'] * np.log(Q[node][0][1]) - stats_traj[node]['T0'] * Q[node][0][1] +
@@ -142,9 +141,9 @@ def train_and_evaluate(ctbn, df_train, df_test):
     n_train = df_train[constants.TRAJ_ID].max()
     n_test = df_test[constants.TRAJ_ID].max()
 
-    suff_stats = get_sufficient_statistics(df_train)
+    suff_stats = get_sufficient_statistics(ctbn, df_train)
 
-    # L_true_model = calculate_log_likelihood(df_test, ctbn.Q)
+    # L_true_model = calculate_log_likelihood(ctbn, df_test, ctbn.Q)
     # L_true_model_avg = np.average(L_true_model)
     # L_true_model_std = np.std(L_true_model)
     # df_L = pd.DataFrame()
@@ -154,7 +153,7 @@ def train_and_evaluate(ctbn, df_train, df_test):
     for traj in range(n_train):
         stats_trained = [v for k, v in suff_stats.items() if k <= traj]
 
-        Q_pred = learn_ctbn_parameters(stats_trained)
+        Q_pred = learn_ctbn_parameters(ctbn, stats_trained)
 
         mse_iter = calculate_mse_for_Q(ctbn.Q, Q_pred)
 

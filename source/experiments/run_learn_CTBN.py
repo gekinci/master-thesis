@@ -1,7 +1,7 @@
 import os
 from ctbn.generative_ctbn import GenerativeCTBN
 from ctbn.learning_ctbn import *
-import ctbn.config as cfg
+from ctbn.config import graph_config
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -11,7 +11,7 @@ if __name__ == "__main__":
     n_train = 8
     n_test = 2
 
-    ctbn = GenerativeCTBN(cfg)
+    ctbn = GenerativeCTBN(graph_config)
 
     df_train = ctbn.sample_and_save_trajectories(n_traj=n_train, file_name='train')
     df_test = ctbn.sample_and_save_trajectories(n_traj=n_test, file_name='test')
@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
     df_eval.to_csv(f'../data/df_eval_{n_train}Train_{n_test}Test_{avg_n_transition}trans.csv')
 
-    print(f'Trajectories : {cfg.t_max} unit of time, about {avg_n_transition}')
+    print(f'Trajectories : {graph_config[constants.T_MAX]} unit of time, about {avg_n_transition}')
     # print(f'True likelihood of test data: avg = {L_true_model_avg}, std = {L_true_model_std}')
     # print('Actual Q:', Q)
     # print('Predicted Q:', Q_pred)
