@@ -4,3 +4,4 @@ N_VALUES = 'n_values'
 
 TRAJ_ID = 'trajectory_id'
 TIME = 'time'
+OBS = 'observations'

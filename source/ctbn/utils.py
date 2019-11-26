@@ -1,4 +1,6 @@
 import itertools
+import constants
+import pandas as pd
 
 
 def cartesian_products(n):
@@ -7,3 +9,9 @@ def cartesian_products(n):
 
 def zero_div(x, y):
     return x / y if y != 0 else 0
+
+#
+# def merge_independent_ctbn_trajectories(df1, df2):
+#     df_joined = pd.concat([df1, df2], ignore_index=True, sort=False).sort_values(
+#         by=constants.TIME).ffill().drop_duplicates(subset=constants.TIME, keep='last')
+#     return df_joined
