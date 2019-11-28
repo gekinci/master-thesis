@@ -22,18 +22,16 @@ class GenerativeCTBN:
 
     def initialize_generative_ctbn(self):
         self.create_and_save_graph()
-        Q_dict = self.generate_random_conditional_intensity_matrices()
+        Q_dict = self.generate_conditional_intensity_matrices()
         return Q_dict
 
-    def generate_random_conditional_intensity_matrices(self):
+    def generate_conditional_intensity_matrices(self):
         Q = dict()
 
         # Randomly generated conditional intensity matrices
         for node in self.node_list:
             if len(self.graph_dict[node]) == 0:
-                tmp = np.random.rand(self.n_values, self.n_values)
-                np.fill_diagonal(tmp, 0)
-                Q[node] = tmp.tolist()
+                Q[node] = random_q_matrix(self.n_values)
             else:
                 parent_list = self.graph_dict[node]
                 n_parents = len(parent_list)
@@ -41,9 +39,7 @@ class GenerativeCTBN:
                 Q[node] = {}
 
                 for prod in parent_cart_prod:
-                    tmp = np.random.rand(self.n_values, self.n_values)
-                    np.fill_diagonal(tmp, 0)
-                    Q[node][prod] = tmp.tolist()
+                    Q[node][prod] = random_q_matrix(self.n_values)
         return Q
 
     def create_and_save_graph(self):
