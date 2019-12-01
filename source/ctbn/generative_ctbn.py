@@ -49,24 +49,24 @@ class GenerativeCTBN:
         nx.draw_networkx(G, pos=pos, arrows=True)
         plt.savefig('../data/ctbn_graph.png')
 
-    def get_parent_values(self, node, df_traj):
+    def get_parent_values(self, node, prev_step):
         parent_list = self.graph_dict[node]
-        return ''.join(map(str, df_traj[parent_list].values[-1].astype(int)))
+        return ''.join(map(str, prev_step[parent_list].values[-1].astype(int)))
 
-    def get_current_Q_for_node(self, node, df_traj):
+    def get_current_Q_for_node(self, node, prev_step):
         parent_list = self.graph_dict[node]
         if len(parent_list) == 0:
             node_Q = self.Q[node]
         else:
-            par_values = self.get_parent_values(node, df_traj)
+            par_values = self.get_parent_values(node, prev_step)
             node_Q = self.Q[node][par_values]
         return node_Q
 
-    def draw_time(self, df_traj):
+    def draw_time(self, prev_step):
         random_draws = []
         for node in self.node_list:
-            current_val = int(df_traj[node].values[-1])
-            current_Q = self.get_current_Q_for_node(node, df_traj)
+            current_val = int(prev_step[node].values[-1])
+            current_Q = self.get_current_Q_for_node(node, prev_step)
             q = current_Q[current_val][1 - current_val]
             random_draws += [np.random.exponential(1 / q)]
 
@@ -86,17 +86,17 @@ class GenerativeCTBN:
         # TODO non-binary variables
         return
 
-    def sample_step(self, df_traj, new_data, t):
-        tao = self.draw_time(df_traj)
-        var = self.draw_variable(df_traj)
+    def do_step(self, prev_step, t):
+        tao = self.draw_time(prev_step)
+        var = self.draw_variable(prev_step)
 
+        new_step = prev_step.copy()
         # Adding new state change to the trajectories
-        new_data.loc[:, constants.TIME] = t + tao
-        new_data.loc[:, var] = int(1 - new_data[var])
-        df_traj = df_traj.append(new_data, ignore_index=True)
+        new_step.loc[:, constants.TIME] = t + tao
+        new_step.loc[:, var] = int(1 - new_step[var])
 
         t += tao
-        return df_traj, new_data, t
+        return new_step, t
 
     def sample_trajectory(self):
         t = 0
@@ -105,10 +105,12 @@ class GenerativeCTBN:
         initial_states = {var: [np.random.randint(0, 2)] for var in self.node_list}
         initial_states[constants.TIME] = 0
         df_traj = pd.DataFrame.from_dict(initial_states)
-        new_data = pd.DataFrame(df_traj[-1:].values, columns=df_traj.columns)
+        prev_step = pd.DataFrame(df_traj[-1:].values, columns=df_traj.columns)
 
         while t < self.t_max:
-            df_traj, new_data, t = self.sample_step(df_traj, new_data, t)
+            new_step, t = self.do_step(prev_step, t)
+            df_traj = df_traj.append(new_step, ignore_index=True)
+            prev_step = new_step.copy()
 
         return df_traj
 
