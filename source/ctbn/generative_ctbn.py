@@ -86,7 +86,19 @@ class GenerativeCTBN:
         # TODO non-binary variables
         return
 
-    def sample_one_trajectory(self):
+    def sample_step(self, df_traj, new_data, t):
+        tao = self.draw_time(df_traj)
+        var = self.draw_variable(df_traj)
+
+        # Adding new state change to the trajectories
+        new_data.loc[:, constants.TIME] = t + tao
+        new_data.loc[:, var] = int(1 - new_data[var])
+        df_traj = df_traj.append(new_data, ignore_index=True)
+
+        t += tao
+        return df_traj, new_data, t
+
+    def sample_trajectory(self):
         t = 0
 
         # Randomly initializing first states
@@ -96,15 +108,7 @@ class GenerativeCTBN:
         new_data = pd.DataFrame(df_traj[-1:].values, columns=df_traj.columns)
 
         while t < self.t_max:
-            tao = self.draw_time(df_traj)
-            var = self.draw_variable(df_traj)
-
-            # Adding new state change to the trajectories
-            new_data.loc[:, constants.TIME] = t + tao
-            new_data.loc[:, var] = int(1 - new_data[var])
-            df_traj = df_traj.append(new_data, ignore_index=True)
-
-            t += tao
+            df_traj, new_data, t = self.sample_step(df_traj, new_data, t)
 
         return df_traj
 
@@ -113,7 +117,7 @@ class GenerativeCTBN:
         df_traj_hist = pd.DataFrame()
 
         for exp in range(n_traj):
-            df_traj = self.sample_one_trajectory()
+            df_traj = self.sample_trajectory()
 
             df_traj.loc[:, constants.TRAJ_ID] = exp
             df_traj_hist = df_traj_hist.append(df_traj)
