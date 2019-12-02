@@ -16,8 +16,13 @@ import logging
 # TODO consider action for transition and observation function
 
 class POMDPSimulation():
-    def __init__(self, cfg):
-        self.ctbn = GenerativeCTBN(cfg)
+    def __init__(self, cfg, save_folder='../data/', save_time=time.time()):
+        self.FOLDER = save_folder
+        self.TIME = save_time
+
+        logging.debug('initializing the POMDP object...')
+
+        self.ctbn = GenerativeCTBN(cfg, save_folder=save_folder, save_time=save_time)
         self.parent_list = ['1', '2']
         self.n_parents = len(self.parent_list)
         self.t_max = cfg[constants.T_MAX]
@@ -126,8 +131,10 @@ class POMDPSimulation():
                 ax[i].set_ylabel(var)
                 ax[i].set_xlabel('time')
                 plt.pause(0.0001)
+            ax[1].xaxis.tick_top()
             time.sleep(2)
         plt.show(block=False)
-        fig.savefig('../data/pomdp.png')
+        fig.savefig(self.FOLDER + f'{self.TIME}_traj.png')
+        df_traj.to_csv(self.FOLDER + f'{self.TIME}_traj.csv')
 
         return df_traj

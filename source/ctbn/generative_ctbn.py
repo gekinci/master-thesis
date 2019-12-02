@@ -5,10 +5,15 @@ import numpy as np
 import pandas as pd
 from ctbn.utils import *
 import constants
+import logging
+import time
 
 
 class GenerativeCTBN:
-    def __init__(self, cfg):
+    def __init__(self, cfg, save_folder='../data/', save_time=time.time()):
+        self.FOLDER = save_folder
+        self.TIME = save_time
+        logging.debug('initializing the CTBN object...')
 
         self.graph_dict = cfg[constants.PARENTS]
         self.t_max = cfg[constants.T_MAX]
@@ -19,6 +24,10 @@ class GenerativeCTBN:
         self.net_struct = [[par, node] for node in self.node_list for par in self.graph_dict[node] if
                            len(self.graph_dict[node]) > 0]
         self.Q = self.initialize_generative_ctbn()
+        for key in self.Q.keys():
+            logging.debug(f'Q[{key}] = {self.Q[key]}')
+        
+        logging.debug('CTBN: initialized!')
 
     def initialize_generative_ctbn(self):
         self.create_and_save_graph()
@@ -47,7 +56,7 @@ class GenerativeCTBN:
         G.add_edges_from(self.net_struct)
         pos = graphviz_layout(G, prog='dot')
         nx.draw_networkx(G, pos=pos, arrows=True)
-        plt.savefig('../data/ctbn_graph.png')
+        plt.savefig(self.FOLDER + f'{self.TIME}_graph.png')
 
     def get_parent_values(self, node, prev_step):
         parent_list = self.graph_dict[node]
@@ -125,6 +134,6 @@ class GenerativeCTBN:
             df_traj_hist = df_traj_hist.append(df_traj)
 
         # Save all the sampled trajectories
-        df_traj_hist.to_csv(f'../data/trajectory_{file_name}.csv')
+        df_traj_hist.to_csv(self.FOLDER + f'{self.TIME}_{file_name}_traj.csv')
 
         return df_traj_hist

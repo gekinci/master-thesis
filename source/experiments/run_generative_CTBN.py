@@ -4,13 +4,16 @@ from ctbn.config import graph_config
 import numpy as np
 import matplotlib.pyplot as plt
 import constants
+import time
 
 if __name__ == "__main__":
-    os.makedirs('../data', exist_ok=True)
+    folder = '../data/generative_ctbn/'
+    os.makedirs(folder, exist_ok=True)
+    t = time.time()
 
     n_traj = 20
 
-    ctbn = GenerativeCTBN(graph_config)
+    ctbn = GenerativeCTBN(graph_config, save_folder=folder, save_time=t)
 
     df_traj_hist = ctbn.sample_and_save_trajectories(n_traj=n_traj)
 
@@ -26,4 +29,4 @@ if __name__ == "__main__":
         ax[i].set_ylabel(var)
         ax[i].set_xlabel('time')
 
-    fig.savefig(f'../data/trajectory_plot.png')
+    fig.savefig(folder + f'{t}_trajectory_plot.png')
