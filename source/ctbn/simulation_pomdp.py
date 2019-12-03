@@ -54,7 +54,8 @@ class POMDPSimulation:
         self.T /= self.T.sum(axis=2)[:, :, np.newaxis]
 
         # Z(a, s', o)
-        self.Z = np.repeat(np.array([[.9, .1], [.1, .9], [.1, .9], [.9, .1]])[np.newaxis, :, :], 3, axis=0)
+        # self.Z = np.repeat(np.array([[.9, .1], [.1, .9], [.1, .9], [.9, .1]])[np.newaxis, :, :], 3, axis=0)
+        self.Z = np.repeat(np.array([[1, .0], [.0, 1], [.0, 1], [1, .0]])[np.newaxis, :, :], 3, axis=0)
 
         self.belief_state = np.tile(1 / len(self.S), len(self.S))
 
@@ -97,7 +98,6 @@ class POMDPSimulation:
         ax[-2].clear()
         ax[-2].bar(self.A, self.policy.loc[state])
         ax[-2].set_ylabel('Pr(a|s)')
-        # plt.pause(0.0001)
         logging.debug(f"P(a|s) = \n{self.policy.loc[state]}")
         return np.random.choice(self.A, p=self.policy.loc[state].values)
 
@@ -105,7 +105,6 @@ class POMDPSimulation:
         ax[-1].clear()
         ax[-1].bar(self.q_list, self.behavior.loc[action])
         ax[-1].set_ylabel('Pr(Q|a)')
-        # plt.pause(0.0001)
         Q_tag = np.random.choice(self.q_list, p=self.behavior.loc[action].values)
         logging.debug(f"P(Q|a) = \n{self.behavior.loc[action]}")
         return self.Q[Q_tag]
@@ -118,14 +117,13 @@ class POMDPSimulation:
             self.update_belief_state(obs)
             ax[-3].clear()
             ax[-3].bar(self.S, self.belief_state)
-            ax[-3].set_ylabel('belief_state')
-            # plt.pause(0.0001)
+            ax[-3].set_ylabel('b')
 
             state_pred = self.get_state()
             logging.debug(f'Deterministic prediction of state: {state_pred}')
 
             action = self.get_action(state_pred, ax)
-            logging.debug(f'Stochasticly selected decision: {action}')
+            logging.debug(f'Stochasticly selected action: {action}')
 
             Q = self.get_Q(action, ax)
             self.ctbn.Q['3'] = Q
@@ -171,11 +169,14 @@ class POMDPSimulation:
                 ax[i].step(df_traj[constants.TIME], df_traj[var], 'b')
                 ax[i].set_ylim([-.5, 1.5])
                 ax[i].set_ylabel(var)
-                ax[i].set_xlabel('time')
+                if i != 0:
+                    ax[i].set_xticks([])
                 plt.pause(0.0001)
-            ax[1].xaxis.tick_top()
-            time.sleep(2)
-            fig.savefig(self.FOLDER + f'{t.round(2)}_step.png')
+            ax[0].xaxis.tick_top()
+            ax[0].set_xlabel('time')
+            ax[0].xaxis.set_label_position('top')
+            time.sleep(1)
+            fig.savefig(self.FOLDER + f'{t.round(3)}_step.png')
         plt.show(block=False)
         # fig.savefig(self.FOLDER + f'traj_plot.png')
         df_traj.to_csv(self.FOLDER + f'traj.csv')
