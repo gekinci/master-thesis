@@ -26,8 +26,8 @@ class GenerativeCTBN:
         self.Q = self.initialize_generative_ctbn()
         for key in self.Q.keys():
             logging.debug(f'Q[{key}] = {self.Q[key]}')
-        
-        logging.debug('CTBN: initialized!')
+
+        logging.debug('CTBN object initialized!')
 
     def initialize_generative_ctbn(self):
         self.create_and_save_graph()
@@ -98,6 +98,8 @@ class GenerativeCTBN:
     def do_step(self, prev_step, t):
         tao = self.draw_time(prev_step)
         var = self.draw_variable(prev_step)
+        logging.debug(f'Change is gonna happen in {tao} sec')
+        logging.debug(f'{var} is gonna change from {int(prev_step[var])} to {int(1 - prev_step[var])}')
 
         new_step = prev_step.copy()
         # Adding new state change to the trajectories

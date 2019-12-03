@@ -6,11 +6,10 @@ import logging
 import time
 import os
 
-
 if __name__ == "__main__":
-    folder = '../data/simulation_pomdp/'
-    os.makedirs(folder, exist_ok=True)
     t = time.time()
+    folder = f'../data/simulation_pomdp/{t}/'
+    os.makedirs(folder, exist_ok=True)
 
     cfg = {
         constants.PARENTS: {'1': [],
@@ -23,7 +22,7 @@ if __name__ == "__main__":
     }
 
     logging.getLogger("matplotlib").setLevel(logging.WARNING)
-    logging.basicConfig(filename=folder+f'{t}_debug.log', level=logging.DEBUG)
+    logging.basicConfig(filename=os.path.join(folder + f'{t}_debug.log'), level=logging.DEBUG)
 
     pomdp_sim = POMDPSimulation(cfg, save_folder=folder, save_time=t)
 
