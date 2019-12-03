@@ -7,15 +7,15 @@ import time
 import os
 
 if __name__ == "__main__":
-    t = time.time()
+    t = int(time.time())
     folder = f'../data/simulation_pomdp/{t}/'
     os.makedirs(folder, exist_ok=True)
 
     cfg = {
-        constants.PARENTS: {'1': [],
-                            '2': [],
-                            '3': []},
-        constants.T_MAX: 10,
+        constants.GRAPH_STRUCT: {'1': [],
+                                 '2': [],
+                                 '3': []},
+        constants.T_MAX: 50,
         constants.N_VALUES: 2,
         constants.N_ACTIONS: 3,
         constants.N_Q: 5
