@@ -2,7 +2,7 @@ import constants
 
 # Dictionary in the format of {node: [its parents]}
 graph_config = {
-    constants.PARENTS: {
+    constants.GRAPH_STRUCT: {
         'X': [],
         'Y': ['X'],
         # 'Z': ['Y'],
