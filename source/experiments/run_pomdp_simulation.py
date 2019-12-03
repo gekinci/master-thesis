@@ -22,7 +22,7 @@ if __name__ == "__main__":
     }
 
     logging.getLogger("matplotlib").setLevel(logging.WARNING)
-    logging.basicConfig(filename=os.path.join(folder + f'{t}_debug.log'), level=logging.DEBUG)
+    logging.basicConfig(filename=os.path.join(folder + f'debug.log'), level=logging.DEBUG)
 
     pomdp_sim = POMDPSimulation(cfg, save_folder=folder, save_time=t)
 

@@ -39,9 +39,9 @@ class POMDPSimulation:
                                    data=np.random.rand(len(self.S), len(self.A)))
         self.policy = self.policy.div(self.policy.sum(axis=1), axis=0)  # normalize to have probabilities
 
-        self.behaviour = pd.DataFrame(index=self.A, columns=self.q_list,
+        self.behavior = pd.DataFrame(index=self.A, columns=self.q_list,
                                       data=np.random.rand(len(self.A), len(self.q_list)))
-        self.behaviour = self.behaviour.div(self.behaviour.sum(axis=1), axis=0)  # normalize to have probabilities
+        self.behavior = self.behavior.div(self.behavior.sum(axis=1), axis=0)  # normalize to have probabilities
         # np.random.choice(self.node_list, p=q_list)
 
         # T(a, s, s')
@@ -103,11 +103,11 @@ class POMDPSimulation:
 
     def get_Q(self, action, ax):
         ax[-1].clear()
-        ax[-1].bar(self.q_list, self.behaviour.loc[action])
+        ax[-1].bar(self.q_list, self.behavior.loc[action])
         ax[-1].set_ylabel('Pr(Q|a)')
         # plt.pause(0.0001)
-        Q_tag = np.random.choice(self.q_list, p=self.behaviour.loc[action].values)
-        logging.debug(f"P(Q|a) = \n{self.behaviour.loc[action]}")
+        Q_tag = np.random.choice(self.q_list, p=self.behavior.loc[action].values)
+        logging.debug(f"P(Q|a) = \n{self.behavior.loc[action]}")
         return self.Q[Q_tag]
 
     def do_step(self, prev_step, t, prev_obs, ax):
@@ -175,8 +175,9 @@ class POMDPSimulation:
                 plt.pause(0.0001)
             ax[1].xaxis.tick_top()
             time.sleep(2)
+            fig.savefig(self.FOLDER + f'{t.round(2)}_step.png')
         plt.show(block=False)
-        fig.savefig(self.FOLDER + f'{self.TIME}_traj.png')
-        df_traj.to_csv(self.FOLDER + f'{self.TIME}_traj.csv')
+        # fig.savefig(self.FOLDER + f'traj_plot.png')
+        df_traj.to_csv(self.FOLDER + f'traj.csv')
 
         return df_traj
