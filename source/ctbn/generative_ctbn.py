@@ -15,7 +15,7 @@ class GenerativeCTBN:
         self.TIME = save_time
         logging.debug('initializing the CTBN object...')
 
-        self.graph_dict = cfg[constants.PARENTS]
+        self.graph_dict = cfg[constants.GRAPH_STRUCT]
         self.t_max = cfg[constants.T_MAX]
         self.n_values = cfg[constants.N_VALUES]
 
