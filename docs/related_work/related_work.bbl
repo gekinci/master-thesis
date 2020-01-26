@@ -1,0 +1,48 @@
+\begin{thebibliography}{1}
+
+\bibitem{Perkins2009a}
+T.~J. Perkins and P.~S. Swain, ``{Strategies for cellular decision-making},''
+  {\em Molecular Systems Biology}, vol.~5, no.~326, pp.~1--15, 2009.
+
+\bibitem{Bowsher2014}
+C.~G. Bowsher and P.~S. Swain, ``{Environmental sensing, information transfer,
+  and cellular decision-making},'' {\em Current Opinion in Biotechnology},
+  vol.~28, pp.~149--155, 2014.
+
+\bibitem{Paarporn2018a}
+K.~Paarporn, C.~Eksin, and J.~S. Weitz, ``{Information sharing for a
+  coordination game in fluctuating environments},'' {\em Journal of Theoretical
+  Biology}, vol.~454, pp.~376--385, 2018.
+
+\bibitem{Gkigkitzis2013}
+I.~Gkigkitzis, ``{Theoretical aspects and modelling of cellular decision
+  making, cell killing and information-processing in photodynamic therapy of
+  cancer},'' {\em BMC Medical Genomics}, vol.~6, no.~SUPPL. 3, pp.~1--16, 2013.
+
+\bibitem{Kobayashi2010a}
+T.~J. Kobayashi, ``{Implementation of dynamic bayesian decision making by
+  intracellular kinetics},'' {\em Physical Review Letters}, vol.~104, no.~22,
+  pp.~1--4, 2010.
+
+\bibitem{Thurley2018}
+K.~Thurley, L.~F. Wu, and S.~J. Altschuler, ``{Modeling Cell-to-Cell
+  Communication Networks Using Response-Time Distributions},'' {\em Cell
+  Systems}, vol.~6, no.~3, pp.~355--367.e5, 2018.
+
+\bibitem{Song2019a}
+D.~Song, D.~Yang, C.~A. Powell, and X.~Wang, ``{Cell–cell communication: old
+  mystery and new opportunity},'' {\em Cell Biology and Toxicology}, vol.~35,
+  no.~2, pp.~89--93, 2019.
+
+\bibitem{Perez-Ocon2000}
+R.~P{\'{e}}rez-Oc{\'{o}}n, J.~E. Ruiz-Castro, and M.~L.
+  G{\'{a}}miz-P{\'{e}}rez, ``{Markov models with Iognormal transition rates in
+  the analysis of survival times},'' {\em Test}, vol.~9, no.~2, pp.~353--370,
+  2000.
+
+\bibitem{Kaelbling2011}
+L.~P. Kaelbling, M.~L. Littman, and A.~R. Cassandra, ``{Planning and acting in
+  partially observable stochastic domains},'' {\em Amino Acids}, vol.~40,
+  no.~2, pp.~443--451, 2011.
+
+\end{thebibliography}

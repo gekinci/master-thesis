@@ -1,0 +1,127 @@
+\documentclass[]{article}
+\usepackage[a4paper, total={6in, 9in}]{geometry}
+\usepackage{amsmath}
+%opening
+\title{Incomplete communication models}
+\author{Gizem Ekinci, Anam Tahir, Dominik Linzner}
+
+\begin{document}
+
+\maketitle
+
+\section{Motivation}
+
+The state of a cell can be expressed in terms of its gene activation state $ X(t) \in \{0, 1\}^{N} $, e.g.
+\begin{center}
+\begin{math}
+X(t)=\left(\begin{array}{c}
+{0} \\
+{1} \\
+{\vdots} \\
+{\vdots} \\
+{0} \\
+{1}
+\end{array}\right)
+\end{math}\\
+\end{center}
+which draws a discrete valued trajectory in time $ X^{[0,T]} $. Based on this gene state, the cell may emit some message $ m_{X}(t) = \phi_{X}(X(t)) $. Let $ Z(t) $ denote some cell receiving the messages emitted by cells X, Y, then it may evolve some translation of the message $ c(t) = \phi _{Z} (m_{X}(t),m_{Y}(t)) = \phi_{Z}(\phi_{X}(X(t)), \phi_{Y}(X(t))) \equiv \psi(X(t), Y(t)) $. Given some task that Z may have to achieve in coordination with X, Y, this defines a POMDP problem. In the following we assume that the behaviour of Z has been shaped by evolution (close) to optimality. Our goal is now to infer the inter-cell language model from demonstrations. \\
+
+\section{Problem Definition}
+
+\subsection{Time-homogenous continuous-time Markov Processes}
+The messages that are emitted by the cells are modelled as independent time-homogeneous continuous-time Markov processes (CTMP). These processes are defined by transition intensity matrices $ Q_{X} $ and $ Q_{Y} $, whose intensities does not depend on time. In this matrix, the intensity $ q_{i} $ represents the instantaneous probability of leaving state i and $ q_{i,j} $ represents the instantaneous probability of switching from state $ i $ to $ j $.\\
+
+Infinitesimal transition probabilities in terms of the entries of transition matrices $ q_{ij} $ can be written as \cite{Cohn2010a}:
+\begin{equation}
+p_{i,j}(h)=\delta_{ij}+q_{i,j} h+o(h)
+\end{equation}
+where $ p_{i, j}(t) \equiv Pr(X^{(t+s)}=j\mid X^{(s)}=i) $ are Markov transition functions and o(.) is a function decaying to zero faster than its argument.\\
+
+The \textit{forward} or \textit{master equation} is then derived as follows:
+
+\begin{equation}
+p_{j}(t)=\sum_{\forall i} p_{i, j}(h) p_{i}(t-h)
+\end{equation}
+
+\begin{equation}
+\begin{split}
+\lim_{h\rightarrow 0} p_{j}(t) & = \lim_{h\rightarrow 0} \sum_{\forall i} \left[ \delta_{ij}+q_{i,j} h+o(h)\right]  p_{i}(t-h) \\ & = \lim_{h\rightarrow 0} p_{j}(t-h) + \lim_{h\rightarrow 0} h \sum_{\forall i} q_{i,j} p_{i}(t-h)
+\end{split}
+\end{equation}
+
+\begin{equation}
+\lim_{h\rightarrow 0} \frac{p_{j}(t) - p_{j}(t-h)}{h} = \lim_{h\rightarrow 0} \sum_{\forall i} q_{i,j} p_{i}(t-h)
+\end{equation}
+
+\begin{equation}
+\begin{split}
+\frac{d}{dt} p_{j}(t) & = \sum_{\forall i} q_{i,j} p_{i}(t) \\ & = \sum_{\forall i \neq j}\left[  q_{i,j} p_{i}(t) - q_{j,i} p_{j}(t) \right]
+\end{split}
+\end{equation}
+The solution to ODE, the time-dependent probability distribution $ p(t) $ is, 
+\begin{equation}
+p(t)=p(0) \exp (t\textbf{Q})
+\end{equation}
+with initial distribution $ p(0) $.\\
+
+The amount of time staying in a state i is exponentially distributed with parameter $ q_{i} $. The probability density function f for staying in the state $ i $ is:
+\begin{equation}
+f(t)=q_{i} \exp \left(-q_{i} t\right)
+\end{equation}
+
+To write down the likelihood of a trajectory sampled from a homogenous CTMC $ X $, first let us consider one transition $ d = <i,j,t> $, where transition happens after time t from state i to j. The likelihood of this transition is:
+\begin{equation}
+L_{X}(d \mid \textbf{Q})=\left(q_{i} \exp \left(-q_{i} t\right)\right)\left(\frac{q_{i,j}}{q_{i}}\right)
+\end{equation}
+By defining sufficient statistics over out dataset $ D $ as $ T[i] $, the amount of time spent in state i, $ M[i,j] $ the number of transitions from state i to j, we can write down the likelihood of a trajectory $  X^{\left[0,T\right] } $,
+\begin{equation}
+\begin{split}
+L_{X}(D \mid \textbf{Q}) &=  \prod_{d \in D} L(d \mid \textbf{Q}) \\&=\left(\prod_{\forall i} q_{i}^{M[i]} \exp \left(-q_{i} T[i]\right)\right)\left(\prod_{\forall i} \prod_{\forall j \neq i} \left(\frac{q_{i,j}}{q_{i}}\right)^{M\left[i, j\right]}\right)
+\end{split}
+\end{equation}
+
+\subsection{Time-inhomogeneous continuous-time Markov Processes}
+The entire communication is defined in the framework of continuous-time Bayesian network (CTBN). In an conventional CTBN, while every node is a Markov process itself, the leaf nodes are \textit{conditional} Markov processes, a type of inhomogeneous Markov process, where the intensities change over time, but not as a function of time rather as a function of parent states. \cite{Nodelman1995} \\
+
+For inhomogeneous Markov processes, Eq.7 becomes:
+\begin{equation}
+f(t) = q_{i}(t) \exp \left(-\int_{s}^{l} q_{i}(u) d u\right)
+\end{equation}
+
+Let X be an inhomogeneous Markov process, and $  X^{\left[0,T\right] } $ is a trajectory sampled from this process. We define $ m $ number of transitions, with $ 0 = t_{0} < t_{1} < ... < t_{m} $ are the times where transition occurred, and $ x{0}, x_{1},...,x_{m} $ are the observed states. The likelihood of trajectory  $  X^{\left[0,T\right] } $ is  as follows: 
+\begin{equation}
+L= \prod_{k=1}^{m} \left[ q_{x_{k-1}, x_{k}} (t_{k}) \exp \left(-\int_{t_{k-1}}^{t_{k}} q_{x_{k-1}}(u) d u\right) \frac{q_{x_{k-1}, x_{k}} (t_{k})}{q_{x_{k-1}}(t_{k})}\right] 
+\end{equation}
+In the paper \cite{Perez-Ocon2000}, this likelihood is written only considering the amount has been spent on one state, while the last part regarding the probability of the transition is ignored. On the other hand, in this paper \cite{Nodelman2014}, instead of integrating over time, $ T[i] $, in Eq.9, is split to two parts $ T[x\mid u] = T_{r}[i\mid par(x)] + T_{c}[i\mid par(x)] $, where $ T_{r}  $ is the total durations that terminate with X remaining at state i, or end of trajectory, $ T_{c} $ is the total durations termination with X leaving state i. While the second derivation is consistent with Eq.11, the first one is not.\\
+
+We can formulate our graphical model as $ S = [X, Y, Z] $, where $ Par(Z) = {X,Y} $ and $ Par(X) = Par(Y) =\emptyset $. We can then write the conditional probability:
+\begin{equation}
+\begin{split}
+P\left(S^{\left(t+h\right)}=s' | S^{\left(t\right)}=s\right) = & P\left(X^{\left( t+h\right) }=x' | X^{\left(t\right)}=x, Par(X)^{\left(t\right)}={y,z}\right) \\&  P\left(Y^{\left( t+h\right) }=y' | Y^{\left(t\right)}=y\right) P\left(Z^{\left( t+h\right) }=z' | ^{\left(t\right)}=z\right)
+\end{split} 
+\end{equation}
+
+\subsection{Partially observable Markov Decision Processes}
+In our problem, cell Z does not have a direct access to its parents' states, rather it observes a summary of them. This is different than observing the states through noisy binary channels, and presents a POMDP problem. Even though it is assumed that the policy of Z is optimal given the true states of parents, the problem of inferring the observational model remains unsolved and to be addressed.
+
+Given the $ transition function T(s, a, s^{\prime})$  and $ observation function O(s^{\prime}, a, o) $, the belief state update is computed as follows \cite{Kaelbling2011}:
+\begin{equation}
+\begin{aligned}
+b^{\prime}\left(s^{\prime}\right) &=\operatorname{Pr}\left(s^{\prime} | o, a, b\right) \\
+&=\frac{\operatorname{Pr}\left(o | s^{\prime}, a, b\right) \operatorname{Pr}\left(s^{\prime} | a, b\right)}{\operatorname{Pr}(o | a, b)} \\
+&=\frac{\operatorname{Pr}\left(o | s^{\prime}, a\right) \sum_{s \in \mathcal{S}} \operatorname{Pr}\left(s^{\prime} | a, b, s\right) \operatorname{Pr}(s | a, b)}{\operatorname{Pr}(o | a, b)} \\
+&=\frac{O\left(s^{\prime}, a, o\right) \sum_{s \in \mathcal{S}} T\left(s, a, s^{\prime}\right) b(s)}{\operatorname{Pr}(o | a, b)}\\
+&=\frac{O\left(s^{\prime}, o\right) \sum_{s \in \mathcal{S}} T\left(s, s^{\prime}\right) b(s)}{\operatorname{Pr}(o | b)}
+\end{aligned}
+\end{equation}
+
+Since for now, we assume there is no affect of Z's on the observation or transition function, $ a $ is omitted from the equation.
+
+\subsection{Simulation - Gillespie algorithm}
+TODO
+
+
+\pagebreak
+\bibliographystyle{ieeetr}
+\bibliography{../bibtex/_master_thesis}
+\end{document}
