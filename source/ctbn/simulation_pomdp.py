@@ -45,17 +45,18 @@ class POMDPSimulation:
         # np.random.choice(self.node_list, p=q_list)
 
         # T(a, s, s')
-        # self.T = np.repeat(np.random.rand(len(self.S), len(self.S))[np.newaxis, :, :], 3, axis=0)  #random
-        self.T = np.repeat(np.repeat(np.tile(1 / len(self.S), len(self.S))[:, np.newaxis], 4, axis=1)
-                           [np.newaxis, :, :], 3, axis=0)  # equiprobable
-        # self.T = amalgamation_independent_cim(self.ctbn.Q['1'], self.ctbn.Q['2'])  # amalgamation from ctbn
+        # self.T = np.repeat(np.random.rand(len(self.S), len(self.S))[np.newaxis, :, :], len(self.A), axis=0)  #random
+        self.T = np.repeat(np.repeat(np.tile(1 / len(self.S), len(self.S))[:, np.newaxis], len(self.S), axis=1)
+                           [np.newaxis, :, :], len(self.A), axis=0)  # equiprobable
+        # self.T = np.repeat(amalgamation_independent_cim(self.ctbn.Q['1'], self.ctbn.Q['2'])[np.newaxis, :, :],
+        #                    len(self.A), axis=0)  # amalgamation from ctbn
 
         [np.fill_diagonal(self.T[i, ::-1, :], 0) for i in range(self.T.shape[0])]  # vars cannot change at the same time
         self.T /= self.T.sum(axis=2)[:, :, np.newaxis]
 
         # Z(a, s', o)
-        # self.Z = np.repeat(np.array([[.9, .1], [.1, .9], [.1, .9], [.9, .1]])[np.newaxis, :, :], 3, axis=0)
-        self.Z = np.repeat(np.array([[1, .0], [.0, 1], [.0, 1], [1, .0]])[np.newaxis, :, :], 3, axis=0)
+        self.Z = np.repeat(np.array([[.9, .1], [.1, .9], [.1, .9], [.9, .1]])[np.newaxis, :, :], len(self.A), axis=0)
+        # self.Z = np.repeat(np.array([[1, .0], [.0, 1], [.0, 1], [1, .0]])[np.newaxis, :, :], len(self.A), axis=0)
 
         self.belief_state = np.tile(1 / len(self.S), len(self.S))
 

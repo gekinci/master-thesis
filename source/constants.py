@@ -8,3 +8,6 @@ OBS = 'o'
 
 N_ACTIONS = 'n_actions'
 N_Q = 'n_int_matrices'
+
+T_CONF = 'T_config'
+Z_CONF = 'Z_config'
