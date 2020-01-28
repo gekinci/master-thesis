@@ -22,6 +22,7 @@ def zero_div(x, y):
 def random_q_matrix(n_values):
     tmp = np.random.rand(n_values, n_values)
     np.fill_diagonal(tmp, 0)
+    np.fill_diagonal(tmp, -tmp.sum(axis=1))
     Q = tmp.tolist()
     return Q
 
@@ -31,8 +32,9 @@ def amalgamation_independent_cim(Q1, Q2):
     y1 = Q1[1][0]
     x2 = Q2[0][1]
     y2 = Q2[1][0]
-    T = np.array([[(x1 + x2) / 2, x2, x1, .0],
-                  [y2, (y2 + x1) / 2, .0, x1],
-                  [y1, .0, (y1 + x2) / 2, x2],
-                  [.0, y1, y2, (y1 + y2) / 2]])
+    T = np.array([[0, x2, x1, .0],
+                  [y2, 0, .0, x1],
+                  [y1, .0, 0, x2],
+                  [.0, y1, y2, 0]])
+    np.fill_diagonal(T, T.sum(axis=1))
     return T
