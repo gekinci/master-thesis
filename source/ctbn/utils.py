@@ -4,8 +4,10 @@ import pandas as pd
 import numpy as np
 
 
-def cartesian_products(n):
-    return ["".join(seq) for seq in itertools.product("01", repeat=n)]
+def cartesian_products(n_par, n_states=2):
+    # it is adapted to non-binary states
+    state_str = '' + "".join(map(str, range(n_states)))
+    return ["".join(seq) for seq in itertools.product(state_str, repeat=n_par)]
 
 
 def zero_div(x, y):
@@ -36,5 +38,5 @@ def amalgamation_independent_cim(Q1, Q2):
                   [y2, 0, .0, x1],
                   [y1, .0, 0, x2],
                   [.0, y1, y2, 0]])
-    np.fill_diagonal(T, T.sum(axis=1))
+    np.fill_diagonal(T, -T.sum(axis=1))
     return T
