@@ -16,9 +16,9 @@ if __name__ == "__main__":
                                  '2': [],
                                  '3': []},
         constants.T_MAX: 50,
-        constants.N_VALUES: 2,
-        constants.N_ACTIONS: 3,
-        constants.N_Q: 5
+        constants.N_STATES: 2,  # for every node
+        # constants.N_ACTIONS: 3,
+        constants.N_Q: 4  # size of the Q3 set
     }
 
     logging.getLogger("matplotlib").setLevel(logging.WARNING)

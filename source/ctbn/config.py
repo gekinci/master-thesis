@@ -14,5 +14,5 @@ graph_config = {
         'M': []
     },
     constants.T_MAX: 20,  # t_max to terminate sampling
-    constants.N_VALUES: 2  # binary {0, 1), if different sets for variables, could also be a dict
+    constants.N_STATES: 2  # binary {0, 1), if different sets for variables, could also be a dict
 }

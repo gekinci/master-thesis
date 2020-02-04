@@ -1,6 +1,6 @@
 GRAPH_STRUCT = 'graph_struct'
 T_MAX = 't_max'
-N_VALUES = 'n_values'
+N_STATES = 'n_states'
 
 TRAJ_ID = 'trajectory_id'
 TIME = 'time'
