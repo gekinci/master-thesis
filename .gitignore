@@ -7,3 +7,5 @@ venv/
 source/data/
 
 Tiger-Problem-POMDP/
+
+POMDPy/
