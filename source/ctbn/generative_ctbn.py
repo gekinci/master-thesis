@@ -17,7 +17,7 @@ class GenerativeCTBN:
 
         self.graph_dict = cfg[constants.GRAPH_STRUCT]
         self.t_max = cfg[constants.T_MAX]
-        self.n_values = cfg[constants.N_VALUES]
+        self.n_states = cfg[constants.N_STATES]
 
         self.node_list = list(self.graph_dict.keys())
         self.num_nodes = len(self.node_list)
@@ -40,15 +40,15 @@ class GenerativeCTBN:
         # Randomly generated conditional intensity matrices
         for node in self.node_list:
             if len(self.graph_dict[node]) == 0:
-                Q[node] = random_q_matrix(self.n_values)
+                Q[node] = random_q_matrix(self.n_states)
             else:
                 parent_list = self.graph_dict[node]
                 n_parents = len(parent_list)
-                parent_cart_prod = cartesian_products(n_parents)
+                parent_cart_prod = cartesian_products(n_parents, n_states=self.n_states)
                 Q[node] = {}
 
                 for prod in parent_cart_prod:
-                    Q[node][prod] = random_q_matrix(self.n_values)
+                    Q[node][prod] = random_q_matrix(self.n_states)
         return Q
 
     def create_and_save_graph(self):
