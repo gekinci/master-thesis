@@ -29,4 +29,4 @@ if __name__ == "__main__":
         ax[i].set_ylabel(var)
         ax[i].set_xlabel('time')
 
-    fig.savefig(folder + f'{t}_trajectory_plot.png')
+    fig.savefig(folder + 'trajectory_plot.png')

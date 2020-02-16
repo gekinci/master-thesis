@@ -2,37 +2,47 @@ import networkx as nx
 from networkx.drawing.nx_agraph import graphviz_layout
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
-from ctbn.utils import *
+from utils import *
 import constants
 import logging
 import time
+import os
 
 
 class GenerativeCTBN:
     def __init__(self, cfg, save_folder='../data/', save_time=time.time()):
-        self.FOLDER = save_folder
-        self.TIME = save_time
+        self.FOLDER = save_folder + str(int(save_time)) + '/'
+        os.makedirs(self.FOLDER, exist_ok=True)
         logging.debug('initializing the CTBN object...')
 
         self.graph_dict = cfg[constants.GRAPH_STRUCT]
         self.t_max = cfg[constants.T_MAX]
-        self.n_states = cfg[constants.N_STATES]
+        self.states = cfg[constants.STATES]
+        self.n_states = len(cfg[constants.STATES])
+        self.initial_probs = cfg[constants.INITIAL_PROB]
 
         self.node_list = list(self.graph_dict.keys())
         self.num_nodes = len(self.node_list)
         self.net_struct = [[par, node] for node in self.node_list for par in self.graph_dict[node] if
                            len(self.graph_dict[node]) > 0]
-        self.Q = self.initialize_generative_ctbn()
-        for key in self.Q.keys():
-            logging.debug(f'Q[{key}] = {self.Q[key]}')
 
+        self.initial_states = self.initialize_nodes()
+
+        self.Q = self.initialize_generative_ctbn(cfg)
+
+        logging.debug(f'Q = {self.Q}')
         logging.debug('CTBN object initialized!')
 
-    def initialize_generative_ctbn(self):
-        self.create_and_save_graph()
-        Q_dict = self.generate_conditional_intensity_matrices()
+    def initialize_generative_ctbn(self, cfg):
+        # self.create_and_save_graph()
+        if constants.Q_DICT in cfg.keys():
+            Q_dict = cfg['Q_dict']
+        else:
+            Q_dict = self.generate_conditional_intensity_matrices()
         return Q_dict
+
+    def initialize_nodes(self):
+        return {var: np.random.choice(self.states, p=self.initial_probs) for var in self.node_list}
 
     def generate_conditional_intensity_matrices(self):
         Q = dict()
@@ -56,7 +66,7 @@ class GenerativeCTBN:
         G.add_edges_from(self.net_struct)
         pos = graphviz_layout(G, prog='dot')
         nx.draw_networkx(G, pos=pos, arrows=True)
-        plt.savefig(self.FOLDER + f'{self.TIME}_graph.png')
+        plt.savefig(self.FOLDER + f'graph.png')
 
     def get_parent_values(self, node, prev_step):
         parent_list = self.graph_dict[node]
@@ -95,7 +105,8 @@ class GenerativeCTBN:
         # TODO non-binary variables
         return
 
-    def do_step(self, prev_step, t):
+    def do_step(self, prev_step):
+        t = prev_step[constants.TIME].values[0]
         tao = self.draw_time(prev_step)
         var = self.draw_variable(prev_step)
         logging.debug(f'Change is gonna happen in {tao} sec')
@@ -106,20 +117,20 @@ class GenerativeCTBN:
         new_step.loc[:, constants.TIME] = t + tao
         new_step.loc[:, var] = int(1 - new_step[var])
 
-        t += tao
-        return new_step, t
+        return new_step
 
     def sample_trajectory(self):
         t = 0
 
         # Randomly initializing first states
-        initial_states = {var: [np.random.randint(0, 2)] for var in self.node_list}
+        initial_states = self.initial_states
         initial_states[constants.TIME] = 0
-        df_traj = pd.DataFrame.from_dict(initial_states)
+        df_traj = pd.DataFrame().append(initial_states, ignore_index=True)
         prev_step = pd.DataFrame(df_traj[-1:].values, columns=df_traj.columns)
 
         while t < self.t_max:
-            new_step, t = self.do_step(prev_step, t)
+            new_step= self.do_step(prev_step)
+            t = new_step[constants.TIME].values[0]
             df_traj = df_traj.append(new_step, ignore_index=True)
             prev_step = new_step.copy()
 
@@ -136,6 +147,6 @@ class GenerativeCTBN:
             df_traj_hist = df_traj_hist.append(df_traj)
 
         # Save all the sampled trajectories
-        df_traj_hist.to_csv(self.FOLDER + f'{self.TIME}_{file_name}_traj.csv')
+        df_traj_hist.to_csv(self.FOLDER + f'{file_name}_traj.csv')
 
         return df_traj_hist

@@ -29,7 +29,7 @@ def random_q_matrix(n_values):
     return Q
 
 
-def amalgamation_independent_cim(Q1, Q2):
+def get_amalgamated_trans_matrix(Q1, Q2):
     x1 = Q1[0][1]
     y1 = Q1[1][0]
     x2 = Q2[0][1]
