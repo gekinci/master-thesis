@@ -36,24 +36,26 @@ def get_env_trajectory(env, max_time=10):
     return df_traj
 
 
-def train_given_trajectory(init_b, b_jump=0.01, max_time=5, folder='../data/'):
+def train_given_trajectory(init_b, b_jump=0.01, max_time=5, import_env=None, folder='../data/'):
     env = CellEnvironment(folder=folder)
 
     df_b_grid = generate_belief_grid(b_jump, path_to_save='./')
 
-    # env_traj = get_env_trajectory(env, max_time=max_time)
-    env_traj = pd.read_csv('../data/1581945386/env_traj.csv', index_col=0)
+    if import_env is None:
+        env_traj = get_env_trajectory(env, max_time=max_time)
+    else:
+        env_traj = pd.read_csv(f'../data/{import_env}/env_traj.csv', index_col=0)
 
     policy_tree, df_optimal_map = valueIteration(env_traj, initial_set, df_b_grid)
 
-    df_optimal_map.to_csv(env.getParents().ctbn.FOLDER + 'df_belief.csv')
-    env_traj.to_csv(env.getParents().ctbn.FOLDER + 'env_traj.csv')
+    df_optimal_map.to_csv(folder + 'df_belief.csv')
+    env_traj.to_csv(folder + 'env_traj.csv')
 
-    visualize_optimal_policy_map(df_optimal_map, path_to_save=env.getParents().ctbn.FOLDER)
-    visualize_trajectories(env_traj, node_list=['X', 'Y'], path_to_save=env.getParents().ctbn.FOLDER)
+    visualize_optimal_policy_map(df_optimal_map, path_to_save=folder)
+    visualize_trajectories(env_traj, node_list=['X', 'Y'], path_to_save=folder)
 
-    if not os.listdir(env.getParents().ctbn.FOLDER):
-        os.rmdir(env.getParents().ctbn.FOLDER)
+    if not os.listdir(folder):
+        os.rmdir(folder)
 
     # TODO get trajectory of Z, given the policy for parent trajectories
     # player = Agent(_b=init_b)
@@ -97,4 +99,5 @@ if __name__ == "__main__":
     max_time = 5
     b_jump = 0.03
 
-    train_given_trajectory(initial_b, b_jump=b_jump, max_time=max_time, folder=folder)
+    train_given_trajectory(initial_b, b_jump=b_jump, import_env='1581945386',
+                           max_time=max_time, folder=folder)
