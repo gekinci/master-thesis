@@ -9,12 +9,12 @@ import scipy
 
 
 class POMDPSimulation:
-    def __init__(self, cfg, save_folder='../data/', save_time=time.time()):
-        self.FOLDER = save_folder + str(int(save_time))
+    def __init__(self, cfg, save_folder='../data/'):
+        self.FOLDER = save_folder
 
         logging.debug('initializing the POMDP object...')
 
-        self.ctbn = GenerativeCTBN(cfg, save_folder=self.FOLDER, save_time=save_time)
+        self.ctbn = GenerativeCTBN(cfg, save_folder=self.FOLDER)
         self.parent_list = ['1', '2']
         self.n_parents = len(self.parent_list)
         self.t_max = cfg[T_MAX]

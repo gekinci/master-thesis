@@ -5,17 +5,15 @@ from ctbn.config import graph_config
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-import time
+
 
 if __name__ == "__main__":
-    folder = '../data/learning_ctbn/'
-    os.makedirs(folder, exist_ok=True)
-    t = time.time()
+    folder = create_folder_for_experiment(folder_name='../data/learning_ctbn/')
 
     n_train = 8
     n_test = 2
 
-    ctbn = GenerativeCTBN(graph_config, save_folder=folder, save_time=t)
+    ctbn = GenerativeCTBN(graph_config, save_folder=folder)
 
     df_train = ctbn.sample_and_save_trajectories(n_traj=n_train, file_name='train')
     df_test = ctbn.sample_and_save_trajectories(n_traj=n_test, file_name='test')
@@ -34,9 +32,9 @@ if __name__ == "__main__":
     plt.ylabel('Mean Squared Error')
     plt.xlabel('Number of trajectories')
     plt.legend()
-    plt.savefig(folder + f'{t}_training_plot_{n_train}Train_{n_test}Test_{avg_n_transition}trans.png')
+    plt.savefig(folder + f'/training_plot_{n_train}Train_{n_test}Test_{avg_n_transition}trans.png')
 
-    df_eval.to_csv(folder + f'{t}_df_eval_{n_train}Train_{n_test}Test_{avg_n_transition}trans.csv')
+    df_eval.to_csv(folder + f'/df_eval_{n_train}Train_{n_test}Test_{avg_n_transition}trans.csv')
 
     # print(f'Trajectories : {graph_config[constants.T_MAX]} unit of time, about {avg_n_transition}')
     # print(f'True likelihood of test data: avg = {L_true_model_avg}, std = {L_true_model_std}')

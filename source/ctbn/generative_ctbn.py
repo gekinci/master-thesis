@@ -5,14 +5,12 @@ import networkx as nx
 from networkx.drawing.nx_agraph import graphviz_layout
 import matplotlib.pyplot as plt
 import logging
-import time
-import os
 
 
 class GenerativeCTBN:
-    def __init__(self, cfg, save_folder='../data/', save_time=time.time()):
-        self.FOLDER = save_folder + str(int(save_time)) + '/'
-        os.makedirs(self.FOLDER, exist_ok=True)
+    def __init__(self, cfg, save_folder='../data/generative_ctbn/'):
+        self.FOLDER = save_folder
+
         logging.debug('initializing the CTBN object...')
 
         self.graph_dict = cfg[GRAPH_STRUCT]
@@ -147,6 +145,6 @@ class GenerativeCTBN:
             df_traj_hist = df_traj_hist.append(df_traj)
 
         # Save all the sampled trajectories
-        df_traj_hist.to_csv(self.FOLDER + f'{file_name}_traj.csv')
+        df_traj_hist.to_csv(os.path.join(self.FOLDER, f'{file_name}_traj.csv'))
 
         return df_traj_hist

@@ -36,8 +36,8 @@ def get_env_trajectory(env, max_time=10):
     return df_traj
 
 
-def train_given_trajectory(init_b, b_jump=0.01, max_time=5):
-    env = CellEnvironment()
+def train_given_trajectory(init_b, b_jump=0.01, max_time=5, folder='../data/'):
+    env = CellEnvironment(folder=folder)
 
     df_b_grid = generate_belief_grid(b_jump, path_to_save='./')
 
@@ -91,8 +91,10 @@ def train_given_trajectory(init_b, b_jump=0.01, max_time=5):
 
 
 if __name__ == "__main__":
+
+    folder = create_folder_for_experiment(folder_name='../data/')
     initial_b = np.array([0.25, 0.25, 0.25, 0.25])
     max_time = 5
     b_jump = 0.03
 
-    train_given_trajectory(initial_b, b_jump=b_jump, max_time=max_time)
+    train_given_trajectory(initial_b, b_jump=b_jump, max_time=max_time, folder=folder)

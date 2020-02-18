@@ -1,6 +1,15 @@
 import itertools
 import numpy as np
 import pandas as pd
+import time
+import os
+
+
+def create_folder_for_experiment(folder_name='../data'):
+    t = int(time.time())
+    folder_exp = os.path.join(folder_name, str(t))
+    os.makedirs(folder_exp, exist_ok=True)
+    return folder_exp
 
 
 def cartesian_products(n_par, n_states=2):
@@ -13,7 +22,6 @@ def zero_div(x, y):
     return x / y if y != 0 else 0
 
 
-#
 # def merge_independent_ctbn_trajectories(df1, df2):
 #     df_joined = pd.concat([df1, df2], ignore_index=True, sort=False).sort_values(
 #         by=constants.TIME).ffill().drop_duplicates(subset=constants.TIME, keep='last')

@@ -11,8 +11,8 @@ class CellEnvironment:
     and returns reward and observation.
     """
 
-    def __init__(self, _state=None):
-        self._parents = Parents(Q_X, Q_Y)
+    def __init__(self, _state=None, folder='../data/'):
+        self._parents = Parents(Q_X, Q_Y, folder=folder)
         self._state = list(self._parents.init_state.values())
         self.time = 0
         self.observation = getObservation(self._state)
@@ -42,7 +42,7 @@ class Parents:
     to the CellEnvironment.
     """
 
-    def __init__(self, Qx, Qy):
+    def __init__(self, Qx, Qy, folder='../data/'):
         self.cfg = {GRAPH_STRUCT: {'X': [],
                                    'Y': []},
                     T_MAX: 50,
@@ -51,7 +51,7 @@ class Parents:
                     Q_DICT: {'X': Qx,
                              'Y': Qy}
                     }
-        self.ctbn = GenerativeCTBN(cfg=self.cfg)
+        self.ctbn = GenerativeCTBN(cfg=self.cfg, save_folder=folder)
         self.init_state = self.ctbn.initial_states
         self._prev_step = pd.DataFrame().append(self.init_state, ignore_index=True)
         self._prev_step[TIME] = 0
