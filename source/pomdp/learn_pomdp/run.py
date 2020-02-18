@@ -50,7 +50,7 @@ def train_given_trajectory(init_b, b_jump=0.01, max_time=5):
     env_traj.to_csv(env.getParents().ctbn.FOLDER + 'env_traj.csv')
 
     visualize_optimal_policy_map(df_optimal_map, path_to_save=env.getParents().ctbn.FOLDER)
-    visualize_trajectories(env_traj, path_to_save=env.getParents().ctbn.FOLDER)
+    visualize_trajectories(env_traj, node_list=['X', 'Y'], path_to_save=env.getParents().ctbn.FOLDER)
 
     if not os.listdir(env.getParents().ctbn.FOLDER):
         os.rmdir(env.getParents().ctbn.FOLDER)

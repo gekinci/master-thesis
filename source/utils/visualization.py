@@ -22,8 +22,9 @@ def visualize_optimal_policy_map(df, path_to_save='../data/'):
     return
 
 
-def visualize_trajectories(df, path_to_save='../data/'):
-    node_list = ['X', 'Y', 'Z'] if 'Z' in df.columns else ['X', 'Y']
+def visualize_trajectories(df, node_list=None, path_to_save='../data/'):
+    if node_list is None:
+        node_list = ['X', 'Y', 'o', 'Z']
 
     # Saving and plotting the trajectories
     fig, ax = plt.subplots(len(node_list))
