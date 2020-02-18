@@ -1,7 +1,6 @@
 import itertools
-import constants
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 
 def cartesian_products(n_par, n_states=2):
@@ -40,3 +39,19 @@ def get_amalgamated_trans_matrix(Q1, Q2):
                   [.0, y1, y2, 0]])
     np.fill_diagonal(T, -T.sum(axis=1))
     return T
+
+
+def generate_belief_grid(step, path_to_save='./'):
+    cols = ['b1', 'b2', 'b3', 'b4']
+    b = []
+
+    for b1 in np.arange(0, 1 + 0.001, step):
+        b234 = 1 - b1
+        for b2 in np.arange(0, b234 + 0.001, step):
+            b34 = b234 - b2
+            for b3 in np.arange(0, b34 + 0.001, step):
+                b4 = b34 - b3
+                b += [[b1.round(3), b2.round(3), b3.round(3), abs(b4).round(3)]]
+    df = pd.DataFrame(b, columns=cols)
+    df.to_csv(path_to_save + f'b_grid_{str(step).split(".")[0]}{str(step).split(".")[-1]}.csv')
+    return df

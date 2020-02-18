@@ -1,4 +1,4 @@
-from constants import *
+from utils.constants import *
 
 # Dictionary in the format of {node: [its parents]}
 graph_config = {

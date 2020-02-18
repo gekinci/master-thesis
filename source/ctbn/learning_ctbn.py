@@ -1,8 +1,9 @@
-from utils import *
+from utils.constants import *
+from utils.helper import *
+
+from sklearn.metrics import mean_squared_error
 import numpy as np
 import pandas as pd
-from sklearn.metrics import mean_squared_error
-import constants
 
 
 def get_time_of_stay_in_state(df_traj, node, df_all=None):
@@ -16,9 +17,9 @@ def get_time_of_stay_in_state(df_traj, node, df_all=None):
                 start = arr[0]
                 end = arr[-1] + 1 if arr[-1] != df.index.values[-1] else arr[-1]
                 if df_all is None:
-                    T[val] += df.loc[end, constants.TIME] - df.loc[start, constants.TIME]
+                    T[val] += df.loc[end, TIME] - df.loc[start, TIME]
                 else:
-                    T[val] += df_all.loc[end, constants.TIME] - df_all.loc[start, constants.TIME]
+                    T[val] += df_all.loc[end, TIME] - df_all.loc[start, TIME]
     return T
 
 
@@ -34,7 +35,7 @@ def get_sufficient_statistics(ctbn, df_all):
     stats = {}
 
     for traj in df_all.trajectory_id.unique():
-        df_traj = df_all[df_all[constants.TRAJ_ID] == traj]
+        df_traj = df_all[df_all[TRAJ_ID] == traj]
 
         stats[traj] = {}
 
@@ -138,8 +139,8 @@ def calculate_mse_for_Q(Q, Q_pred):
 
 
 def train_and_evaluate(ctbn, df_train, df_test):
-    n_train = df_train[constants.TRAJ_ID].max()
-    n_test = df_test[constants.TRAJ_ID].max()
+    n_train = df_train[TRAJ_ID].max()
+    n_test = df_test[TRAJ_ID].max()
 
     suff_stats = get_sufficient_statistics(ctbn, df_train)
 

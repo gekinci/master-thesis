@@ -3,7 +3,7 @@ from ctbn.generative_ctbn import GenerativeCTBN
 from ctbn.config import graph_config
 import numpy as np
 import matplotlib.pyplot as plt
-import constants
+from utils import constants
 import time
 
 if __name__ == "__main__":

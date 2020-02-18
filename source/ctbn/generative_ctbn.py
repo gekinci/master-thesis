@@ -1,9 +1,9 @@
+from utils.constants import *
+from utils.helper import *
+
 import networkx as nx
 from networkx.drawing.nx_agraph import graphviz_layout
 import matplotlib.pyplot as plt
-import numpy as np
-from utils import *
-import constants
 import logging
 import time
 import os
@@ -15,11 +15,11 @@ class GenerativeCTBN:
         os.makedirs(self.FOLDER, exist_ok=True)
         logging.debug('initializing the CTBN object...')
 
-        self.graph_dict = cfg[constants.GRAPH_STRUCT]
-        self.t_max = cfg[constants.T_MAX]
-        self.states = cfg[constants.STATES]
-        self.n_states = len(cfg[constants.STATES])
-        self.initial_probs = cfg[constants.INITIAL_PROB]
+        self.graph_dict = cfg[GRAPH_STRUCT]
+        self.t_max = cfg[T_MAX]
+        self.states = cfg[STATES]
+        self.n_states = len(cfg[STATES])
+        self.initial_probs = cfg[INITIAL_PROB]
 
         self.node_list = list(self.graph_dict.keys())
         self.num_nodes = len(self.node_list)
@@ -35,7 +35,7 @@ class GenerativeCTBN:
 
     def initialize_generative_ctbn(self, cfg):
         # self.create_and_save_graph()
-        if constants.Q_DICT in cfg.keys():
+        if Q_DICT in cfg.keys():
             Q_dict = cfg['Q_dict']
         else:
             Q_dict = self.generate_conditional_intensity_matrices()
@@ -106,7 +106,7 @@ class GenerativeCTBN:
         return
 
     def do_step(self, prev_step):
-        t = prev_step[constants.TIME].values[0]
+        t = prev_step[TIME].values[0]
         tao = self.draw_time(prev_step)
         var = self.draw_variable(prev_step)
         logging.debug(f'Change is gonna happen in {tao} sec')
@@ -114,7 +114,7 @@ class GenerativeCTBN:
 
         new_step = prev_step.copy()
         # Adding new state change to the trajectories
-        new_step.loc[:, constants.TIME] = t + tao
+        new_step.loc[:, TIME] = t + tao
         new_step.loc[:, var] = int(1 - new_step[var])
 
         return new_step
@@ -124,13 +124,13 @@ class GenerativeCTBN:
 
         # Randomly initializing first states
         initial_states = self.initial_states
-        initial_states[constants.TIME] = 0
+        initial_states[TIME] = 0
         df_traj = pd.DataFrame().append(initial_states, ignore_index=True)
         prev_step = pd.DataFrame(df_traj[-1:].values, columns=df_traj.columns)
 
         while t < self.t_max:
             new_step= self.do_step(prev_step)
-            t = new_step[constants.TIME].values[0]
+            t = new_step[TIME].values[0]
             df_traj = df_traj.append(new_step, ignore_index=True)
             prev_step = new_step.copy()
 
@@ -143,7 +143,7 @@ class GenerativeCTBN:
         for exp in range(n_traj):
             df_traj = self.sample_trajectory()
 
-            df_traj.loc[:, constants.TRAJ_ID] = exp
+            df_traj.loc[:, TRAJ_ID] = exp
             df_traj_hist = df_traj_hist.append(df_traj)
 
         # Save all the sampled trajectories

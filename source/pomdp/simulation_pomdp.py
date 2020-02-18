@@ -1,5 +1,7 @@
-from utils import *
+from utils.constants import *
+from utils.helper import *
 from ctbn.generative_ctbn import GenerativeCTBN
+
 import matplotlib.pyplot as plt
 import time
 import logging
@@ -15,16 +17,16 @@ class POMDPSimulation:
         self.ctbn = GenerativeCTBN(cfg, save_folder=self.FOLDER, save_time=save_time)
         self.parent_list = ['1', '2']
         self.n_parents = len(self.parent_list)
-        self.t_max = cfg[constants.T_MAX]
-        self.states = cfg[constants.STATES]
-        self.n_states = len(cfg[constants.STATES])
-        self.HOW_TO_PRED_STATE = cfg[constants.HOW_TO_PRED_STATE]
-        self.time_grain = cfg[constants.TIME_GRAIN]
+        self.t_max = cfg[T_MAX]
+        self.states = cfg[STATES]
+        self.n_states = len(cfg[STATES])
+        self.HOW_TO_PRED_STATE = cfg[HOW_TO_PRED_STATE]
+        self.time_grain = cfg[TIME_GRAIN]
 
         self.S = cartesian_products(self.n_parents, self.n_states)  # state space
         self.O = [0, 1]  # observation space
 
-        self.q_list = ['Q' + str(k) for k in range(1, cfg[constants.N_Q] + 1)]
+        self.q_list = ['Q' + str(k) for k in range(1, cfg[N_Q] + 1)]
         self.Q = {k: random_q_matrix(self.n_states) for k in self.q_list}
 
         # policy is set to be deterministic!!!
@@ -100,7 +102,7 @@ class POMDPSimulation:
         return Q
 
     def do_step(self, prev_step, t, prev_obs, ax):
-        obs = prev_step[constants.OBS].values[0]
+        obs = prev_step[OBS].values[0]
         if prev_obs is None or prev_obs != obs:  # if it is the very first step or obs has changed
             logging.debug(f'Prev obs was {prev_obs}, now observed {obs}!)\n'
                           'New observation! Updating the belief state! ...')
@@ -118,14 +120,14 @@ class POMDPSimulation:
 
         logging.debug('Taking the new step at ctbn...')
         new_step = self.ctbn.do_step(prev_step)  # updates only for the nodes of ctbn!
-        t = new_step[constants.TIME].values[0].round(3)
+        t = new_step[TIME].values[0].round(3)
 
         if (prev_step[self.parent_list].values == new_step[self.parent_list].values).all():
-            new_step.loc[:, constants.OBS] = prev_step.loc[0, constants.OBS]
+            new_step.loc[:, OBS] = prev_step.loc[0, OBS]
             logging.debug('Parents didnt change their states. No new observation! Continue with the Gillespie!')
         else:
             logging.debug('Parents changed their states...')
-            new_step.loc[:, constants.OBS] = new_step[self.parent_list].apply(self.get_observation, axis=1)
+            new_step.loc[:, OBS] = new_step[self.parent_list].apply(self.get_observation, axis=1)
 
         return new_step, t, obs
 
@@ -134,12 +136,12 @@ class POMDPSimulation:
 
         # Randomly initializing first states
         initial_states = {var: [np.random.randint(0, 2)] for var in self.ctbn.node_list}
-        initial_states[constants.TIME] = 0
+        initial_states[TIME] = 0
         logging.debug(f'Initial states of the nodes: {initial_states}')
 
         df_traj = pd.DataFrame.from_dict(initial_states)
         # add first observation
-        df_traj.loc[:, constants.OBS] = df_traj[self.parent_list].apply(self.get_observation, axis=1)
+        df_traj.loc[:, OBS] = df_traj[self.parent_list].apply(self.get_observation, axis=1)
         prev_step = pd.DataFrame(df_traj[-1:].values, columns=df_traj.columns)
         prev_obs = None
 
@@ -153,8 +155,8 @@ class POMDPSimulation:
             df_traj = df_traj.append(new_step, ignore_index=True)
             prev_step = new_step.copy()
 
-            for i, var in enumerate(['1', '2', constants.OBS]):  # , '3']):
-                ax[i].step(df_traj[constants.TIME], df_traj[var], 'b')
+            for i, var in enumerate(['1', '2', OBS]):  # , '3']):
+                ax[i].step(df_traj[TIME], df_traj[var], 'b')
                 ax[i].set_ylim([-.5, 1.5])
                 ax[i].set_ylabel(var)
                 if i != 0:

@@ -1,8 +1,10 @@
 from pomdp.simulation_pomdp import *
+from utils.constants import *
+
 import logging
 import time
 import os
-from constants import *
+
 
 if __name__ == "__main__":
     t = int(time.time())
