@@ -1,0 +1,24 @@
+# Config dict to be used for pomdp simulation
+# All tags are mandatory!
+# The ones with default value given as comment, can be left empty to use default value.
+# All others must be specified!
+
+
+graph_struct:
+  X: []
+  Y: []
+
+parent_list:  # default  ['X', 'Y']
+
+t_max: 10 # default  20
+
+states: [0, 1]  # default [0, 1]
+initial_prob:  [0.5, 0.5]  # default equiprobable
+
+Q_dict:  # default randomly generated
+
+how_to_pred_state: 'expectation'  # 'maximum_likely' or 'expectation'
+time_grain: 0.001
+
+observation_space: [0, 1, 2]
+action_space: [0, 1]

@@ -1,5 +1,5 @@
 from utils.constants import *
-from utils.helper import *
+from utils.helpers import *
 
 from sklearn.metrics import mean_squared_error
 import numpy as np
@@ -50,7 +50,7 @@ def get_sufficient_statistics(ctbn, df_all):
                 stats[traj][node]['T0'], stats[traj][node]['T1'] = get_time_of_stay_in_state(df_traj, node)
             else:
 
-                parent_cart_prod = cartesian_products(n_parents, n_states=ctbn.n_states)
+                parent_cart_prod = cartesian_products(n_parents, states=ctbn.states)
                 for parent_code in parent_cart_prod:
 
                     stats[traj][node][parent_code] = {}
@@ -87,7 +87,7 @@ def learn_ctbn_parameters(ctbn, stats):
 
         else:
             Q_pred[node] = {}
-            parent_cart_prod = cartesian_products(n_parents, n_states=ctbn.n_states)
+            parent_cart_prod = cartesian_products(n_parents, states=ctbn.states)
             for parent_code in parent_cart_prod:
                 M0_list = [sublist[node][parent_code]['M0'] for sublist in stats]
                 T0_list = [sublist[node][parent_code]['T0'] for sublist in stats]
@@ -113,7 +113,7 @@ def calculate_log_likelihood(ctbn, df_all, Q):
                 L += (stats_traj[node]['M0'] * np.log(Q[node][0][1]) - stats_traj[node]['T0'] * Q[node][0][1] +
                       stats_traj[node]['M1'] * np.log(Q[node][1][0]) - stats_traj[node]['T1'] * Q[node][1][0])
             else:
-                parent_cart_prod = cartesian_products(n_parents, n_states=ctbn.n_states)
+                parent_cart_prod = cartesian_products(n_parents, states=ctbn.states)
                 for parent_code in parent_cart_prod:
                     L += (stats_traj[node][parent_code]['M0'] * np.log(Q[node][parent_code][0][1]) -
                           stats_traj[node][parent_code]['T0'] * Q[node][parent_code][0][1] +

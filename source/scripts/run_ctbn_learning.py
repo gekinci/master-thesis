@@ -1,19 +1,20 @@
-import os
-from ctbn.generative_ctbn import GenerativeCTBN
-from ctbn.learning_ctbn import *
-from ctbn.config import graph_config
-import pandas as pd
+from simulations.ctbn import CTBNSimulation
+from ctbn.parameter_learning import *
 import seaborn as sns
 import matplotlib.pyplot as plt
+import yaml
 
 
 if __name__ == "__main__":
-    folder = create_folder_for_experiment(folder_name='../data/learning_ctbn/')
+    folder = create_folder_for_experiment(folder_name='../_data/learning_ctbn/')
 
     n_train = 8
     n_test = 2
 
-    ctbn = GenerativeCTBN(graph_config, save_folder=folder)
+    with open('../configs/ctbn_sim.yaml') as f:
+        cfg = yaml.load(f, Loader=yaml.FullLoader)
+
+    ctbn = CTBNSimulation(cfg, save_folder=folder)
 
     df_train = ctbn.sample_and_save_trajectories(n_traj=n_train, file_name='train')
     df_test = ctbn.sample_and_save_trajectories(n_traj=n_test, file_name='test')

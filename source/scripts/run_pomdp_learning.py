@@ -11,14 +11,11 @@ an AI player, the player will play according to the predetermined strategy.
 max_time: The number of time steps over which the game is played.
 """
 
-from pomdp.learn_pomdp.environment import CellEnvironment
-from pomdp.learn_pomdp.agent import Agent
-from pomdp.learn_pomdp.valueIteration import *
-from pomdp.learn_pomdp.parameters import *
-import numpy as np
-import pandas as pd
+from pomdp.vi_learning.environment import CellEnvironment
+from pomdp.vi_learning.valueIteration import *
+from pomdp.vi_learning.parameters import *
 from utils.constants import *
-from utils.helper import *
+from utils.helpers import *
 from utils.visualization import *
 import os
 
@@ -36,7 +33,7 @@ def get_env_trajectory(env, max_time=10):
     return df_traj
 
 
-def train_given_trajectory(init_b, b_jump=0.01, max_time=5, import_env=None, folder='../data/'):
+def train_given_trajectory(init_b, b_jump=0.01, max_time=5, import_env=None, folder='../_data/'):
     env = CellEnvironment(folder=folder)
 
     df_b_grid = generate_belief_grid(b_jump, path_to_save='./')
@@ -44,7 +41,7 @@ def train_given_trajectory(init_b, b_jump=0.01, max_time=5, import_env=None, fol
     if import_env is None:
         env_traj = get_env_trajectory(env, max_time=max_time)
     else:
-        env_traj = pd.read_csv(f'../data/{import_env}/env_traj.csv', index_col=0)
+        env_traj = pd.read_csv(f'../_data/{import_env}/env_traj.csv', index_col=0)
 
     policy_tree, df_optimal_map = valueIteration(env_traj, initial_set, df_b_grid)
 
@@ -94,7 +91,7 @@ def train_given_trajectory(init_b, b_jump=0.01, max_time=5, import_env=None, fol
 
 if __name__ == "__main__":
 
-    folder = create_folder_for_experiment(folder_name='../data/')
+    folder = create_folder_for_experiment(folder_name='../_data/learning_pomdp/')
     initial_b = np.array([0.25, 0.25, 0.25, 0.25])
     max_time = 5
     b_jump = 0.03

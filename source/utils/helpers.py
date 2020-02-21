@@ -5,16 +5,17 @@ import time
 import os
 
 
-def create_folder_for_experiment(folder_name='../data'):
+def create_folder_for_experiment(folder_name='../_data'):
     t = int(time.time())
     folder_exp = os.path.join(folder_name, str(t))
     os.makedirs(folder_exp, exist_ok=True)
     return folder_exp
 
 
-def cartesian_products(n_par, n_states=2):
+def cartesian_products(n_par, states=None):
+    states = [0, 1] if states is None else states
     # it is adapted to non-binary states
-    state_str = '' + "".join(map(str, range(n_states)))
+    state_str = '' + "".join(map(str, states))
     return ["".join(seq) for seq in itertools.product(state_str, repeat=n_par)]
 
 
@@ -49,7 +50,7 @@ def get_amalgamated_trans_matrix(Q1, Q2):
     return T
 
 
-def generate_belief_grid(step, path_to_save='./'):
+def generate_belief_grid(step, path_to_save=None):
     cols = ['b1', 'b2', 'b3', 'b4']
     b = []
 
@@ -61,5 +62,6 @@ def generate_belief_grid(step, path_to_save='./'):
                 b4 = b34 - b3
                 b += [[b1.round(3), b2.round(3), b3.round(3), abs(b4).round(3)]]
     df = pd.DataFrame(b, columns=cols)
-    df.to_csv(path_to_save + f'b_grid_{str(step).split(".")[0]}{str(step).split(".")[-1]}.csv')
+    if path_to_save:
+        df.to_csv(path_to_save + f'b_grid_{str(step).split(".")[0]}{str(step).split(".")[-1]}.csv')
     return df

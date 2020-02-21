@@ -1,5 +1,5 @@
 from utils.constants import *
-from utils.helper import *
+from utils.helpers import *
 
 import networkx as nx
 from networkx.drawing.nx_agraph import graphviz_layout
@@ -7,40 +7,44 @@ import matplotlib.pyplot as plt
 import logging
 
 
-class GenerativeCTBN:
-    def __init__(self, cfg, save_folder='../data/generative_ctbn/'):
+class CTBNSimulation:
+    def __init__(self, cfg, save_folder='../_data/generative_ctbn/'):
         self.FOLDER = save_folder
 
         logging.debug('initializing the CTBN object...')
 
         self.graph_dict = cfg[GRAPH_STRUCT]
-        self.t_max = cfg[T_MAX]
-        self.states = cfg[STATES]
-        self.n_states = len(cfg[STATES])
-        self.initial_probs = cfg[INITIAL_PROB]
+        self.t_max = cfg[T_MAX] if cfg[T_MAX] else 20
+        self.states = cfg[STATES] if cfg[STATES] else [0, 1]
+        self.n_states = len(self.states)
 
         self.node_list = list(self.graph_dict.keys())
         self.num_nodes = len(self.node_list)
-        self.net_struct = [[par, node] for node in self.node_list for par in self.graph_dict[node] if
-                           len(self.graph_dict[node]) > 0]
 
-        self.initial_states = self.initialize_nodes()
-
-        self.Q = self.initialize_generative_ctbn(cfg)
+        self.draw_and_save_graph()
+        self.initial_states = self.initialize_nodes(cfg)
+        self.Q = self.initialize_intensity_matrices(cfg)
 
         logging.debug(f'Q = {self.Q}')
         logging.debug('CTBN object initialized!')
 
-    def initialize_generative_ctbn(self, cfg):
-        # self.create_and_save_graph()
-        if Q_DICT in cfg.keys():
-            Q_dict = cfg['Q_dict']
-        else:
-            Q_dict = self.generate_conditional_intensity_matrices()
+    def draw_and_save_graph(self):
+        net_struct = [[par, node] for node in self.node_list for par in self.graph_dict[node] if
+                      len(self.graph_dict[node]) > 0]
+        G = nx.DiGraph()
+        G.add_edges_from(net_struct)
+        pos = graphviz_layout(G, prog='dot')
+        nx.draw_networkx(G, pos=pos, arrows=True)
+        plt.savefig(os.path.join(self.FOLDER, 'graph.png'))
+
+    def initialize_intensity_matrices(self, cfg):
+        Q_dict = cfg['Q_dict'] if cfg[Q_DICT] else self.generate_conditional_intensity_matrices()
         return Q_dict
 
-    def initialize_nodes(self):
-        return {var: np.random.choice(self.states, p=self.initial_probs) for var in self.node_list}
+    def initialize_nodes(self, cfg):
+        initial_probs = cfg[INITIAL_PROB] if cfg[INITIAL_PROB] else np.ones(len(self.states))/len(self.states)
+
+        return {var: np.random.choice(self.states, p=initial_probs) for var in self.node_list}
 
     def generate_conditional_intensity_matrices(self):
         Q = dict()
@@ -52,19 +56,12 @@ class GenerativeCTBN:
             else:
                 parent_list = self.graph_dict[node]
                 n_parents = len(parent_list)
-                parent_cart_prod = cartesian_products(n_parents, n_states=self.n_states)
+                parent_cart_prod = cartesian_products(n_parents, states=self.states)
                 Q[node] = {}
 
                 for prod in parent_cart_prod:
                     Q[node][prod] = random_q_matrix(self.n_states)
         return Q
-
-    def create_and_save_graph(self):
-        G = nx.DiGraph()
-        G.add_edges_from(self.net_struct)
-        pos = graphviz_layout(G, prog='dot')
-        nx.draw_networkx(G, pos=pos, arrows=True)
-        plt.savefig(self.FOLDER + f'graph.png')
 
     def get_parent_values(self, node, prev_step):
         parent_list = self.graph_dict[node]
@@ -120,14 +117,13 @@ class GenerativeCTBN:
     def sample_trajectory(self):
         t = 0
 
-        # Randomly initializing first states
         initial_states = self.initial_states
         initial_states[TIME] = 0
         df_traj = pd.DataFrame().append(initial_states, ignore_index=True)
         prev_step = pd.DataFrame(df_traj[-1:].values, columns=df_traj.columns)
 
         while t < self.t_max:
-            new_step= self.do_step(prev_step)
+            new_step = self.do_step(prev_step)
             t = new_step[TIME].values[0]
             df_traj = df_traj.append(new_step, ignore_index=True)
             prev_step = new_step.copy()

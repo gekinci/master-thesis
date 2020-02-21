@@ -1,9 +1,12 @@
+from utils.constants import *
+
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import pyplot as plt
 import pandas as pd
+import os
 
 
-def visualize_optimal_policy_map(df, path_to_save='../data/'):
+def visualize_optimal_policy_map(df, path_to_save='../_data/'):
     step_cols = df.columns[df.columns.str.startswith('step')]
 
     for s in step_cols:
@@ -22,25 +25,25 @@ def visualize_optimal_policy_map(df, path_to_save='../data/'):
     return
 
 
-def visualize_trajectories(df, node_list=None, path_to_save='../data/'):
+def visualize_trajectories(df, node_list=None, path_to_save='../_data/'):
     if node_list is None:
         node_list = ['X', 'Y', 'o', 'Z']
 
     # Saving and plotting the trajectories
     fig, ax = plt.subplots(len(node_list))
     for i, node in enumerate(node_list):
-        ax[i].step(df['time'], df[node])
+        ax[i].step(df[TIME], df[node])
         ax[i].set_ylim([-.5, 1.5])
         ax[i].set_ylabel(node)
-        ax[i].set_xlabel('time')
+        ax[i].set_xlabel(TIME)
 
-    fig.savefig(path_to_save + 'trajectory_plot.png')
+    fig.savefig(os.path.join(path_to_save, 'trajectory_plot.png'))
 
     return
 
 
 if __name__ == '__main__':
-    folder = '../pomdp/data/1581945386/'
+    folder = '../pomdp/_data/1581945386/'
     df_belief = pd.read_csv(folder + 'df_belief.csv')
     df_traj = pd.read_csv(folder + 'env_traj.csv')
 
