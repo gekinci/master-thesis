@@ -25,7 +25,7 @@ def visualize_optimal_policy_map(df, path_to_save='../_data/'):
     return
 
 
-def visualize_trajectories(df, node_list=None, path_to_save='../_data/'):
+def plot_trajectories(df, node_list=None, path_to_save='../_data/'):
     if node_list is None:
         node_list = ['X', 'Y', 'o', 'Z']
 

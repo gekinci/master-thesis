@@ -23,4 +23,4 @@ if __name__ == "__main__":
     exp_to_plot = np.random.randint(1, n_traj + 1)
     df_traj_to_plot = df_traj_hist[df_traj_hist[TRAJ_ID] == exp_to_plot-1]
 
-    visualize_trajectories(df_traj_to_plot, node_list=ctbn.node_list, path_to_save=folder)
+    plot_trajectories(df_traj_to_plot, node_list=ctbn.node_list, path_to_save=folder)

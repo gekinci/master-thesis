@@ -22,3 +22,5 @@ TIME_GRAIN = 'time_grain'
 PARENT_LIST = 'parent_list'
 OBS_SPACE = 'observation_space'
 ACT_SPACE = 'action_space'
+
+SEED = 'seed'

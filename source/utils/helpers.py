@@ -1,4 +1,5 @@
 import itertools
+from decimal import *
 import numpy as np
 import pandas as pd
 import time
@@ -50,18 +51,26 @@ def get_amalgamated_trans_matrix(Q1, Q2):
     return T
 
 
-def generate_belief_grid(step, path_to_save=None):
-    cols = ['b1', 'b2', 'b3', 'b4']
+def generate_belief_grid(step, cols, path_to_save=None):
+    assert len(cols) == 4, 'The belief grid is designed for 4 states of environment!'
     b = []
 
-    for b1 in np.arange(0, 1 + 0.001, step):
+    for b1 in np.arange(0, 1 + .00000001, step):
         b234 = 1 - b1
-        for b2 in np.arange(0, b234 + 0.001, step):
+        for b2 in np.arange(0, b234 + .00000001, step):
             b34 = b234 - b2
-            for b3 in np.arange(0, b34 + 0.001, step):
+            for b3 in np.arange(0, b34 + .00000001, step):
                 b4 = b34 - b3
-                b += [[b1.round(3), b2.round(3), b3.round(3), abs(b4).round(3)]]
+                b += [[b1, b2, b3, abs(b4)]]
     df = pd.DataFrame(b, columns=cols)
     if path_to_save:
         df.to_csv(path_to_save + f'b_grid_{str(step).split(".")[0]}{str(step).split(".")[-1]}.csv')
     return df
+
+
+def custom_round(n, decimals=3):
+    return Decimal(str(n)).quantize(Decimal(str(1 / 10 ** decimals)), rounding=ROUND_HALF_UP)
+
+
+def custom_decimal_range(start, end, step):
+    return np.arange(Decimal(str(start)), Decimal(str(float(end) + .00000001)), Decimal(str(step)))

@@ -3,7 +3,6 @@
 # The ones with default value given as comment, can be left empty to use default value.
 # All others must be specified!
 
-
 graph_struct:
   X: []
   Y: []
@@ -22,3 +21,5 @@ time_grain: 0.001
 
 observation_space: [0, 1, 2]
 action_space: [0, 1]
+
+seed: 0

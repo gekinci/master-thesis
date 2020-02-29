@@ -49,7 +49,7 @@ def train_given_trajectory(init_b, b_jump=0.01, max_time=5, import_env=None, fol
     env_traj.to_csv(folder + 'env_traj.csv')
 
     visualize_optimal_policy_map(df_optimal_map, path_to_save=folder)
-    visualize_trajectories(env_traj, node_list=['X', 'Y'], path_to_save=folder)
+    plot_trajectories(env_traj, node_list=['X', 'Y'], path_to_save=folder)
 
     if not os.listdir(folder):
         os.rmdir(folder)
