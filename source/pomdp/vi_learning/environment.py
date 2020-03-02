@@ -52,7 +52,7 @@ class Parents:
                              'Y': Qy}
                     }
         self.ctbn = CTBNSimulation(cfg=self.cfg, save_folder=folder)
-        self.init_state = self.ctbn.initial_states
+        self.init_state = self.ctbn.initialize_nodes()
         self._prev_step = pd.DataFrame().append(self.init_state, ignore_index=True)
         self._prev_step[TIME] = 0
 

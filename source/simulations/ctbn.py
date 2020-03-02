@@ -17,12 +17,13 @@ class CTBNSimulation:
         self.t_max = cfg[T_MAX] if cfg[T_MAX] else 20
         self.states = cfg[STATES] if cfg[STATES] else [0, 1]
         self.n_states = len(self.states)
+        self.initial_probs = cfg[INITIAL_PROB] if cfg[INITIAL_PROB] else np.ones(len(self.states))/len(self.states)
 
         self.node_list = list(self.graph_dict.keys())
         self.num_nodes = len(self.node_list)
 
-        self.draw_and_save_graph()
-        self.initial_states = self.initialize_nodes(cfg)
+        # self.draw_and_save_graph()
+        # self.initial_states = self.initialize_nodes()
         self.Q = self.initialize_intensity_matrices(cfg)
 
         logging.debug(f'Q = {self.Q}')
@@ -41,10 +42,8 @@ class CTBNSimulation:
         Q_dict = cfg['Q_dict'] if cfg[Q_DICT] else self.generate_conditional_intensity_matrices()
         return Q_dict
 
-    def initialize_nodes(self, cfg):
-        initial_probs = cfg[INITIAL_PROB] if cfg[INITIAL_PROB] else np.ones(len(self.states))/len(self.states)
-
-        return {var: np.random.choice(self.states, p=initial_probs) for var in self.node_list}
+    def initialize_nodes(self):
+        return {var: np.random.choice(self.states, p=self.initial_probs) for var in self.node_list}
 
     def generate_conditional_intensity_matrices(self):
         Q = dict()
@@ -117,8 +116,7 @@ class CTBNSimulation:
     def sample_trajectory(self):
         t = 0
 
-        initial_states = self.initial_states
-        initial_states[TIME] = 0
+        initial_states = {**self.initialize_nodes(), **{TIME: 0}}
         df_traj = pd.DataFrame().append(initial_states, ignore_index=True)
         prev_step = pd.DataFrame(df_traj[-1:].values, columns=df_traj.columns)
 
