@@ -74,3 +74,7 @@ def custom_round(n, decimals=3):
 
 def custom_decimal_range(start, end, step):
     return np.arange(Decimal(str(start)), Decimal(str(float(end) + .00000001)), Decimal(str(step)))
+
+
+def to_decimal(n):
+    return Decimal(str(n))

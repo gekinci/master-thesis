@@ -9,6 +9,7 @@ Q_DICT = 'Q_dict'
 TRAJ_ID = 'trajectory_id'
 TIME = 'time'
 OBS = 'o'
+T_DELTA = 't_delta'
 
 N_ACTIONS = 'n_actions'
 N_Q = 'n_int_matrices'

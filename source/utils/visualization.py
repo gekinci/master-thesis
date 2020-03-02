@@ -25,7 +25,7 @@ def visualize_optimal_policy_map(df, path_to_save='../_data/'):
     return
 
 
-def plot_trajectories(df, node_list=None, path_to_save='../_data/'):
+def plot_trajectories(df, node_list=None, path_to_save=None):
     if node_list is None:
         node_list = ['X', 'Y', 'o', 'Z']
 
@@ -37,14 +37,28 @@ def plot_trajectories(df, node_list=None, path_to_save='../_data/'):
         ax[i].set_ylabel(node)
         ax[i].set_xlabel(TIME)
 
-    fig.savefig(os.path.join(path_to_save, 'trajectory_plot.png'))
+    if path_to_save:
+        fig.savefig(os.path.join(path_to_save, 'trajectory_plot.png'))
 
-    return
+
+def visualize_pomdp_simulation(df_traj, df_b, df_Q, node_list=None, path_to_save='../_data/'):
+    if node_list is None:
+        node_list = ['X', 'Y', 'o', 'Z']
+
+    plot_trajectories(df_traj, node_list=node_list, path_to_save=path_to_save)
+
+    fig, ax = plt.subplots(2, 1)
+    df_b.plot(ax=ax[0])
+    df_Q.plot(ax=ax[1])
+
+    fig.savefig(os.path.join(path_to_save, 'b_Q_plot.png'))
 
 
 if __name__ == '__main__':
-    folder = '../pomdp/_data/1581945386/'
+    S = ['00', '01', '10', '11']
+    folder = '../_data/pomdp_simulation/1582983024/'
     df_belief = pd.read_csv(folder + 'df_belief.csv')
     df_traj = pd.read_csv(folder + 'env_traj.csv')
+    df_Q = pd.read_csv(folder + 'df_Qz.csv')
 
-    visualize_optimal_policy_map(df_belief, path_to_save=folder)
+    visualize_pomdp_simulation(df_traj, df_belief[S], df_Q[S], node_list=['X', 'Y', 'o'], path_to_save=folder)
