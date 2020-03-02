@@ -17,10 +17,7 @@ if __name__ == "__main__":
     with open(os.path.join(folder, 'cfg.yaml'), 'w') as f:
         yaml.dump(cfg, f)
 
-    logging.getLogger("matplotlib").setLevel(logging.WARNING)
-    logging.basicConfig(filename=os.path.join(folder, 'debug.log'), level=logging.DEBUG)
-
     np.random.seed(cfg[SEED])
-    pomdp_sim = POMDPSimulation(cfg, save_folder=folder, import_data=None)
+    pomdp_sim = POMDPSimulation(cfg, save_folder=folder, import_data='1582930774')
 
     df_traj = pomdp_sim.sample_trajectory()
