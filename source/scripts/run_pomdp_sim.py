@@ -21,3 +21,7 @@ if __name__ == "__main__":
     pomdp_sim = POMDPSimulation(cfg, save_folder=folder, import_data='1582930774')
 
     df_traj = pomdp_sim.sample_trajectory()
+    df_traj.to_csv(os.path.join(folder, 'df_traj.csv'))
+    pomdp_sim.df_b.to_csv(os.path.join(folder, 'df_belief.csv'))
+    pomdp_sim.policy.to_csv(os.path.join(folder, 'df_policy.csv'))
+    pomdp_sim.df_Qz.to_csv(os.path.join(folder, 'df_Qz.csv'))
