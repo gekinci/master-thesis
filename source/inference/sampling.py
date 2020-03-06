@@ -23,10 +23,9 @@ def log_likelihood_inhomogeneous_ctmc(df_traj, df_Q, node='Z'):
         trans_tag = ''.join(map(str, i[0:2]))
         stay_tag = ''.join((str(i[0]), str(i[0])))
         times = i[2:4]
-        q_trans = df_Q.loc[to_decimal(times[1]), trans_tag]
+        q_trans = df_Q.truncate(after=to_decimal(times[1])).iloc[-1].loc[trans_tag]
         df_Q_ = df_Q.truncate(before=to_decimal(times[0]), after=to_decimal(times[1]))
         prob_stay = (df_Q_[stay_tag].multiply(df_Q_[T_DELTA], axis="index")).cumsum().loc[to_decimal(times[1])]
         prob_trans = df_Q.loc[to_decimal(times[1]), trans_tag] / abs(df_Q.loc[to_decimal(times[1]), stay_tag])
-        print(np.log(q_trans) + np.log(prob_trans) + prob_stay)
         L += np.log(q_trans) + np.log(prob_trans) + prob_stay
     return L

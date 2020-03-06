@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import time
 import logging
 import scipy
-from timer import Timer
 
 
 class POMDPSimulation:
@@ -63,6 +62,9 @@ class POMDPSimulation:
         self.df_b.loc[0] = np.append(self.init_belief_state, 0)
         self.df_Qz = pd.DataFrame(columns=self.S + [T_DELTA], index=time_grid)
 
+    def reset_obs_model(self, new):
+        self.Z = new
+
     def initialize_nodes(self):
         return {**self.parent_ctbn.initialize_nodes(), **{'Z': np.random.choice(self.states, p=self.initial_probs)}}
 
@@ -82,7 +84,7 @@ class POMDPSimulation:
     def append_event(self, t, event_b=np.nan, event_q=np.nan):
         self.df_b.loc[to_decimal(t)] = event_b
         self.df_b.sort_index(inplace=True)
-        self.df_Qz.loc[to_decimal(t), :] = event_q
+        self.df_Qz.loc[to_decimal(t)] = event_q
         self.df_Qz.sort_index(inplace=True)
 
     def update_belief_state_jump(self, obs, t):
@@ -116,18 +118,17 @@ class POMDPSimulation:
         return Q
 
     def get_belief_traj(self, df_traj):
-        t_end = df_traj[TIME].values[-1]
-        time_grid = custom_decimal_range(0, t_end, self.time_grain)
-        self.df_b = self.df_b.reindex(time_grid)
-
+        prev = df_traj.iloc[0]
         for i, row in df_traj.iterrows():
-            self.update_belief_state_jump(int(row[OBS]), row[TIME])
+            if ((row == prev).all()) or (row[OBS] != prev[OBS]):
+                self.update_belief_state_jump(int(row[OBS]), row[TIME])
 
             if i == df_traj.index[-1]:
                 break
             else:
                 t = row[TIME]
                 t_next = df_traj[TIME].values[i + 1]
+                self.append_event(t_next)
                 self.update_cont_belief_state(t, t_next)
 
     def update_cont_Q(self, t=0, t_next=None):
@@ -141,11 +142,16 @@ class POMDPSimulation:
 
         ind = (self.df_b.index >= to_decimal(t)) & (self.df_b.index <= to_decimal(t_next))
         self.df_Qz.loc[ind, self.S] = self.df_b.loc[ind, self.S].apply(helper, axis=1)
-        self.df_Qz.loc[ind, T_DELTA] = np.append(np.diff(self.df_Qz.loc[ind].index),
-                                                 to_decimal(self.time_grain)).astype(float)
+        self.df_Qz.loc[(self.df_b.index <= to_decimal(t_next)), T_DELTA] = np.append(to_decimal(self.time_grain),
+                                                                                     np.diff(self.df_Qz.loc[
+                                                                                                 self.df_b.index <= to_decimal(
+                                                                                                     t_next)].index)).astype(
+            float)
 
     def sample_parent_trajectory(self):
-        return self.parent_ctbn.sample_trajectory()
+        df_par_traj = self.parent_ctbn.sample_trajectory()
+        df_par_traj.loc[:, OBS] = df_par_traj.apply(self.get_observation, axis=1)
+        return df_par_traj
 
     def draw_time_contQ(self, t_start, t_end):
         col_transition = ['01', '10']  # TODO hardcoded

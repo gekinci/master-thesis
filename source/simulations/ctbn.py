@@ -123,6 +123,10 @@ class CTBNSimulation:
         while t < self.t_max:
             new_step = self.do_step(prev_step)
             t = new_step[TIME].values[0]
+            if t > self.t_max:
+                prev_step.loc[:, TIME] = self.t_max
+                df_traj = df_traj.append(prev_step, ignore_index=True)
+                break
             df_traj = df_traj.append(new_step, ignore_index=True)
             prev_step = new_step.copy()
 
