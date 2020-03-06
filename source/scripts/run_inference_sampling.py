@@ -6,6 +6,7 @@ from inference.sampling import *
 
 import logging
 import yaml
+import random
 import os
 
 
@@ -24,7 +25,7 @@ def get_complete_df_Q(pomdp_, df_orig):
 
 
 if __name__ == "__main__":
-    n_traj = 20
+    n_traj = 10
     IMPORT_TRAJ = '1583515823_20x10'
 
     folder = create_folder_for_experiment(folder_name='../_data/inference_sampling/')
@@ -47,6 +48,7 @@ if __name__ == "__main__":
 
     if IMPORT_TRAJ:
         df_all_traj = pd.read_csv(f'../_data/inference_sampling/{IMPORT_TRAJ}/df_all_traj.csv', index_col=0)
+        df_all_traj = df_all_traj[df_all_traj[TRAJ_ID] <= n_traj]
     else:
         df_all_traj = pd.DataFrame()
 
@@ -72,10 +74,15 @@ if __name__ == "__main__":
 
     np.random.seed(1)
 
-    phi_set = obs_model_set(len(cfg[STATES])**2, len(cfg[OBS_SPACE]))
-    L_list = np.zeros((len(phi_set)))
+    phi_set = obs_model_set(len(cfg[STATES]) ** 2, len(cfg[OBS_SPACE]))
+    phi_subset = random.choices(population=phi_set, k=5)
+    if not (np.all(pomdp_sim.Z == phi_subset, axis=(1, 2))).any():
+        phi_subset = phi_subset[:-1]
+        phi_subset += [pomdp_sim.Z]
 
-    for i, obs_model in enumerate(phi_set):
+    L_list = np.zeros((len(phi_subset)))
+
+    for i, obs_model in enumerate(phi_subset):
         pomdp_sim.reset_obs_model(obs_model)
 
         L = 0
@@ -88,8 +95,8 @@ if __name__ == "__main__":
 
         L_list[i] = L
 
-    print(phi_set[np.argmax(L_list)])
-    np.save(os.path.join(folder, 'phi_set.npy'), phi_set)
+    print(phi_subset[np.argmax(L_list)])
+    np.save(os.path.join(folder, 'phi_set.npy'), phi_subset)
     np.save(os.path.join(folder, 'llh.npy'), L_list)
 
     t1 = time.time()
