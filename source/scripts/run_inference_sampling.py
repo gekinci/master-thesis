@@ -25,23 +25,28 @@ def get_complete_df_Q(pomdp_, df_orig):
 
 if __name__ == "__main__":
     n_traj = 20
-    IMPORT_TRAJ = True
+    IMPORT_TRAJ = '1583515823_20x10'
 
     folder = create_folder_for_experiment(folder_name='../_data/inference_sampling/')
 
     with open('../configs/pomdp_sim.yaml', 'r') as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
 
-    with open(os.path.join(folder, 'cfg.yaml'), 'w') as f:
-        yaml.dump(cfg, f)
-
     t0 = time.time()
 
     np.random.seed(cfg[SEED])
     pomdp_sim = POMDPSimulation(cfg, save_folder=folder)
 
+    pomdp_sim.policy.to_csv(os.path.join(folder, 'df_policy.csv'))
+    cfg['T'] = pomdp_sim.T.tolist()
+    cfg['PHI'] = pomdp_sim.Z.tolist()
+    cfg['Qz'] = pomdp_sim.Qz
+
+    with open(os.path.join(folder, 'cfg.yaml'), 'w') as f:
+        yaml.dump(cfg, f)
+
     if IMPORT_TRAJ:
-        df_all_traj = pd.read_csv('../_data/inference_sampling/1583515823_20x10/df_all_traj.csv', index_col=0)
+        df_all_traj = pd.read_csv(f'../_data/inference_sampling/{IMPORT_TRAJ}/df_all_traj.csv', index_col=0)
     else:
         df_all_traj = pd.DataFrame()
 
@@ -54,7 +59,6 @@ if __name__ == "__main__":
 
             df_traj.to_csv(os.path.join(run_folder, 'df_traj.csv'))
             pomdp_sim.df_b.to_csv(os.path.join(run_folder, 'df_belief.csv'))
-            pomdp_sim.policy.to_csv(os.path.join(run_folder, 'df_policy.csv'))
             pomdp_sim.df_Qz.to_csv(os.path.join(run_folder, 'df_Qz.csv'))
 
             visualize_pomdp_simulation(df_traj, pomdp_sim.df_b[pomdp_sim.S], pomdp_sim.df_Qz[['01', '10']],
