@@ -14,42 +14,24 @@ class POMDPSimulation:
 
         self.FOLDER = save_folder
         self.IMPORT = import_data
-
         self.parent_ctbn = CTBNSimulation(cfg, save_folder=self.FOLDER)
         self.t_max = cfg[T_MAX] if cfg[T_MAX] else 20
-
         self.parent_list = cfg[PARENT_LIST] if cfg[PARENT_LIST] else ['X', 'Y']
         self.n_parents = len(self.parent_list)
-
         self.states = cfg[STATES] if cfg[STATES] else [0, 1]
         self.n_states = len(self.states)
         self.initial_probs = cfg[INITIAL_PROB] if cfg[INITIAL_PROB] else np.ones(len(self.states)) / len(self.states)
-
-        self.HOW_TO_PRED_STATE = cfg[HOW_TO_PRED_STATE]
-        self.time_grain = cfg[TIME_GRAIN]
-
         self.S = cartesian_products(self.n_parents, states=self.states)
         self.O = cfg[OBS_SPACE]
         self.A = [str(i) for i in cfg[ACT_SPACE]]
-
         self.Qz = {k: random_q_matrix(self.n_states) for k in self.A}
-
-        self.policy = self.generate_random_stoch_policy()
-
-        # T(a, s, s')
+        self.policy = self.generate_random_stoch_policy().round()  # TODO DETERMINISTIC POLICY
         self.T = get_amalgamated_trans_matrix(self.parent_ctbn.Q[self.parent_list[0]],
                                               self.parent_ctbn.Q[self.parent_list[1]])
-
-        # Z(a, s', o)
-        self.Z = np.array([[1, 0, 0],
-                           [0, 1, 0],
-                           [0, 1, 0],
-                           [0, 0, 1]])
-
+        self.Z = np.array(cfg[OBS_MODEL])
         self.init_belief_state = np.tile(1 / len(self.S), len(self.S))
-
         self.initial_states = self.initialize_nodes()
-
+        self.time_grain = cfg[TIME_GRAIN]
         time_grid = custom_decimal_range(0, self.t_max + .00000001, self.time_grain)
         self.df_b = pd.DataFrame(columns=self.S + [T_DELTA], index=time_grid)
         self.df_b.loc[0] = np.append(self.init_belief_state, 0)
@@ -88,12 +70,7 @@ class POMDPSimulation:
         self.df_Qz.sort_index(inplace=True)
 
     def update_belief_state_jump(self, obs, t):
-        # if t > 0:
-        #     self.belief_state = self.df_b.truncate(before=self.df_b.index[0], after=to_decimal(t)).iloc[-1][
-        #         self.S].values
-        # self.belief_state = self.Z[:, obs] * (self.belief_state @ scipy.linalg.expm(self.T * self.time_grain))
-        # self.belief_state = self.belief_state / self.belief_state.sum()
-        new_b = self.Z[:, obs] * (self.df_b.loc[to_decimal(t), self.S] @ scipy.linalg.expm(self.T * self.time_grain))
+        new_b = self.Z[:, obs] * self.df_b.loc[to_decimal(t), self.S]
         new_b /= new_b.sum()
         self.df_b.loc[to_decimal(t)] = np.append(new_b, 0)
 
@@ -109,8 +86,6 @@ class POMDPSimulation:
         self.df_b.loc[ind, :] = tmp.apply(helper, axis=1)
 
     def get_prob_action(self, belief=None):
-        # if belief is None:
-        #     belief = self.belief_state
         return self.policy.loc[np.argmin(abs(self.policy[self.S].values - belief.astype(float)).sum(axis=1)), self.A]
 
     def get_Qz(self, p_act):
@@ -123,6 +98,7 @@ class POMDPSimulation:
             if ((row == prev).all()) or (row[OBS] != prev[OBS]):
                 self.update_belief_state_jump(int(row[OBS]), row[TIME])
 
+            prev = row.copy()
             if i == df_traj.index[-1]:
                 break
             else:
@@ -170,6 +146,10 @@ class POMDPSimulation:
             t_next = np.float(ind) - t_diff
         else:
             t_next = np.nan
+
+        if t_next < t_start:
+            t_next = np.nan
+
         return t_next
 
     def do_step(self, prev_step, NEW_OBS):
