@@ -10,24 +10,16 @@ import logging
 class CTBNSimulation:
     def __init__(self, cfg, save_folder='../_data/generative_ctbn/'):
         self.FOLDER = save_folder
-
-        logging.debug('initializing the CTBN object...')
-
         self.graph_dict = cfg[GRAPH_STRUCT]
         self.t_max = cfg[T_MAX] if cfg[T_MAX] else 20
         self.states = cfg[STATES] if cfg[STATES] else [0, 1]
         self.n_states = len(self.states)
         self.initial_probs = cfg[INITIAL_PROB] if cfg[INITIAL_PROB] else np.ones(len(self.states))/len(self.states)
-
         self.node_list = list(self.graph_dict.keys())
         self.num_nodes = len(self.node_list)
-
         # self.draw_and_save_graph()
         # self.initial_states = self.initialize_nodes()
         self.Q = self.initialize_intensity_matrices(cfg)
-
-        logging.debug(f'Q = {self.Q}')
-        logging.debug('CTBN object initialized!')
 
     def draw_and_save_graph(self):
         net_struct = [[par, node] for node in self.node_list for par in self.graph_dict[node] if
@@ -76,14 +68,15 @@ class CTBNSimulation:
         return node_Q
 
     def draw_time(self, prev_step):
-        random_draws = []
+        q = 0
         for node in self.node_list:
             current_val = int(prev_step[node].values[-1])
             current_Q = self.get_current_Q_for_node(node, prev_step)
-            q = current_Q[current_val][1 - current_val]
-            random_draws += [np.random.exponential(1 / q)]
+            q += abs(current_Q[current_val][current_val])
 
-        return np.min(random_draws)
+        tao = [np.random.exponential(1 / q)]
+
+        return tao
 
     def draw_variable(self, df_traj):
         q_list = []
@@ -103,8 +96,6 @@ class CTBNSimulation:
         t = prev_step[TIME].values[0]
         tao = self.draw_time(prev_step)
         var = self.draw_variable(prev_step)
-        logging.debug(f'Change is gonna happen in {tao} sec')
-        logging.debug(f'{var} is gonna change from {int(prev_step[var])} to {int(1 - prev_step[var])}')
 
         new_step = prev_step.copy()
         # Adding new state change to the trajectories
