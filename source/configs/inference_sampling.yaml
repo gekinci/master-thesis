@@ -12,15 +12,17 @@ states: [0, 1]  # default [0, 1]
 initial_prob:  # default equiprobable
 Q_dict:  # default randomly generated
 observation_space: [0, 1, 2]
+
 action_space: [0, 1]
-obs_model: [[1, 0, 0],
+obs_model: [[0, 1, 0],
             [0, 1, 0],
-            [0, 1, 0],
-            [0, 0, 1]]
+            [1, 0, 0],
+            [0, 1, 0]]
+policy: function  # deterministic, stochastic or function
 
-time_grain: 0.001
-t_max: 10 # default  20
-n_traj: 2
-n_obs_model: 10
+time_grain: 0.01
+t_max: 3 # default  20
+n_traj: 10
+n_obs_model: 5
 
-seed: 0
+seed: 1
