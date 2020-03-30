@@ -8,7 +8,7 @@ import os
 
 def create_folder_for_experiment(folder_name='../_data', tag=None):
     t = int(time.time())
-    folder_exp = os.path.join(folder_name, str(t)+tag) if tag else os.path.join(folder_name, str(t))
+    folder_exp = os.path.join(folder_name, str(t) + tag) if tag else os.path.join(folder_name, str(t))
     os.makedirs(folder_exp, exist_ok=True)
     return folder_exp
 
@@ -24,14 +24,15 @@ def zero_div(x, y):
     return x / y if y != 0 else 0
 
 
-# def merge_independent_ctbn_trajectories(df1, df2):
+# def merge_independent_ctbn_traj
+# ectories(df1, df2):
 #     df_joined = pd.concat([df1, df2], ignore_index=True, sort=False).sort_values(
 #         by=constants.TIME).ffill().drop_duplicates(subset=constants.TIME, keep='last')
 #     return df_joined
 
 
 def random_q_matrix(n_values):
-    tmp = np.random.gamma(shape=2., scale=2., size=(n_values, n_values)) #TODO pass the parameters
+    tmp = np.random.gamma(shape=2., scale=2., size=(n_values, n_values))  # TODO pass the parameters
     np.fill_diagonal(tmp, 0)
     np.fill_diagonal(tmp, -tmp.sum(axis=1))
     Q = tmp.tolist()

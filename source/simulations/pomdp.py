@@ -14,6 +14,7 @@ class POMDPSimulation:
 
         self.FOLDER = save_folder
         self.IMPORT = import_data
+        self.policy_type = cfg[POLICY]
         self.parent_ctbn = CTBNSimulation(cfg, save_folder=self.FOLDER)
         self.t_max = cfg[T_MAX] if cfg[T_MAX] else 20
         self.parent_list = cfg[PARENT_LIST] if cfg[PARENT_LIST] else ['X', 'Y']
@@ -21,11 +22,18 @@ class POMDPSimulation:
         self.states = cfg[STATES] if cfg[STATES] else [0, 1]
         self.n_states = len(self.states)
         self.initial_probs = cfg[INITIAL_PROB] if cfg[INITIAL_PROB] else np.ones(len(self.states)) / len(self.states)
+
         self.S = cartesian_products(self.n_parents, states=self.states)
         self.O = cfg[OBS_SPACE]
         self.A = [str(i) for i in cfg[ACT_SPACE]]
-        self.Qz = {k: random_q_matrix(self.n_states) for k in self.A}
-        self.policy = self.generate_random_stoch_policy().round()  # TODO DETERMINISTIC POLICY
+        self.Qz = {'0': [[-0.5, 0.5],
+                         [25, -25]],
+                   '1': [[-32, 32],
+                         [0.02, -0.02]]}  # {k: random_q_matrix(self.n_states) for k in self.A}
+
+        self.df_policy = self.generate_random_df_policy()
+        self.policy_func = np.random.random(4)
+
         self.T = get_amalgamated_trans_matrix(self.parent_ctbn.Q[self.parent_list[0]],
                                               self.parent_ctbn.Q[self.parent_list[1]])
         self.Z = np.array(cfg[OBS_MODEL])
@@ -50,12 +58,15 @@ class POMDPSimulation:
     def initialize_nodes(self):
         return {**self.parent_ctbn.initialize_nodes(), **{'Z': np.random.choice(self.states, p=self.initial_probs)}}
 
-    def generate_random_stoch_policy(self):
+    def generate_random_df_policy(self):
         policy = generate_belief_grid(step=0.01, cols=self.S)
         for action in self.A:
             policy[str(action)] = np.random.random(len(policy))
         policy[self.A] = policy[self.A].div(policy[self.A].sum(axis=1), axis=0)
-        return policy
+        if self.policy_type == 'deterministic':
+            return policy.round()
+        elif self.policy_type == 'stochastic':
+            return policy
 
     def get_observation(self, df):  # Stochastic observation
         state = ''.join(map(str, df[self.parent_list].values.astype(int)))
@@ -86,16 +97,21 @@ class POMDPSimulation:
         self.df_b.loc[ind, :] = tmp.apply(helper, axis=1)
 
     def get_prob_action(self, belief=None):
-        return self.policy.loc[np.argmin(abs(self.policy[self.S].values - belief.astype(float)).sum(axis=1)), self.A]
+        p_0 = np.sum(belief * self.policy_func)
+        if self.policy_type == 'function':
+            return pd.Series([p_0, 1 - p_0], index=[self.A])
+        else:
+            return self.df_policy.loc[
+                np.argmin(abs(self.df_policy[self.S].values - belief.astype(float)).sum(axis=1)), self.A]
 
     def get_Qz(self, p_act):
-        Q = np.sum([np.array(self.Qz[i]) * p_act[i] for i in self.A], axis=0)
+        Q = np.sum([np.array(self.Qz[i]) * p_act[i].values[0] for i in self.A], axis=0)
         return Q
 
     def get_belief_traj(self, df_traj):
         prev = df_traj.iloc[0]
         for i, row in df_traj.iterrows():
-            if ((row == prev).all()) or (row[OBS] != prev[OBS]):
+            if row[TIME] == 0. or (row[OBS] != prev[OBS]):
                 self.update_belief_state_jump(int(row[OBS]), row[TIME])
 
             prev = row.copy()
@@ -118,11 +134,10 @@ class POMDPSimulation:
 
         ind = (self.df_b.index >= to_decimal(t)) & (self.df_b.index <= to_decimal(t_next))
         self.df_Qz.loc[ind, self.S] = self.df_b.loc[ind, self.S].apply(helper, axis=1)
-        self.df_Qz.loc[(self.df_b.index <= to_decimal(t_next)), T_DELTA] = np.append(to_decimal(self.time_grain),
-                                                                                     np.diff(self.df_Qz.loc[
-                                                                                                 self.df_b.index <= to_decimal(
-                                                                                                     t_next)].index)).astype(
-            float)
+        t_diff = np.diff(self.df_Qz.loc[self.df_b.index <= to_decimal(t_next)].index)
+        self.df_Qz.loc[(self.df_b.index <= to_decimal(t_next)), T_DELTA] = np.append(t_diff,
+                                                                                     to_decimal(self.time_grain) -
+                                                                                     t_diff[-1]).astype(float)
 
     def sample_parent_trajectory(self):
         df_par_traj = self.parent_ctbn.sample_trajectory()
@@ -141,9 +156,11 @@ class POMDPSimulation:
         if tmp:
             ind = min(tmp.values())
             coln = min(tmp, key=tmp.get)
-
-            t_diff = np.log((1 - rnd) / (1 - F.loc[ind, coln])) / self.df_Qz.loc[:ind, coln].values[-2]
-            t_next = np.float(ind) - t_diff
+            if len(self.df_Qz.loc[:ind, coln]) >= 2:
+                t_diff = np.log((1 - rnd) / (1 - F.loc[ind, coln])) / self.df_Qz.loc[:ind, coln].values[-2]
+                t_next = np.float(ind) - t_diff
+            else:
+                t_next = np.nan
         else:
             t_next = np.nan
 
@@ -176,11 +193,11 @@ class POMDPSimulation:
             self.append_event(t_agent_change, event_q=np.append(
                 self.df_Qz.loc[self.df_Qz.index < to_decimal(t_agent_change)][self.S].iloc[-1], 0))
 
-            self.df_b.loc[self.df_b.index > to_decimal(t_agent_change)] = np.nan
-            self.df_Qz.loc[self.df_Qz.index > to_decimal(t_agent_change)] = np.nan
+            self.df_b.loc[self.df_b.index > to_decimal(t)] = np.nan
+            self.df_Qz.loc[self.df_Qz.index > to_decimal(t)] = np.nan
 
-            self.update_cont_belief_state(t_agent_change - self.time_grain, t_agent_change)
-            self.update_cont_Q(t=t_agent_change - self.time_grain, t_next=t_agent_change)
+            self.update_cont_belief_state(t, t_agent_change)
+            self.update_cont_Q(t=t, t_next=t_agent_change)
 
             NEW_OBS = False
         else:
@@ -200,6 +217,8 @@ class POMDPSimulation:
         prev_step = pd.DataFrame(df_traj[-1:].values, columns=df_traj.columns)
         NEW_OBS = True
 
+        # plt.figure()
+
         while t < self.t_max:
             new_step, NEW_OBS = self.do_step(prev_step, NEW_OBS)
             t = new_step[TIME].values[0]
@@ -208,6 +227,16 @@ class POMDPSimulation:
                 df_traj = df_traj.append(prev_step, ignore_index=True)
                 break
             df_traj = df_traj.append(new_step, ignore_index=True)
+
+            # plt.scatter(df_traj[TIME], df_traj[OBS], s=75)
+            # for t in df_traj[TIME]:
+            #     plt.axvline(t, ymin=0, ymax=2)
+            # plt.plot(self.df_b.index, self.df_b['00'])
+            # plt.plot(self.df_b.index, self.df_b['01'])
+            # plt.plot(self.df_b.index, self.df_b['10'])
+            # plt.plot(self.df_b.index, self.df_b['11'])
+            # plt.show()
+
             prev_step = new_step.copy()
 
         return df_traj
