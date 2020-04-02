@@ -10,6 +10,35 @@ import yaml
 import os
 
 
+def generate_dataset(pomdp_, n_samples, path_to_save, IMPORT_DATA=None):
+    if IMPORT_DATA:
+        df_all = pd.read_csv(f'../_data/inference_sampling/{IMPORT_DATA}/dataset.csv', index_col=0)
+        df_all = df_all[df_all[TRAJ_ID] <= n_samples]
+    else:
+        df_all = pd.DataFrame()
+
+        for k in range(1, n_samples + 1):
+            data_folder = folder + f'/dataset/traj_{k}'
+            os.makedirs(data_folder, exist_ok=True)
+
+            df_traj = pomdp_.sample_trajectory()
+            df_traj.loc[:, TRAJ_ID] = k
+
+            df_traj.to_csv(os.path.join(path_to_save, 'traj.csv'))
+            pomdp_.df_b.to_csv(os.path.join(path_to_save, 'belief_traj.csv'))
+            pomdp_.df_Qz.to_csv(os.path.join(path_to_save, 'Q_traj.csv'))
+
+            visualize_pomdp_simulation(df_traj, pomdp_.df_b[pomdp_.S], pomdp_.df_Qz[['01', '10']],
+                                       path_to_save=path_to_save)
+
+            df_all = df_all.append(df_traj)
+            print(log_likelihood_inhomogeneous_ctmc(df_traj, pomdp_.df_Qz))
+
+            pomdp_.reset()
+
+    return df_all, pomdp_
+
+
 def get_complete_df_Q(pomdp_, df_orig, path_to_save=None):
     df_orig.loc[:, OBS] = df_orig.apply(pomdp_.get_observation, axis=1)
 
@@ -32,6 +61,7 @@ def get_complete_df_Q(pomdp_, df_orig, path_to_save=None):
 if __name__ == "__main__":
     IMPORT_TRAJ = None
 
+    ### Reading and saving config
     with open('../configs/inference_sampling.yaml', 'r') as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
 
@@ -54,42 +84,19 @@ if __name__ == "__main__":
         pomdp_sim.df_policy.to_csv(os.path.join(folder, 'policy.csv'))
 
     cfg['T'] = pomdp_sim.T.tolist()
-    # cfg['PHI'] = pomdp_sim.Z.tolist()
     cfg['Qz'] = pomdp_sim.Qz
 
     with open(os.path.join(folder, 'config.yaml'), 'w') as f:
         yaml.dump(cfg, f)
 
-    if IMPORT_TRAJ:
-        df_all_traj = pd.read_csv(f'../_data/inference_sampling/{IMPORT_TRAJ}/dataset.csv', index_col=0)
-        df_all_traj = df_all_traj[df_all_traj[TRAJ_ID] <= n_traj]
-    else:
-        df_all_traj = pd.DataFrame()
-
-        for i in range(1, n_traj + 1):
-            data_folder = folder + f'/dataset/traj_{i}'
-            os.makedirs(data_folder, exist_ok=True)
-
-            df_traj = pomdp_sim.sample_trajectory()
-            df_traj.loc[:, TRAJ_ID] = i
-
-            df_traj.to_csv(os.path.join(data_folder, 'traj.csv'))
-            pomdp_sim.df_b.to_csv(os.path.join(data_folder, 'belief_traj.csv'))
-            pomdp_sim.df_Qz.to_csv(os.path.join(data_folder, 'Q_traj.csv'))
-
-            visualize_pomdp_simulation(df_traj, pomdp_sim.df_b[pomdp_sim.S], pomdp_sim.df_Qz[['01', '10']],
-                                       path_to_save=data_folder)
-
-            df_all_traj = df_all_traj.append(df_traj)
-            print(log_likelihood_inhomogeneous_ctmc(df_traj, pomdp_sim.df_Qz))
-
-            pomdp_sim.reset()
-
+    ### Generate (or read) dataset
+    df_all_traj, pomdp_sim = generate_dataset(pomdp_sim, n_traj, path_to_save=folder, IMPORT_DATA=IMPORT_TRAJ)
     df_all_traj.to_csv(os.path.join(folder, 'dataset.csv'))
 
     np.random.seed(0)
 
-    phi_subset = get_downsampled_obs_set(n_obs_model, pomdp_sim.Z)
+    # phi_subset = get_downsampled_obs_set(n_obs_model, pomdp_sim.Z)
+    phi_subset = np.load('../_data/inference_sampling/phi_set_3.npy')
     np.save(os.path.join(folder, 'phi_set.npy'), phi_subset)
 
     df_L = pd.DataFrame()
