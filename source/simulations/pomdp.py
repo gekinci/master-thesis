@@ -26,10 +26,7 @@ class POMDPSimulation:
         self.S = cartesian_products(self.n_parents, states=self.states)
         self.O = cfg[OBS_SPACE]
         self.A = [str(i) for i in cfg[ACT_SPACE]]
-        self.Qz = {'0': [[-0.5, 0.5],
-                         [25, -25]],
-                   '1': [[-32, 32],
-                         [0.02, -0.02]]}  # {k: random_q_matrix(self.n_states) for k in self.A}
+        self.Qz = self.set_Q_agent(cfg)
 
         self.df_policy = self.generate_random_df_policy()
         self.policy_func = np.random.random(4)
@@ -54,6 +51,10 @@ class POMDPSimulation:
 
     def reset_obs_model(self, new):
         self.Z = new
+
+    def set_Q_agent(self, cfg):
+        Q_agent = cfg[Q_Z] if cfg[Q_Z] else {k: random_q_matrix(self.n_states) for k in self.A}
+        return Q_agent
 
     def initialize_nodes(self):
         return {**self.parent_ctbn.initialize_nodes(), **{'Z': np.random.choice(self.states, p=self.initial_probs)}}

@@ -7,22 +7,39 @@ graph_struct:
   X: []
   Y: []
 
+Q_dict:  # default gamma-distributed
+
+Q_gamma_params: # default alpha:2, beta:2
+  X:
+    alpha: [2,2]
+    beta: [2,2]
+  Y:
+    alpha: [2,2]
+    beta: [2,2]
+
 parent_list:  # default  ['X', 'Y']
 states: [0, 1]  # default [0, 1]
 initial_prob:  # default equiprobable
-Q_dict:  # default randomly generated
-observation_space: [0, 1, 2]
 
+Q_Z: {'0': [[-0.5, 0.5],
+            [25, -25]],
+      '1': [[-32, 32],
+            [0.02, -0.02]]}
+
+observation_space: [0, 1, 2]
 action_space: [0, 1]
-obs_model: [[0, 1, 0],
-            [0, 1, 0],
-            [1, 0, 0],
-            [0, 1, 0]]
+obs_model: [[1., 0., 0.],
+            [0., 1., 0.],
+            [0., 1., 0.],
+            [0., 0., 1.]]
+
 policy: function  # deterministic, stochastic or function
+
+marginalize: 1
 
 time_grain: 0.01
 t_max: 3 # default  20
-n_traj: 10
-n_obs_model: 5
+n_traj: 1
+n_obs_model: 1
 
 seed: 1
