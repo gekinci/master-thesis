@@ -92,9 +92,12 @@ class POMDPSimulation:
 
         ind = (self.df_b.index >= to_decimal(t)) & (self.df_b.index <= to_decimal(t_next))
         tmp = self.df_b.loc[ind].copy()
-        tmp.t_delta = (tmp.index - tmp.index[0]).values.astype(float)
-        tmp.ffill(inplace=True)
-        self.df_b.loc[ind, :] = tmp.apply(helper, axis=1)
+        if not tmp.empty:
+            tmp.t_delta = (tmp.index - tmp.index[0]).values.astype(float)
+            tmp.ffill(inplace=True)
+            self.df_b.loc[ind, :] = tmp.apply(helper, axis=1)
+        else:
+            pass
 
     def get_prob_action(self, belief=None):
         p_0 = np.sum(belief * self.policy_func)
@@ -144,32 +147,36 @@ class POMDPSimulation:
         df_par_traj.loc[:, OBS] = df_par_traj.apply(self.get_observation, axis=1)
         return df_par_traj
 
-    def draw_time_contQ(self, t_start, t_end):
-        col_transition = ['01', '10']  # TODO hardcoded
+    def draw_time_contQ(self, state, t_start, t_end):
+        if state == 0:
+            col_transition = '01'
+        elif state == 1:
+            col_transition = '10'  # TODO hardcoded
+        else:
+            raise Exception(f'State of cell unknown: {state}')
 
         df_Q_ = self.df_Qz.truncate(before=to_decimal(t_start), after=to_decimal(t_end))
 
         F = 1 - np.exp(-(df_Q_[col_transition].multiply(df_Q_[T_DELTA], axis="index")).cumsum().astype(float))
         rnd = np.random.uniform()
 
-        tmp = {col: F.loc[F[col] > rnd].index[0] for col in F.columns if not F.loc[F[col] > rnd].empty}
-        if tmp:
-            ind = min(tmp.values())
-            coln = min(tmp, key=tmp.get)
-            if len(self.df_Qz.loc[:ind, coln]) >= 2:
-                t_diff = np.log((1 - rnd) / (1 - F.loc[ind, coln])) / self.df_Qz.loc[:ind, coln].values[-2]
-                t_next = np.float(ind) - t_diff
-            else:
-                t_next = np.nan
+        if len(F.index[F < rnd]):
+            # t_next = np.float(F.index[F < rnd][-1])
+            ind = F.index[F < rnd][-1]
+            # if len(self.df_Qz.loc[:ind, col_transition]) >= 2:
+            t_diff = np.log((1 - rnd) / (1 - F.loc[ind])) / -self.df_Qz.loc[:ind, col_transition].values[-1]
+            t_next = np.float(ind) + t_diff
+            # else:
+            #     t_next = np.nan
         else:
             t_next = np.nan
 
-        if t_next < t_start:
+        if t_next <= t_start:
             t_next = np.nan
 
         return t_next
 
-    def do_step(self, prev_step, NEW_OBS):
+    def do_step(self, prev_step, NEW_OBS, t_last_agent_change):
         t = prev_step[TIME].values[0]
 
         if NEW_OBS:
@@ -183,7 +190,7 @@ class POMDPSimulation:
         self.update_cont_belief_state(t, t_par_change)
         self.update_cont_Q(t=t, t_next=t_par_change)
 
-        t_agent_change = self.draw_time_contQ(t, t_par_change)
+        t_agent_change = self.draw_time_contQ(prev_step.iloc[0]['Z'], t, t_par_change)
 
         if t_agent_change < t_par_change:
             next_step = prev_step.copy()
@@ -200,12 +207,13 @@ class POMDPSimulation:
             self.update_cont_Q(t=t, t_next=t_agent_change)
 
             NEW_OBS = False
+            t_last_agent_change = t_agent_change
         else:
             next_step = tmp.copy()
             next_step.loc[:, OBS] = next_step.apply(self.get_observation, axis=1)
             NEW_OBS = next_step.iloc[0][OBS] != prev_step.iloc[0][OBS]
 
-        return next_step, NEW_OBS
+        return next_step, NEW_OBS, t_last_agent_change
 
     def sample_trajectory(self):
 
@@ -216,26 +224,16 @@ class POMDPSimulation:
         df_traj.loc[:, OBS] = df_traj.apply(self.get_observation, axis=1)
         prev_step = pd.DataFrame(df_traj[-1:].values, columns=df_traj.columns)
         NEW_OBS = True
-
-        # plt.figure()
+        t_last_agent_change = 0
 
         while t < self.t_max:
-            new_step, NEW_OBS = self.do_step(prev_step, NEW_OBS)
+            new_step, NEW_OBS, t_last_agent_change = self.do_step(prev_step, NEW_OBS, t_last_agent_change)
             t = new_step[TIME].values[0]
             if t > self.t_max:
                 prev_step.loc[:, TIME] = self.t_max
                 df_traj = df_traj.append(prev_step, ignore_index=True)
                 break
             df_traj = df_traj.append(new_step, ignore_index=True)
-
-            # plt.scatter(df_traj[TIME], df_traj[OBS], s=75)
-            # for t in df_traj[TIME]:
-            #     plt.axvline(t, ymin=0, ymax=2)
-            # plt.plot(self.df_b.index, self.df_b['00'])
-            # plt.plot(self.df_b.index, self.df_b['01'])
-            # plt.plot(self.df_b.index, self.df_b['10'])
-            # plt.plot(self.df_b.index, self.df_b['11'])
-            # plt.show()
 
             prev_step = new_step.copy()
 
