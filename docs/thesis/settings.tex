@@ -1,0 +1,76 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% packages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% math %%%
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+%%% fonts %%%
+\usepackage{lmodern}
+
+%%% graphics %%%
+\usepackage{tikz}
+\graphicspath{{figures/}}
+
+%%% referencing %%%
+\usepackage[bookmarks, bookmarksdepth=chapter, hidelinks]{hyperref}
+\usepackage[capitalise, noabbrev]{cleveref}
+
+%%% bibliography %%%
+\bibliographystyle{ieeetr}
+
+%%% misc %%%
+\usepackage{blindtext}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% document settings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% title page %%%
+\author{}
+\date{}
+\titlehead{
+	\centering
+	\includegraphics[width=10cm]{tud_logo.pdf} \\
+	\large\sffamily
+	Fachbereich Elektrotechnik und Informationstechnik \\
+	Bioinspired Communication Systems
+	\vspace{10ex}
+} 
+\subtitle{
+	\vspace{2ex}
+	\documenttype\\
+	\normalfont \sffamily 
+	\major \\
+	\vspace{4ex}
+	Eingereicht von\\
+	\vspace{2ex}
+	{\Large \name}\\
+	\vspace{2ex}
+	am\\
+	\submission\\
+	\vspace{4ex}
+	\parbox{0cm}{%
+	\begin{tabbing}
+	1.~Gutachten: \= Prof.~Dr.~techn.~Heinz~Koeppl \\
+	2.~Gutachten: \>\supervisor
+	\end{tabbing}}
+}
+
+%%% paragraph settings %%%
+\parindent0ex
+\parskip\baselineskip
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% probability %%%
+\newcommand{\given}{\,|\,}
+\newcommand{\p}{p}
+

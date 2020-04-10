@@ -74,7 +74,7 @@ class CTBNSimulation:
             current_Q = self.get_current_Q_for_node(node, prev_step)
             q += abs(current_Q[current_val][current_val])
 
-        tao = [np.random.exponential(1 / q)]
+        tao = np.random.exponential(1 / q)
 
         return tao
 

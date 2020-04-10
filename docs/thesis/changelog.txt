@@ -1,0 +1,20 @@
+####################
+Version 1.0
+--------------------
+* base version
+
+
+####################
+Version 1.1
+--------------------
+* reformatted title page and added study program
+
+
+####################
+Version 1.2
+--------------------
+* switched title page language to English
+* added "Gutachter" to title page
+* added "Erklärung zur Abschlussarbeit"
+* added empty pages
+* page number starting from 1 in Chapter 1

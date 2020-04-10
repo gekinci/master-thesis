@@ -1,0 +1,39 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% BCS LaTeX template
+% Version: 1.2
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[a4paper, DIV=12, abstracton]{scrreprt}
+\setcounter{secnumdepth}{3}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% author and thesis details (please adjust accordingly)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\name}{Gizem Ekinci} % <-- your name here
+\title{Bayesian Inference of Information Transfer in Graph-Based Continuous-Time Multi-Agent Systems} % <-- thesis title here
+\newcommand{\documenttype}{Master-Thesis} % <-- select type: "Master-Thesis", "Bachelor-Thesis", "Projektseminar", "Proseminar"
+\newcommand{\major}{Elektro- und Informationstechnik} % <-- your study program
+\newcommand{\supervisor}{Dominik Linzner} % <-- your supervisor here
+\newcommand{\submission}{07.07.2020} % <-- your submission date here
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% load document settings %%%
+\input{settings.tex}
+
+\begin{document}
+	\maketitle
+	\input{content/erklaerung.tex}
+	\input{content/abstract.tex}
+	
+	\tableofcontents
+	\thispagestyle{empty}
+	\newpage
+	\setcounter{page}{1}
+
+	\input{content/c1_introduction.tex}
+	\input{content/c2_problem_statement.tex}
+	\input{content/c3_methodology_experiments.tex}
+	\input{content/c4_results_evaluation.tex}
+	\input{content/c5_conclusion_futurework.tex}
+	\bibliography{../bibtex/_master_thesis}
+\end{document}

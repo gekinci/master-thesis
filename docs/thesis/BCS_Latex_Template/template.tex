@@ -1,0 +1,35 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% BCS LaTeX template
+% Version: 1.2
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[a4paper, DIV=12, abstracton]{scrreprt}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% author and thesis details (please adjust accordingly)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\name}{Vorname Nachname} % <-- your name here
+\title{Bayesian Inverse Reinforcement Learning} % <-- thesis title here
+\newcommand{\documenttype}{Master-Thesis} % <-- select type: "Master-Thesis", "Bachelor-Thesis", "Projektseminar", "Proseminar"
+\newcommand{\major}{Elektro- und Informationstechnik} % <-- your study program
+\newcommand{\supervisor}{Thomas Bayes} % <-- your supervisor here
+\newcommand{\submission}{01.07.2019} % <-- your submission date here
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% load document settings %%%
+\input{settings.tex}
+
+\begin{document}
+	\maketitle
+	\input{content/erklaerung.tex}
+	\input{content/abstract.tex}
+	
+	\tableofcontents
+	\thispagestyle{empty}
+	\newpage
+	\setcounter{page}{1}
+
+	\input{content/chapter1.tex}
+	\input{content/chapter2.tex}
+	\bibliography{references.bib}
+\end{document}
