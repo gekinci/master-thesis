@@ -14,7 +14,7 @@ class CTBNSimulation:
         self.t_max = cfg[T_MAX] if cfg[T_MAX] else 20
         self.states = cfg[STATES] if cfg[STATES] else [0, 1]
         self.n_states = len(self.states)
-        self.initial_probs = cfg[INITIAL_PROB] if cfg[INITIAL_PROB] else np.ones(len(self.states))/len(self.states)
+        self.initial_probs = cfg[INITIAL_PROB] if cfg[INITIAL_PROB] else np.ones(len(self.states)) / len(self.states)
         self.node_list = list(self.graph_dict.keys())
         self.num_nodes = len(self.node_list)
         # self.draw_and_save_graph()
@@ -31,19 +31,25 @@ class CTBNSimulation:
         plt.savefig(os.path.join(self.FOLDER, 'graph.png'))
 
     def initialize_intensity_matrices(self, cfg):
-        Q_dict = cfg['Q_dict'] if cfg[Q_DICT] else self.generate_conditional_intensity_matrices()
+        if cfg[Q_DICT]:
+            Q_dict = cfg['Q_dict']
+        elif cfg[GAMMA_PARAMS]:
+            Q_dict = self.generate_conditional_intensity_matrices(param_dict=cfg[GAMMA_PARAMS])
+        else:
+            Q_dict = self.generate_conditional_intensity_matrices()
         return Q_dict
 
     def initialize_nodes(self):
         return {var: np.random.choice(self.states, p=self.initial_probs) for var in self.node_list}
 
-    def generate_conditional_intensity_matrices(self):
+    def generate_conditional_intensity_matrices(self, param_dict=None):
         Q = dict()
 
         # Randomly generated conditional intensity matrices
         for node in self.node_list:
             if len(self.graph_dict[node]) == 0:
-                Q[node] = random_q_matrix(self.n_states)
+                Q[node] = random_q_matrix(self.n_states, params=param_dict[node]) if param_dict else random_q_matrix(
+                    self.n_states)
             else:
                 parent_list = self.graph_dict[node]
                 n_parents = len(parent_list)
@@ -51,7 +57,9 @@ class CTBNSimulation:
                 Q[node] = {}
 
                 for prod in parent_cart_prod:
-                    Q[node][prod] = random_q_matrix(self.n_states)
+                    Q[node][prod] = random_q_matrix(self.n_states,
+                                                    params=param_dict[node]) if param_dict else random_q_matrix(
+                        self.n_states)
         return Q
 
     def get_parent_values(self, node, prev_step):

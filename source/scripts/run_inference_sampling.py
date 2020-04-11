@@ -1,4 +1,5 @@
 from simulations.pomdp import POMDPSimulation
+from ctbn.parameter_learning import *
 from utils.visualization import *
 from utils.constants import *
 from utils.helpers import *
@@ -18,21 +19,21 @@ def generate_dataset(pomdp_, n_samples, path_to_save, IMPORT_DATA=None):
         df_all = pd.DataFrame()
 
         for k in range(1, n_samples + 1):
-            data_folder = folder + f'/dataset/traj_{k}'
+            data_folder = path_to_save + f'/dataset/traj_{k}'
             os.makedirs(data_folder, exist_ok=True)
 
             df_traj = pomdp_.sample_trajectory()
             df_traj.loc[:, TRAJ_ID] = k
 
-            df_traj.to_csv(os.path.join(path_to_save, 'traj.csv'))
-            pomdp_.df_b.to_csv(os.path.join(path_to_save, 'belief_traj.csv'))
-            pomdp_.df_Qz.to_csv(os.path.join(path_to_save, 'Q_traj.csv'))
+            df_traj.to_csv(os.path.join(data_folder, 'traj.csv'))
+            pomdp_.df_b.to_csv(os.path.join(data_folder, 'belief_traj.csv'))
+            pomdp_.df_Qz.to_csv(os.path.join(data_folder, 'Q_traj.csv'))
 
             visualize_pomdp_simulation(df_traj, pomdp_.df_b[pomdp_.S], pomdp_.df_Qz[['01', '10']],
-                                       path_to_save=path_to_save)
+                                       path_to_save=data_folder)
 
             df_all = df_all.append(df_traj)
-            print(log_likelihood_inhomogeneous_ctmc(df_traj, pomdp_.df_Qz))
+            print(llh_inhomogenous_ctbn(df_traj, pomdp_.df_Qz))
 
             pomdp_.reset()
 
@@ -61,7 +62,12 @@ def get_complete_df_Q(pomdp_, df_orig, path_to_save=None):
 if __name__ == "__main__":
     IMPORT_TRAJ = None
 
-    ### Reading and saving config
+    # phi_subset = get_downsampled_obs_set(n_obs_model, pomdp_sim.Z)
+    phi_subset = np.load('../_data/inference_sampling/phi_set_3.npy')
+
+    t0 = time.time()
+
+    # READING AND SAVING CONFIG
     with open('../configs/inference_sampling.yaml', 'r') as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
 
@@ -70,12 +76,16 @@ if __name__ == "__main__":
     t_max = cfg[T_MAX]
     policy_type = cfg[POLICY]
 
-    folder = create_folder_for_experiment(folder_name='../_data/inference_sampling/',
-                                          tag=f'_{t_max}sec_{n_traj}traj_{n_obs_model}model_{policy_type}Policy')
+    if cfg[MARGINALIZE]:
+        tag = f'_{t_max}sec_{n_traj}traj_{n_obs_model}model_{policy_type}Policy_marginalized'
+    else:
+        tag = f'_{t_max}sec_{n_traj}traj_{n_obs_model}model_{policy_type}Policy'
 
-    t0 = time.time()
+    folder = create_folder_for_experiment(folder_name='../_data/inference_sampling/',
+                                          tag=tag)
 
     np.random.seed(cfg[SEED])
+
     pomdp_sim = POMDPSimulation(cfg, save_folder=folder)
 
     if pomdp_sim.policy_type == 'function':
@@ -89,15 +99,11 @@ if __name__ == "__main__":
     with open(os.path.join(folder, 'config.yaml'), 'w') as f:
         yaml.dump(cfg, f)
 
-    ### Generate (or read) dataset
+    # Generate (or read) dataset
     df_all_traj, pomdp_sim = generate_dataset(pomdp_sim, n_traj, path_to_save=folder, IMPORT_DATA=IMPORT_TRAJ)
     df_all_traj.to_csv(os.path.join(folder, 'dataset.csv'))
 
-    np.random.seed(0)
-
-    # phi_subset = get_downsampled_obs_set(n_obs_model, pomdp_sim.Z)
-    phi_subset = np.load('../_data/inference_sampling/phi_set_3.npy')
-    np.save(os.path.join(folder, 'phi_set.npy'), phi_subset)
+    # np.random.seed(0)
 
     df_L = pd.DataFrame()
 
@@ -116,7 +122,13 @@ if __name__ == "__main__":
 
             pomdp_sim.reset()
             df_Q = get_complete_df_Q(pomdp_sim, df_traj, path_to_save=run_folder_)
-            L += [log_likelihood_inhomogeneous_ctmc(df_traj, df_Q)]
+            llh_Z = llh_inhomogenous_ctbn(df_traj, df_Q)
+            if cfg[MARGINALIZE]:
+                marg_log_p = marginalized_log_prob_of_homogenous_ctbn(df_traj, params=cfg[GAMMA_PARAMS])
+                llh_data = llh_Z + marg_log_p
+            else:
+                llh_data = llh_Z
+            L += [llh_Z]
 
         df_L[f'obs_{i}'] = L
         df_L_norm = df_L.cumsum().div((df_L.index + 1), axis=0)
@@ -124,12 +136,13 @@ if __name__ == "__main__":
         plt.figure()
         df_L_norm.plot()
         plt.savefig(os.path.join(folder, 'llh.png'))
+        plt.close()
 
         print(obs_model, np.sum(L))
         df_L.to_csv(os.path.join(folder, 'llh.csv'))
 
+    np.save(os.path.join(folder, 'phi_set.npy'), phi_subset)
     print('Maximum likely obs model:')
     print(phi_subset[int(df_L.sum(axis=0).idxmax().split('_')[-1])])
-
     t1 = time.time()
     print(f'It has been {(t1 - t0) / 3600} hours...PHEW!')

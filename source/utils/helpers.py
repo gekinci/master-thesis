@@ -31,8 +31,17 @@ def zero_div(x, y):
 #     return df_joined
 
 
-def random_q_matrix(n_values):
-    tmp = np.random.gamma(shape=2., scale=2., size=(n_values, n_values))  # TODO pass the parameters
+def random_q_matrix(n_values, params=None):
+    if params:
+        alpha_list = params['alpha']
+        beta_list = params['beta']
+    else:
+        alpha_list = np.tile(2., n_values)
+        beta_list = np.tile(2., n_values)
+
+    tmp = np.zeros((n_values, n_values))
+    for i in range(n_values):
+        tmp[i] = np.random.gamma(shape=alpha_list[i], scale=1/beta_list[i], size=(1, n_values))
     np.fill_diagonal(tmp, 0)
     np.fill_diagonal(tmp, -tmp.sum(axis=1))
     Q = tmp.tolist()

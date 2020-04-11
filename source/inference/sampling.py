@@ -1,7 +1,9 @@
+from math import gamma
 import numpy as np
 import itertools
 from utils.constants import *
 from utils.helpers import *
+from ctbn.parameter_learning import *
 
 
 def sample_obs_model(n_states, n_obs):
@@ -22,7 +24,7 @@ def get_downsampled_obs_set(n_sample, orig_phi, n_states=2, n_obs=3):
     return phi_subset[::-1, :, :]
 
 
-def log_likelihood_inhomogeneous_ctmc(df_traj, df_Q, node='Z'):
+def llh_inhomogenous_ctbn(df_traj, df_Q, node='Z'):
     L = 0
     df_trans = df_traj.loc[df_traj[node].diff() != 0]
     trans_tuples = list(
@@ -36,3 +38,19 @@ def log_likelihood_inhomogeneous_ctmc(df_traj, df_Q, node='Z'):
         prob_stay_integral = (df_Q_[stay_tag].multiply(df_Q_[T_DELTA], axis="index")).cumsum().loc[to_decimal(times[1])]
         L += np.log(q_trans) + prob_stay_integral
     return L
+
+
+def marginalized_log_prob_of_homogenous_ctbn(df_traj, params, node_list=None):
+    node_list = ['X', 'Y'] if node_list is None else node_list
+    n_states = df_traj[node_list].nunique()[0]
+    marg_log_p = 0
+
+    for node in node_list:
+        alpha_list = params[node]['alpha']
+        beta_list = params[node]['beta']
+        T = get_time_of_stay_in_state(df_traj, node='X')
+        M = get_number_of_transitions(df_traj, node='X')
+        for i in range(n_states):
+            p = beta_list[i] * (T[i] + beta_list[i])**(M[i] + alpha_list[i]) * gamma(M[i] + alpha_list[i]) / gamma(alpha_list[i])
+            marg_log_p += np.log(p)
+    return marg_log_p
