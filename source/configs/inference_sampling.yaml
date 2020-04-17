@@ -35,7 +35,7 @@ obs_model: [[1., 0., 0.],
 
 policy: function  # deterministic, stochastic or function
 
-marginalize: 1
+marginalize: True
 
 time_grain: 0.01
 t_max: 3 # default  20

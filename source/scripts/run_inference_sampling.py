@@ -33,7 +33,6 @@ def generate_dataset(pomdp_, n_samples, path_to_save, IMPORT_DATA=None):
                                        path_to_save=data_folder)
 
             df_all = df_all.append(df_traj)
-            print(llh_inhomogenous_ctbn(df_traj, pomdp_.df_Qz))
 
             pomdp_.reset()
 
@@ -61,10 +60,6 @@ def get_complete_df_Q(pomdp_, df_orig, path_to_save=None):
 
 if __name__ == "__main__":
     IMPORT_TRAJ = None
-
-    # phi_subset = get_downsampled_obs_set(n_obs_model, pomdp_sim.Z)
-    phi_subset = np.load('../_data/inference_sampling/phi_set_3.npy')
-
     t0 = time.time()
 
     # READING AND SAVING CONFIG
@@ -105,6 +100,10 @@ if __name__ == "__main__":
 
     # np.random.seed(0)
 
+    # phi_subset = get_downsampled_obs_set(n_obs_model, pomdp_sim.Z)
+    phi_subset = np.load('../_data/inference_sampling/phi_set_3.npy')
+    np.save(os.path.join(folder, 'phi_set.npy'), phi_subset)
+
     df_L = pd.DataFrame()
 
     for i, obs_model in enumerate(phi_subset):
@@ -141,7 +140,6 @@ if __name__ == "__main__":
         print(obs_model, np.sum(L))
         df_L.to_csv(os.path.join(folder, 'llh.csv'))
 
-    np.save(os.path.join(folder, 'phi_set.npy'), phi_subset)
     print('Maximum likely obs model:')
     print(phi_subset[int(df_L.sum(axis=0).idxmax().split('_')[-1])])
     t1 = time.time()

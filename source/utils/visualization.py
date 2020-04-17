@@ -39,6 +39,7 @@ def plot_trajectories(df, node_list=None, path_to_save=None):
 
     if path_to_save:
         fig.savefig(os.path.join(path_to_save, 'trajectory_plot.png'))
+    plt.close('all')
 
 
 def visualize_pomdp_simulation(df_traj, df_b, df_Q, node_list=None, path_to_save='../_data/'):
@@ -52,7 +53,7 @@ def visualize_pomdp_simulation(df_traj, df_b, df_Q, node_list=None, path_to_save
     df_Q.plot(ax=ax[1])
 
     fig.savefig(os.path.join(path_to_save, 'b_Q_plot.png'))
-    plt.close()
+    plt.close('all')
 
 
 if __name__ == '__main__':
