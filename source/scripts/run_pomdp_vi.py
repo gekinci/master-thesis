@@ -27,7 +27,7 @@ def get_env_trajectory(env, max_time=10):
         _, o, t = env.respond()
         list_traj.append(env.getState() + [o, t])
 
-    df_traj = pd.DataFrame(list_traj, columns=['X', 'Y', OBS, TIME])
+    df_traj = pd.DataFrame(list_traj, columns=['X1', 'X2', OBS, TIME])
     df_traj = df_traj.assign(t_delta=np.append(df_traj.time.diff().values[1:], .0))
 
     return df_traj
@@ -49,7 +49,7 @@ def train_given_trajectory(init_b, b_jump=0.01, max_time=5, import_env=None, fol
     env_traj.to_csv(folder + 'env_traj.csv')
 
     visualize_optimal_policy_map(df_optimal_map, path_to_save=folder)
-    plot_trajectories(env_traj, node_list=['X', 'Y'], path_to_save=folder)
+    plot_trajectories(env_traj, node_list=['X1', 'X2'], path_to_save=folder)
 
     if not os.listdir(folder):
         os.rmdir(folder)
@@ -64,7 +64,7 @@ def train_given_trajectory(init_b, b_jump=0.01, max_time=5, import_env=None, fol
     # while step:
     #     print("Step " + str(step) + ":")
     #     env_instant = env_traj.loc[step - 1, :]
-    #     s = [env_instant['X'], env_instant['Y']]
+    #     s = [env_instant['X1'], env_instant['X2']]
     #     o = env_instant[OBS]
     #     t = env_instant[TIME]
     #     t_delta = env_instant['t_delta']

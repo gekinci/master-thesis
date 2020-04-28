@@ -43,13 +43,13 @@ class Parents:
     """
 
     def __init__(self, Qx, Qy, folder='../_data/'):
-        self.cfg = {GRAPH_STRUCT: {'X': [],
-                                   'Y': []},
+        self.cfg = {GRAPH_STRUCT: {'X1': [],
+                                   'X2': []},
                     T_MAX: 50,
                     STATES: parent_states,
                     INITIAL_PROB: prob_states,
-                    Q_DICT: {'X': Qx,
-                             'Y': Qy}
+                    Q_DICT: {'X1': Qx,
+                             'X2': Qy}
                     }
         self.ctbn = CTBNSimulation(cfg=self.cfg, save_folder=folder)
         self.init_state = self.ctbn.initialize_nodes()
@@ -59,5 +59,5 @@ class Parents:
     def transition(self):
         self._prev_step = self.ctbn.do_step(self._prev_step)
         t = self._prev_step[TIME].values[0]
-        state = [int(self._prev_step['X'].values[0]), int(self._prev_step['Y'].values[0])]
+        state = [int(self._prev_step['X1'].values[0]), int(self._prev_step['X2'].values[0])]
         return state, t

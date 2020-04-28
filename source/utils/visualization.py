@@ -1,7 +1,9 @@
 from utils.constants import *
+from utils.helpers import *
 
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import pyplot as plt
+from matplotlib.ticker import FormatStrFormatter
 import pandas as pd
 import os
 
@@ -27,15 +29,18 @@ def visualize_optimal_policy_map(df, path_to_save='../_data/'):
 
 def plot_trajectories(df, node_list=None, path_to_save=None):
     if node_list is None:
-        node_list = ['X', 'Y', 'o', 'Z']
+        node_list = ['X1', 'X2', 'y', 'X3']
 
     # Saving and plotting the trajectories
-    fig, ax = plt.subplots(len(node_list))
+    fig, ax = plt.subplots(len(node_list), sharex=True)
     for i, node in enumerate(node_list):
-        ax[i].step(df[TIME], df[node])
-        ax[i].set_ylim([-.5, 1.5])
-        ax[i].set_ylabel(node)
-        ax[i].set_xlabel(TIME)
+        ax[i].step(df[TIME], df[node], where='post')
+        if node == 'y':
+            ax[i].set_ylim([-.5, 2.5])
+        else:
+            ax[i].set_ylim([-.5, 1.5])
+        ax[i].set_ylabel(node + '(t)')
+    ax[len(node_list) - 1].set_xlabel('t')
 
     if path_to_save:
         fig.savefig(os.path.join(path_to_save, 'trajectory_plot.png'))
@@ -44,14 +49,33 @@ def plot_trajectories(df, node_list=None, path_to_save=None):
 
 def visualize_pomdp_simulation(df_traj, df_b, df_Q, node_list=None, path_to_save='../_data/'):
     if node_list is None:
-        node_list = ['X', 'Y', 'o', 'Z']
+        node_list = [r'$X_{1}$', r'$X_{2}$', 'y', r'$X_{3}$']
 
     plot_trajectories(df_traj, node_list=node_list, path_to_save=path_to_save)
 
-    fig, ax = plt.subplots(2, 1)
-    df_b.plot(ax=ax[0])
-    df_Q.plot(ax=ax[1])
+    t_max = df_traj[TIME].values[-1]
+    df_b = df_b.truncate(before=to_decimal(0), after=to_decimal(t_max))
+    df_Q = df_Q.truncate(before=to_decimal(0), after=to_decimal(t_max))
 
+    fig, ax = plt.subplots(3, 1, sharex=True)
+
+    ax[0].step(df_traj[TIME], df_traj['y'], where='post')
+    ax[0].set_ylim([-.5, 2.5])
+    ax[0].set_ylabel('y(t)')
+
+    for col in df_b.columns:
+        ax[1].plot(df_b.index, df_b[col])
+    ax[1].set_ylabel(r'$b(x_{1},x_{2};t)$')
+    ax[1].legend(['00', '01', '10', '11'],
+                 bbox_to_anchor=(1.02, 1.0), loc='upper left')
+
+    for col in df_Q.columns:
+        ax[2].plot(df_Q.index, df_Q[col])
+    ax[2].set_ylabel(r'$Q_{3}(t)$')
+    ax[2].set_xlabel('t')
+    ax[2].legend([r'$q_{0}$', r'$q_{1}$'])
+
+    plt.tight_layout()
     fig.savefig(os.path.join(path_to_save, 'b_Q_plot.png'))
     plt.close('all')
 
@@ -63,4 +87,4 @@ if __name__ == '__main__':
     df_traj = pd.read_csv(folder + 'env_traj.csv')
     df_Q = pd.read_csv(folder + 'df_Qz.csv')
 
-    visualize_pomdp_simulation(df_traj, df_belief[S], df_Q[S], node_list=['X', 'Y', 'o'], path_to_save=folder)
+    visualize_pomdp_simulation(df_traj, df_belief[S], df_Q[S], node_list=['X1', 'X2', 'y'], path_to_save=folder)

@@ -4,27 +4,27 @@
 # All others must be specified!
 
 graph_struct:
-  X: []
-  Y: []
+  $X_{1}$: []
+  $X_{2}$: []
 
 Q_dict:  # default gamma-distributed
 
 Q_gamma_params: # default alpha:2, beta:2
-  X:
+  $X_{1}$:
     alpha: [2,2]
-    beta: [2,2]
-  Y:
+    beta: [.5,.5]
+  $X_{2}$:
     alpha: [2,2]
-    beta: [2,2]
+    beta: [.5,.5]
 
-parent_list:  # default  ['X', 'Y']
+parent_list:  # default  ['X1', 'X2']
 states: [0, 1]  # default [0, 1]
 initial_prob:  # default equiprobable
 
-Q_Z: {'0': [[-0.5, 0.5],
-            [25, -25]],
-      '1': [[-32, 32],
-            [0.02, -0.02]]}
+$Q_{3}$: {'0': [[-0.5, 0.5],
+                [25, -25]],
+          '1': [[-32, 32],
+                [0.02, -0.02]]}
 
 observation_space: [0, 1, 2]
 action_space: [0, 1]
@@ -33,13 +33,17 @@ obs_model: [[1., 0., 0.],
             [0., 1., 0.],
             [0., 0., 1.]]
 
-policy: function  # deterministic, stochastic or function
+belief_update: particle_filter  # particle_filter or exact
+n_particle: 50
 
-marginalize: True
+policy: deterministic  # deterministic, stochastic or function
+
+marginalize: False
 
 time_grain: 0.01
 t_max: 3 # default  20
-n_traj: 200
+n_traj: 10
 n_obs_model: 3
+test: 3
 
-seed: 1
+seed: 0

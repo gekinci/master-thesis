@@ -32,7 +32,7 @@ class CTBNSimulation:
 
     def initialize_intensity_matrices(self, cfg):
         if cfg[Q_DICT]:
-            Q_dict = cfg['Q_dict']
+            Q_dict = cfg[Q_DICT]
         elif cfg[GAMMA_PARAMS]:
             Q_dict = self.generate_conditional_intensity_matrices(param_dict=cfg[GAMMA_PARAMS])
         else:
