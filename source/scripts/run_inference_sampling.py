@@ -54,7 +54,7 @@ def get_complete_df_Q(pomdp_, df_orig, path_to_save=None):
         pomdp_.df_Qz.to_csv(os.path.join(path_to_save, 'Q_traj.csv'))
 
         visualize_pomdp_simulation(df_orig, pomdp_.df_b[pomdp_.S], pomdp_.df_Qz[['01', '10']],
-                                   node_list=['X', 'Y', 'o'], path_to_save=path_to_save)
+                                   node_list=[r'$X_{1}$', r'$X_{2}$', r'y'], path_to_save=path_to_save)
     return pomdp_.df_Qz
 
 
@@ -84,12 +84,13 @@ if __name__ == "__main__":
     pomdp_sim = POMDPSimulation(cfg, save_folder=folder)
 
     if pomdp_sim.policy_type == 'function':
-        np.save(os.path.join(folder, 'policy.npy'), pomdp_sim.policy_func)
+        np.save(os.path.join(folder, 'policy.npy'), pomdp_sim.policy)
     else:
-        pomdp_sim.df_policy.to_csv(os.path.join(folder, 'policy.csv'))
+        pomdp_sim.policy.to_csv(os.path.join(folder, 'policy.csv'))
 
     cfg['T'] = pomdp_sim.T.tolist()
-    cfg['Qz'] = pomdp_sim.Qz
+    cfg['Q3'] = pomdp_sim.Qz
+    cfg['parent_Q'] = pomdp_sim.parent_ctbn.Q
 
     with open(os.path.join(folder, 'config.yaml'), 'w') as f:
         yaml.dump(cfg, f)
@@ -98,15 +99,20 @@ if __name__ == "__main__":
     df_all_traj, pomdp_sim = generate_dataset(pomdp_sim, n_traj, path_to_save=folder, IMPORT_DATA=IMPORT_TRAJ)
     df_all_traj.to_csv(os.path.join(folder, 'dataset.csv'))
 
+    # TODO test stuff
+    # TODO change foldering
+    # df_test_traj, pomdp_sim = generate_dataset(pomdp_sim, cfg['test'], path_to_save=folder+'/test', IMPORT_DATA=IMPORT_TRAJ)
+    # df_test_traj.to_csv(os.path.join(folder, 'test.csv'))
+
     # np.random.seed(0)
 
-    # phi_subset = get_downsampled_obs_set(n_obs_model, pomdp_sim.Z)
-    phi_subset = np.load('../_data/inference_sampling/phi_set_3.npy')
-    np.save(os.path.join(folder, 'phi_set.npy'), phi_subset)
+    # psi_subset = get_downsampled_obs_set(n_obs_model, pomdp_sim.Z)
+    psi_subset = np.load('../_data/inference_sampling/psi_set_3_2.npy')
+    np.save(os.path.join(folder, 'psi_set.npy'), psi_subset)
 
     df_L = pd.DataFrame()
 
-    for i, obs_model in enumerate(phi_subset):
+    for i, obs_model in enumerate(psi_subset):
         run_folder = folder + f'/inference/obs_model_{i}'
         os.makedirs(run_folder, exist_ok=True)
 
@@ -121,19 +127,23 @@ if __name__ == "__main__":
 
             pomdp_sim.reset()
             df_Q = get_complete_df_Q(pomdp_sim, df_traj, path_to_save=run_folder_)
-            llh_Z = llh_inhomogenous_ctbn(df_traj, df_Q)
+            llh_X3 = llh_inhomogenous_ctbn(df_traj, df_Q)
+            llh_X1 = llh_homogenous_ctbn(df_traj, pomdp_sim.parent_ctbn.Q[parent_list_[0]], node=parent_list_[0])
+            llh_X2 = llh_homogenous_ctbn(df_traj, pomdp_sim.parent_ctbn.Q[parent_list_[1]], node=parent_list_[1])
             if cfg[MARGINALIZE]:
                 marg_log_p = marginalized_log_prob_of_homogenous_ctbn(df_traj, params=cfg[GAMMA_PARAMS])
-                llh_data = llh_Z + marg_log_p
+                llh_data = llh_X3 + marg_log_p
             else:
-                llh_data = llh_Z
-            L += [llh_Z]
+                llh_data = llh_X3 + llh_X1 + llh_X2
+            L += [llh_data]
 
-        df_L[f'obs_{i}'] = L
+        df_L[r'$\psi_{}$'.format(i)] = L
         df_L_norm = df_L.cumsum().div((df_L.index + 1), axis=0)
 
         plt.figure()
         df_L_norm.plot()
+        plt.xlabel('Number of trajectories')
+        plt.ylabel('Average log-likelihood')
         plt.savefig(os.path.join(folder, 'llh.png'))
         plt.close()
 
@@ -141,6 +151,6 @@ if __name__ == "__main__":
         df_L.to_csv(os.path.join(folder, 'llh.csv'))
 
     print('Maximum likely obs model:')
-    print(phi_subset[int(df_L.sum(axis=0).idxmax().split('_')[-1])])
+    print(psi_subset[int(df_L.sum(axis=0).idxmax().split('_')[-1][0])])
     t1 = time.time()
     print(f'It has been {(t1 - t0) / 3600} hours...PHEW!')

@@ -2,7 +2,6 @@ from simulations.pomdp import POMDPSimulation
 from utils.constants import *
 from utils.helpers import *
 
-import logging
 import yaml
 import os
 
@@ -23,5 +22,5 @@ if __name__ == "__main__":
     df_traj = pomdp_sim.sample_trajectory()
     df_traj.to_csv(os.path.join(folder, 'df_traj.csv'))
     pomdp_sim.df_b.to_csv(os.path.join(folder, 'df_belief.csv'))
-    pomdp_sim.df_policy.to_csv(os.path.join(folder, 'df_policy.csv'))
+    pomdp_sim.policy.to_csv(os.path.join(folder, 'df_policy.csv'))
     pomdp_sim.df_Qz.to_csv(os.path.join(folder, 'df_Qz.csv'))
