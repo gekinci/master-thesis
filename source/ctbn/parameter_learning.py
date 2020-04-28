@@ -28,7 +28,7 @@ def get_number_of_transitions(df_traj, node):
     change1to0 = (df_traj[node].diff() == -1)
     M0 = change0to1.sum()  # also M0
     M1 = change1to0.sum()  # also M1
-    return [M0, M1]
+    return np.array([M0, M1])
 
 
 def get_sufficient_statistics(ctbn, df_all):

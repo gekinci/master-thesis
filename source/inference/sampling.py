@@ -24,7 +24,7 @@ def get_downsampled_obs_set(n_sample, orig_phi, n_states=2, n_obs=3):
     return phi_subset[::-1, :, :]
 
 
-def llh_inhomogenous_ctbn(df_traj, df_Q, node=agent_):
+def llh_inhomogenous_mp(df_traj, df_Q, node=agent_):
     L = 0
     df_trans = df_traj.loc[df_traj[node].diff() != 0]
     trans_tuples = list(
@@ -40,7 +40,7 @@ def llh_inhomogenous_ctbn(df_traj, df_Q, node=agent_):
     return L
 
 
-def llh_homogenous_ctbn(df_traj, Q, node):
+def llh_homogenous_mp(df_traj, Q, node):
     L = 0
     T = get_time_of_stay_in_state(df_traj, node=node)
     M = get_number_of_transitions(df_traj, node=node)
@@ -53,17 +53,15 @@ def llh_homogenous_ctbn(df_traj, Q, node):
     return L
 
 
-def marginalized_log_prob_of_homogenous_ctbn(df_traj, params, node_list=None):
-    node_list = parent_list_ if node_list is None else node_list
-    n_states = df_traj[node_list].nunique()[0]
-    marg_log_p = 0
+def marginalized_llh_homogenous_mp(df_traj, params, node):
+    n_states = df_traj[node].nunique()[0]
+    marg_llh = 0
 
-    for node in node_list:
-        alpha_list = params[node]['alpha']
-        beta_list = params[node]['beta']
-        T = get_time_of_stay_in_state(df_traj, node=node)
-        M = get_number_of_transitions(df_traj, node=node)
-        for i in range(n_states):
-            p = beta_list[i] * (T[i] + beta_list[i])**(M[i] + alpha_list[i]) * gamma(M[i] + alpha_list[i]) / gamma(alpha_list[i])
-            marg_log_p += np.log(p)
-    return marg_log_p
+    alpha_list = params[node]['alpha']
+    beta_list = params[node]['beta']
+    T = get_time_of_stay_in_state(df_traj, node=node)
+    M = get_number_of_transitions(df_traj, node=node)
+    for i in range(n_states):
+        p = beta_list[i] * (T[i] + beta_list[i])**(M[i] + alpha_list[i]) * gamma(M[i] + alpha_list[i]) / gamma(alpha_list[i])
+        marg_llh += np.log(p)
+    return marg_llh

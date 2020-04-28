@@ -127,12 +127,13 @@ if __name__ == "__main__":
 
             pomdp_sim.reset()
             df_Q = get_complete_df_Q(pomdp_sim, df_traj, path_to_save=run_folder_)
-            llh_X3 = llh_inhomogenous_ctbn(df_traj, df_Q)
-            llh_X1 = llh_homogenous_ctbn(df_traj, pomdp_sim.parent_ctbn.Q[parent_list_[0]], node=parent_list_[0])
-            llh_X2 = llh_homogenous_ctbn(df_traj, pomdp_sim.parent_ctbn.Q[parent_list_[1]], node=parent_list_[1])
+            llh_X3 = llh_inhomogenous_mp(df_traj, df_Q)
+            llh_X1 = llh_homogenous_mp(df_traj, pomdp_sim.parent_ctbn.Q[parent_list_[0]], node=parent_list_[0])
+            llh_X2 = llh_homogenous_mp(df_traj, pomdp_sim.parent_ctbn.Q[parent_list_[1]], node=parent_list_[1])
             if cfg[MARGINALIZE]:
-                marg_log_p = marginalized_log_prob_of_homogenous_ctbn(df_traj, params=cfg[GAMMA_PARAMS])
-                llh_data = llh_X3 + marg_log_p
+                marg_llh_X1 = marginalized_llh_homogenous_mp(df_traj, params=cfg[GAMMA_PARAMS], node='X1')
+                marg_llh_X2 = marginalized_llh_homogenous_mp(df_traj, params=cfg[GAMMA_PARAMS], node='X2')
+                llh_data = llh_X3 + marg_llh_X1 + marg_llh_X2
             else:
                 llh_data = llh_X3 + llh_X1 + llh_X2
             L += [llh_data]
