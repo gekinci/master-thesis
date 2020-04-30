@@ -34,7 +34,7 @@ obs_model: [[1., 0., 0.],
             [0., 0., 1.]]
 
 belief_update: particle_filter  # particle_filter or exact
-n_particle: 50
+n_particle: 100
 
 policy: deterministic  # deterministic, stochastic or function
 
@@ -46,4 +46,4 @@ n_traj: 10
 n_obs_model: 3
 test: 3
 
-seed: 0
+seed: 3

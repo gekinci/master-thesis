@@ -5,7 +5,7 @@ from simulations.ctbn import CTBNSimulation
 from simulations.particle_filter import ParticleFilter
 
 import matplotlib.pyplot as plt
-import time
+# import time
 import logging
 import scipy
 
@@ -13,9 +13,12 @@ import scipy
 class POMDPSimulation:
     def __init__(self, cfg, save_folder='../_data/pomdp_simulation', import_data=None):
 
+        self.cfg = cfg
         self.FOLDER = save_folder
         self.IMPORT = import_data
         self.policy_type = cfg[POLICY]
+        self.belief_update = cfg[B_UPDATE]
+
         self.parent_ctbn = CTBNSimulation(cfg, save_folder=self.FOLDER)
         self.t_max = cfg[T_MAX] if cfg[T_MAX] else 20
         self.parent_list = cfg[PARENT_LIST] if cfg[PARENT_LIST] else parent_list_
@@ -27,7 +30,7 @@ class POMDPSimulation:
         self.S = cartesian_products(self.n_parents, states=self.states)
         self.O = cfg[OBS_SPACE]
         self.A = [str(i) for i in cfg[ACT_SPACE]]
-        self.Qz = self.set_Q_agent(cfg)
+        self.Qz = self.set_Q_agent()
 
         self.policy = self.generate_policy()
 
@@ -55,8 +58,8 @@ class POMDPSimulation:
     def reset_obs_model(self, new):
         self.Z = new
 
-    def set_Q_agent(self, cfg):
-        Q_agent = cfg[Q3] if cfg[Q3] else {k: random_q_matrix(self.n_states) for k in self.A}
+    def set_Q_agent(self):
+        Q_agent = self.cfg[Q3] if self.cfg[Q3] else {k: random_q_matrix(self.n_states) for k in self.A}
         return Q_agent
 
     def initialize_nodes(self):
@@ -88,12 +91,15 @@ class POMDPSimulation:
         self.df_Qz.loc[to_decimal(t)] = event_q
         self.df_Qz.sort_index(inplace=True)
 
-    def update_belief_exact(self, obs, t):
+    def get_belief_exact(self, obs, t):
         new_b = self.Z[:, obs] * self.df_b.loc[to_decimal(t), self.S]
         new_b /= new_b.sum()
-        self.df_b.loc[to_decimal(t)] = np.append(new_b, 0)
+        return new_b
 
-    def update_cont_belief_state(self, t, t_next):
+    def update_belief_jump(self, b, t):
+        self.df_b.loc[to_decimal(t)] = np.append(b, 0)
+
+    def update_belief_cont(self, t, t_next):
         def helper(row):
             row[self.S] = row[self.S].values @ scipy.linalg.expm(self.T * row[T_DELTA])
             return row
@@ -120,11 +126,15 @@ class POMDPSimulation:
         return Q
 
     def get_belief_traj(self, df_traj):
+        self.belief_particle_filter.reset()
         prev = df_traj.iloc[0]
         for i, row in df_traj.iterrows():
             if row[TIME] == 0. or (row[OBS] != prev[OBS]):
-                # self.belief_particle_filter.update(int(row[OBS]), row[TIME])
-                self.update_belief_exact(int(row[OBS]), row[TIME])
+                if self.belief_update == 'particle_filter':
+                    new_b = self.belief_particle_filter.update(int(row[OBS]), row[TIME])
+                else:
+                    new_b = self.get_belief_exact(int(row[OBS]), row[TIME])
+                self.update_belief_jump(new_b, row[TIME])
 
             prev = row.copy()
             if i == df_traj.index[-1]:
@@ -133,7 +143,7 @@ class POMDPSimulation:
                 t = row[TIME]
                 t_next = df_traj[TIME].values[i + 1]
                 self.append_event(t_next)
-                self.update_cont_belief_state(t, t_next)
+                self.update_belief_cont(t, t_next)
 
     def update_cont_Q(self, t=0, t_next=None):
         def helper(v):
@@ -185,15 +195,18 @@ class POMDPSimulation:
         t = prev_step[TIME].values[0]
 
         if NEW_OBS:
-            # self.belief_particle_filter.update(prev_step[OBS].values[0], t)
-            self.update_belief_exact(int(prev_step[OBS].values[0]), t)
+            if self.belief_update == 'particle_filter':
+                new_b = self.belief_particle_filter.update(prev_step[OBS].values[0], t)
+            else:
+                new_b = self.get_belief_exact(int(prev_step[OBS].values[0]), t)
+            self.update_belief_jump(new_b, t)
 
         tmp = self.parent_ctbn.do_step(prev_step)
         t_par_change = tmp[TIME].values[0]
 
         self.append_event(t_par_change)
 
-        self.update_cont_belief_state(t, t_par_change)
+        self.update_belief_cont(t, t_par_change)
         self.update_cont_Q(t=t, t_next=t_par_change)
 
         t_agent_change = self.draw_time_contQ(prev_step.iloc[0][agent_], t, t_par_change)
@@ -209,7 +222,7 @@ class POMDPSimulation:
             self.df_b.loc[self.df_b.index > to_decimal(t)] = np.nan
             self.df_Qz.loc[self.df_Qz.index > to_decimal(t)] = np.nan
 
-            self.update_cont_belief_state(t, t_agent_change)
+            self.update_belief_cont(t, t_agent_change)
             self.update_cont_Q(t=t, t_next=t_agent_change)
 
             NEW_OBS = False
@@ -222,7 +235,7 @@ class POMDPSimulation:
         return next_step, NEW_OBS, t_last_agent_change
 
     def sample_trajectory(self):
-
+        self.belief_particle_filter.reset()
         t = 0
         initial_states = {**self.initial_states, **{TIME: t}}
 

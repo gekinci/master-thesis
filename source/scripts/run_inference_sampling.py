@@ -59,7 +59,7 @@ def get_complete_df_Q(pomdp_, df_orig, path_to_save=None):
 
 
 if __name__ == "__main__":
-    IMPORT_TRAJ = None
+    IMPORT_TRAJ = '1588253028_3sec_10traj_3model_deterministicPolicy_particle_filter100'
     t0 = time.time()
 
     # READING AND SAVING CONFIG
@@ -70,11 +70,13 @@ if __name__ == "__main__":
     n_obs_model = cfg[N_OBS_MODEL]
     t_max = cfg[T_MAX]
     policy_type = cfg[POLICY]
+    b_type = cfg[B_UPDATE]
+    n_par = cfg[N_PARTICLE]
 
     if cfg[MARGINALIZE]:
-        tag = f'_{t_max}sec_{n_traj}traj_{n_obs_model}model_{policy_type}Policy_marginalized'
+        tag = f'_{t_max}sec_{n_traj}traj_{n_obs_model}model_{policy_type}Policy_{b_type}{n_par}_marginalized'
     else:
-        tag = f'_{t_max}sec_{n_traj}traj_{n_obs_model}model_{policy_type}Policy'
+        tag = f'_{t_max}sec_{n_traj}traj_{n_obs_model}model_{policy_type}Policy_{b_type}{n_par}'
 
     folder = create_folder_for_experiment(folder_name='../_data/inference_sampling/',
                                           tag=tag)

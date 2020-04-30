@@ -20,6 +20,7 @@ SEED = 'seed'
 N_TRAJ = 'n_traj'
 N_OBS_MODEL = 'n_obs_model'
 
+B_UPDATE = 'belief_update'
 N_PARTICLE = 'n_particle'
 
 # Column names
