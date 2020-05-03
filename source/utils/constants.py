@@ -18,6 +18,8 @@ MARGINALIZE = 'marginalize'
 TIME_GRAIN = 'time_grain'
 SEED = 'seed'
 N_TRAJ = 'n_traj'
+N_TRAIN = 'n_train'
+N_TEST = 'n_test'
 N_OBS_MODEL = 'n_obs_model'
 
 B_UPDATE = 'belief_update'

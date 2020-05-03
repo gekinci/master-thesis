@@ -11,6 +11,24 @@ import yaml
 import os
 
 
+def create_folder_tag(cfg):
+    n_train = cfg[N_TRAIN]
+    n_test = cfg[N_TEST]
+    n_obs_model = cfg[N_OBS_MODEL]
+    t_max = cfg[T_MAX]
+    policy_type = cfg[POLICY]
+    b_type = cfg[B_UPDATE]
+    n_par = cfg[N_PARTICLE] if b_type=='particle_type' else ''
+    seed = cfg[SEED]
+
+    if cfg[MARGINALIZE]:
+        tag = f'_{t_max}sec_{n_traj}traj_{n_obs_model}model_{policy_type}Policy_{b_type}{n_par}_marginalized_seed{seed}'
+    else:
+        tag = f'_{t_max}sec_{n_traj}traj_{n_obs_model}model_{policy_type}Policy_{b_type}{n_par}_seed{seed}'
+
+    return tag
+
+
 def generate_dataset(pomdp_, n_samples, path_to_save, IMPORT_DATA=None):
     if IMPORT_DATA:
         df_all = pd.read_csv(f'../_data/inference_sampling/{IMPORT_DATA}/dataset.csv', index_col=0)
@@ -59,27 +77,27 @@ def get_complete_df_Q(pomdp_, df_orig, path_to_save=None):
 
 
 if __name__ == "__main__":
-    IMPORT_TRAJ = '1588253028_3sec_10traj_3model_deterministicPolicy_particle_filter100'
+    IMPORT_TRAJ = None
     t0 = time.time()
 
     # READING AND SAVING CONFIG
     with open('../configs/inference_sampling.yaml', 'r') as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
 
-    n_traj = cfg[N_TRAJ]
+    n_train = cfg[N_TRAIN]
+    n_test = cfg[N_TEST]
     n_obs_model = cfg[N_OBS_MODEL]
-    t_max = cfg[T_MAX]
+    # t_max = cfg[T_MAX]
     policy_type = cfg[POLICY]
-    b_type = cfg[B_UPDATE]
-    n_par = cfg[N_PARTICLE]
+    # b_type = cfg[B_UPDATE]
+    # n_par = cfg[N_PARTICLE]
+    #
+    # if cfg[MARGINALIZE]:
+    #     tag = f'_{t_max}sec_{n_traj}traj_{n_obs_model}model_{policy_type}Policy_{b_type}{n_par}_marginalized'
+    # else:
+    #     tag = f'_{t_max}sec_{n_traj}traj_{n_obs_model}model_{policy_type}Policy_{b_type}{n_par}'
 
-    if cfg[MARGINALIZE]:
-        tag = f'_{t_max}sec_{n_traj}traj_{n_obs_model}model_{policy_type}Policy_{b_type}{n_par}_marginalized'
-    else:
-        tag = f'_{t_max}sec_{n_traj}traj_{n_obs_model}model_{policy_type}Policy_{b_type}{n_par}'
-
-    folder = create_folder_for_experiment(folder_name='../_data/inference_sampling/',
-                                          tag=tag)
+    folder = create_folder_for_experiment(folder_name='../_data/inference_sampling/', tag=create_folder_tag(cfg))
 
     np.random.seed(cfg[SEED])
 
