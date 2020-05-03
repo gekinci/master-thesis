@@ -27,7 +27,7 @@ def visualize_optimal_policy_map(df, path_to_save='../_data/'):
     return
 
 
-def plot_trajectories(df, node_list=None, path_to_save=None):
+def plot_trajectories(df, node_list=None, path_to_save=None, tag=''):
     if node_list is None:
         node_list = ['X1', 'X2', 'y', 'X3']
 
@@ -43,15 +43,15 @@ def plot_trajectories(df, node_list=None, path_to_save=None):
     ax[len(node_list) - 1].set_xlabel('t')
 
     if path_to_save:
-        fig.savefig(os.path.join(path_to_save, 'trajectory_plot.png'))
+        fig.savefig(os.path.join(path_to_save, 'trajectory_plot_' + tag + '.png'))
     plt.close('all')
 
 
-def visualize_pomdp_simulation(df_traj, df_b, df_Q, node_list=None, path_to_save='../_data/'):
+def visualize_pomdp_simulation(df_traj, df_b, df_Q, node_list=None, path_to_save='../_data/', tag=''):
     if node_list is None:
         node_list = [r'$X_{1}$', r'$X_{2}$', 'y', r'$X_{3}$']
 
-    plot_trajectories(df_traj, node_list=node_list, path_to_save=path_to_save)
+    plot_trajectories(df_traj, node_list=node_list, path_to_save=path_to_save, tag=tag)
 
     t_max = df_traj[TIME].values[-1]
     df_b = df_b.truncate(before=to_decimal(0), after=to_decimal(t_max))
@@ -76,7 +76,7 @@ def visualize_pomdp_simulation(df_traj, df_b, df_Q, node_list=None, path_to_save
     ax[2].legend([r'$q_{0}$', r'$q_{1}$'])
 
     plt.tight_layout()
-    fig.savefig(os.path.join(path_to_save, 'b_Q_plot.png'))
+    fig.savefig(os.path.join(path_to_save, 'b_Q_plot_' + tag + '.png'))
     plt.close('all')
 
 

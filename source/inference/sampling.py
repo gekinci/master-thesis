@@ -21,7 +21,12 @@ def get_downsampled_obs_set(n_sample, orig_phi, n_states=2, n_obs=3):
     phi_subset = phi_set[np.random.choice(range(len(phi_set)), size=n_sample, replace=False)]
     if not (np.all(orig_phi == phi_subset, axis=(1, 2))).any():
         phi_subset = np.append(phi_subset[:-1], [orig_phi], axis=0)
-    return phi_subset[::-1, :, :]
+        phi_subset = phi_subset[::-1, :, :]
+    else:
+        tmp = np.insert(phi_subset, 0, orig_phi, axis=0)
+        indexes = np.unique(tmp, return_index=True, axis=0)[1]
+        phi_subset = [tmp[index] for index in sorted(indexes)]
+    return phi_subset
 
 
 def llh_inhomogenous_mp(df_traj, df_Q, node=agent_):
