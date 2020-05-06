@@ -6,6 +6,7 @@ from utils.helpers import *
 from inference.sampling import *
 
 import seaborn as sns; sns.set()
+from joblib import Parallel, delayed
 import matplotlib.pyplot as plt
 import logging
 import yaml
@@ -36,12 +37,11 @@ def generate_dataset(pomdp_, n_samples, path_to_save, IMPORT_DATA=None, tag=''):
         df_all = df_all[df_all[TRAJ_ID] <= n_samples]
     else:
         df_all = pd.DataFrame()
+        data_folder = path_to_save + f'/dataset_{tag}'
+        csv_folder = data_folder + '/csv'
+        os.makedirs(csv_folder, exist_ok=True)
 
         for k in range(1, n_samples + 1):
-            data_folder = path_to_save + f'/dataset_{tag}'
-            csv_folder = data_folder + '/csv'
-            os.makedirs(csv_folder, exist_ok=True)
-
             df_traj = pomdp_.sample_trajectory()
             df_traj.loc[:, TRAJ_ID] = k
 
@@ -51,8 +51,7 @@ def generate_dataset(pomdp_, n_samples, path_to_save, IMPORT_DATA=None, tag=''):
             visualize_pomdp_simulation(df_traj, pomdp_.df_b[pomdp_.S], pomdp_.df_Qz[['01', '10']],
                                        path_to_save=data_folder, tag=str(k))
             df_all = df_all.append(df_traj)
-            pomdp_.reset()
-
+            # pomdp_.reset()
     return df_all, pomdp_
 
 
@@ -82,7 +81,7 @@ def run_test(df_llh, phi_set, n_train, n_test, path_to_save):
     df_test = df_llh.tail(n_test)
 
     df_test_result = pd.DataFrame(columns=['Number of trajectories', 'Test log-likelihood'])
-    for i in range(1, n_train):
+    for i in range(1, n_train+1):
         df_test_run = pd.DataFrame(columns=['Number of trajectories', 'Test log-likelihood'])
         df_train_run = df_train.head(i)
         # pred = phi_set[int(df_train_run.sum(axis=0).idxmax().split('_')[-1][0])]

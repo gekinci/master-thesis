@@ -20,7 +20,7 @@ if __name__ == "__main__":
     df_test = df_llh.tail(test_data)
 
     df_test_result = pd.DataFrame(columns=['Number of trajectories', 'Test log-likelihood'])
-    for i in range(1, train_data):
+    for i in range(1, train_data+1):
         df_test_run = pd.DataFrame(columns=['Number of trajectories', 'Test log-likelihood'])
         df_train_run = df_train.head(i)
         pred = phi_set[int(df_train_run.sum(axis=0).idxmax().split('_')[-1][0])]
