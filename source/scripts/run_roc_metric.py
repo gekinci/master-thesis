@@ -19,6 +19,7 @@ def divisors(n):
 
 if __name__ == "__main__":
     path_to_data = '../_data/roc_analysis'
+    mult = 5
 
     phi_set = np.load(os.path.join(path_to_data, 'psi_set_3_2.npy'))
     n_classes = len(phi_set)
@@ -36,12 +37,12 @@ if __name__ == "__main__":
             df_loglh = pd.read_csv(os.path.join(folder, 'llh.csv'), index_col=0)
             df_lh = np.exp(df_loglh)
             # df_scores = df_scores.append(df_lh)
-            for k in range(n):
+            for k in range(n*mult):
                 df_shuffled_ = df_lh.sample(frac=1).reset_index(drop=True)
                 df_scores = df_scores.append(df_shuffled_.groupby(df_shuffled_.index // n).mean())
 
             # Create and concatenate labels for different classes
-            n_class_samples = int(len(df_loglh))
+            n_class_samples = int(len(df_loglh)*mult)
             y_class_labels = np.zeros((n_class_samples, n_classes))
             y_class_labels[:, i] = 1
             if y_labels is None:
@@ -52,16 +53,15 @@ if __name__ == "__main__":
         df_scores.reset_index(drop=True, inplace=True)
         # df_scores = df_scores.groupby(df_scores.index // n).mean()
 
-        n_samples = len(df_scores)
-        # Normalizing likelihoods
-        y_scores = df_scores.divide(df_scores.values.sum(axis=1), axis=0).values
+        n_samples = len(df_scores)*mult
+        y_scores = df_scores.divide(df_scores.values.sum(axis=1), axis=0).values # Normalizing likelihoods
 
         fpr = dict()
         tpr = dict()
         roc_auc = dict()
-        for i in range(n_classes):
-            fpr[i], tpr[i], _ = roc_curve(y_labels[:, i], y_scores[:, i])
-            roc_auc[i] = auc(fpr[i], tpr[i])
+        for m in range(n_classes):
+            fpr[m], tpr[m], _ = roc_curve(y_labels[:, m], y_scores[:, m])
+            roc_auc[m] = auc(fpr[m], tpr[m])
 
         plt.figure()
         c = 0
@@ -74,5 +74,5 @@ if __name__ == "__main__":
         plt.ylabel('True Positive Rate')
         plt.title(r'ROC curve $\psi_{0}$ vs. ' + f'all (n={n})')
         plt.legend(loc="lower right")
-        plt.savefig(path_to_data + f'/AUROC_100samples_class{c}_llh_n{n}.png')
+        plt.savefig(path_to_data + f'/AUROC_300samples_class{c}_llh_n{n}.png')
         plt.show()
