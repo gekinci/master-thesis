@@ -75,6 +75,14 @@ class POMDPSimulation:
             policy[self.A] = policy[self.A].div(policy[self.A].sum(axis=1), axis=0)
             if self.policy_type == 'deterministic':
                 policy[self.A] = policy[self.A].round()
+                policy.loc[policy['00'] >= 0.5, '0'] = 0
+                policy.loc[policy['00'] >= 0.5, '1'] = 1
+                policy.loc[policy['01'] >= 0.5, '0'] = 0
+                policy.loc[policy['01'] >= 0.5, '1'] = 1
+                policy.loc[policy['10'] >= 0.5, '0'] = 0
+                policy.loc[policy['10'] >= 0.5, '1'] = 1
+                policy.loc[policy['11'] >= 0.5, '1'] = 0
+                policy.loc[policy['11'] >= 0.5, '0'] = 1
                 return policy
             elif self.policy_type == 'stochastic':
                 return policy
@@ -131,7 +139,8 @@ class POMDPSimulation:
         for i, row in df_traj.iterrows():
             if row[TIME] == 0. or (row[OBS] != prev[OBS]):
                 if self.belief_update == 'particle_filter':
-                    new_b = self.belief_particle_filter.update(int(row[OBS]), row[TIME])
+                    new_b, new_Q = self.belief_particle_filter.update(int(row[OBS]), row[TIME])
+                    self.T = get_amalgamated_trans_matrix(new_Q[self.parent_list[0]], new_Q[self.parent_list[1]])
                 else:
                     new_b = self.get_belief_exact(int(row[OBS]), row[TIME])
                 self.update_belief_jump(new_b, row[TIME])
@@ -196,7 +205,8 @@ class POMDPSimulation:
 
         if NEW_OBS:
             if self.belief_update == 'particle_filter':
-                new_b = self.belief_particle_filter.update(prev_step[OBS].values[0], t)
+                new_b, new_Q = self.belief_particle_filter.update(prev_step[OBS].values[0], t)
+                self.T = get_amalgamated_trans_matrix(new_Q[self.parent_list[0]], new_Q[self.parent_list[1]])
             else:
                 new_b = self.get_belief_exact(int(prev_step[OBS].values[0]), t)
             self.update_belief_jump(new_b, t)
@@ -235,6 +245,7 @@ class POMDPSimulation:
         return next_step, NEW_OBS, t_last_agent_change
 
     def sample_trajectory(self):
+        self.reset()
         self.belief_particle_filter.reset()
         t = 0
         initial_states = {**self.initial_states, **{TIME: t}}
