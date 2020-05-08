@@ -22,10 +22,7 @@ class ParticleFilter:
         self.sampling_ctbn.Q = {node: (np.array([[-1, 1], [1, -1]]) * (
                 np.array(self.Q_gamma_params[node]['alpha']) / np.array(self.Q_gamma_params[node]['beta']))).T for
                                 node in self.sampling_ctbn.node_list}
-        t0 = time.time()
         self.particles = self.initialize_particles()
-        t1 = time.time()
-        print(t1 - t0)
         self.weights = np.tile(1 / self.n_particle, self.n_particle)
 
     def reset(self):
