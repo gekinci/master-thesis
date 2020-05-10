@@ -36,12 +36,14 @@ def generate_dataset(pomdp_, n_samples, path_to_save, IMPORT_DATA=None, tag=''):
         df_all = pd.read_csv(f'../_data/inference_sampling/{IMPORT_DATA}/dataset_{tag}.csv', index_col=0)
         df_all = df_all[df_all[TRAJ_ID] <= n_samples]
     else:
+
         df_all = pd.DataFrame()
         data_folder = path_to_save + f'/dataset_{tag}'
         csv_folder = data_folder + '/csv'
         os.makedirs(csv_folder, exist_ok=True)
 
         for k in range(1, n_samples + 1):
+            np.random.seed(k)
             df_traj = pomdp_.sample_trajectory()
             df_traj.loc[:, TRAJ_ID] = k
 
@@ -51,7 +53,6 @@ def generate_dataset(pomdp_, n_samples, path_to_save, IMPORT_DATA=None, tag=''):
             visualize_pomdp_simulation(df_traj, pomdp_.df_b[pomdp_.S], pomdp_.df_Qz[['01', '10']],
                                        path_to_save=data_folder, tag=str(k))
             df_all = df_all.append(df_traj)
-            # pomdp_.reset()
     return df_all, pomdp_
 
 
@@ -122,19 +123,15 @@ if __name__ == "__main__":
     with open(os.path.join(folder, 'config.yaml'), 'w') as f:
         yaml.dump(cfg, f)
 
+    n_samples = cfg[N_TRAIN] +  cfg[N_TEST]
+
     # Generate (or read) dataset
-    df_train, pomdp_sim = generate_dataset(pomdp_sim, cfg[N_TRAIN], path_to_save=folder, IMPORT_DATA=IMPORT_TRAJ,
+    df_all, pomdp_sim = generate_dataset(pomdp_sim, n_samples, path_to_save=folder, IMPORT_DATA=IMPORT_TRAJ,
                                            tag='train')
-    df_train.to_csv(os.path.join(folder, 'dataset_train.csv'))
-    df_test, pomdp_sim = generate_dataset(pomdp_sim, cfg[N_TEST], path_to_save=folder, IMPORT_DATA=IMPORT_TRAJ,
-                                          tag='test')
-    df_test.to_csv(os.path.join(folder, 'dataset_test.csv'))
+    df_all.to_csv(os.path.join(folder, 'dataset.csv'))
 
-    df_test[TRAJ_ID] = df_test[TRAJ_ID] + cfg[N_TRAIN]
-    df_all = pd.concat([df_train, df_test])
-
-    psi_subset = get_downsampled_obs_set(cfg[N_OBS_MODEL], pomdp_sim.Z)
-    # psi_subset = np.load('../_data/inference_sampling/psi_set_3_2.npy')
+    # psi_subset = get_downsampled_obs_set(cfg[N_OBS_MODEL], pomdp_sim.Z)
+    psi_subset = np.load('../_data/inference_sampling/psi_set_3_2.npy')
     np.save(os.path.join(folder, 'psi_set.npy'), psi_subset)
 
     df_L = pd.DataFrame()
