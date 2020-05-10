@@ -134,6 +134,7 @@ class POMDPSimulation:
         return Q
 
     def get_belief_traj(self, df_traj):
+        self.reset()
         self.belief_particle_filter.reset()
         prev = df_traj.iloc[0]
         for i, row in df_traj.iterrows():
