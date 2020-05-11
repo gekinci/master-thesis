@@ -186,7 +186,7 @@ if __name__ == "__main__":
         yaml.dump(cfg, f)
 
     if IMPORT_PSI:
-        psi_subset = np.load('../_data/inference_sampling/psi_set_3.npy')
+        psi_subset = np.load('../configs/psi_set_3.npy')
     else:
         psi_subset = get_downsampled_obs_set(cfg[N_OBS_MODEL], pomdp_sim.Z)
     np.save(os.path.join(run_folder, 'psi_set.npy'), psi_subset)
