@@ -42,9 +42,9 @@ marginalize: False
 
 time_grain: 0.01
 t_max: 3 # default  20
-n_train: 10
-n_test: 3
+n_train: 20
+n_test: 0
 
 n_obs_model: 3
 
-seed: 0
+seed: 3

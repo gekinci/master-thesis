@@ -31,14 +31,13 @@ def create_folder_tag(conf):
     return tag
 
 
-def generate_dataset(pomdp_, n_samples, path_to_save, IMPORT_DATA=None, tag=''):
+def generate_dataset(pomdp_, n_samples, path_to_save, IMPORT_DATA=None):
     if IMPORT_DATA:
-        df_all = pd.read_csv(f'../_data/inference_sampling/{IMPORT_DATA}/dataset_{tag}.csv', index_col=0)
+        df_all = pd.read_csv(f'../_data/inference_sampling/{IMPORT_DATA}/dataset.csv', index_col=0)
         df_all = df_all[df_all[TRAJ_ID] <= n_samples]
     else:
-
         df_all = pd.DataFrame()
-        data_folder = path_to_save + f'/dataset_{tag}'
+        data_folder = path_to_save + f'/dataset'
         csv_folder = data_folder + '/csv'
         os.makedirs(csv_folder, exist_ok=True)
 
@@ -53,6 +52,9 @@ def generate_dataset(pomdp_, n_samples, path_to_save, IMPORT_DATA=None, tag=''):
             visualize_pomdp_simulation(df_traj, pomdp_.df_b[pomdp_.S], pomdp_.df_Qz[['01', '10']],
                                        path_to_save=data_folder, tag=str(k))
             df_all = df_all.append(df_traj)
+            print(llh_inhomogenous_mp(df_traj, pomdp_.df_Qz),
+                  llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[0]], node=parent_list_[0]),
+                  llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[1]], node=parent_list_[1]))
     return df_all, pomdp_
 
 
@@ -99,7 +101,8 @@ def run_test(df_llh, phi_set, n_train, n_test, path_to_save):
 
 
 if __name__ == "__main__":
-    IMPORT_TRAJ = None
+    IMPORT_TRAJ = '1589127818_3sec_20train_0test_3model_deterministicPolicy_particle_filter100_seed3'  # None  #
+    IMPORT_PSI = True
     t0 = time.time()
 
     # READING AND SAVING CONFIG
@@ -123,20 +126,22 @@ if __name__ == "__main__":
     with open(os.path.join(folder, 'config.yaml'), 'w') as f:
         yaml.dump(cfg, f)
 
-    n_samples = cfg[N_TRAIN] +  cfg[N_TEST]
+    n_samples = cfg[N_TRAIN] + cfg[N_TEST]
 
     # Generate (or read) dataset
-    df_all, pomdp_sim = generate_dataset(pomdp_sim, n_samples, path_to_save=folder, IMPORT_DATA=IMPORT_TRAJ,
-                                           tag='train')
+    df_all, pomdp_sim = generate_dataset(pomdp_sim, n_samples, path_to_save=folder, IMPORT_DATA=IMPORT_TRAJ)
     df_all.to_csv(os.path.join(folder, 'dataset.csv'))
 
-    # psi_subset = get_downsampled_obs_set(cfg[N_OBS_MODEL], pomdp_sim.Z)
-    psi_subset = np.load('../_data/inference_sampling/psi_set_3_2.npy')
+    if IMPORT_PSI:
+        psi_subset = np.load('../_data/inference_sampling/psi_set_3.npy')
+    else:
+        psi_subset = get_downsampled_obs_set(cfg[N_OBS_MODEL], pomdp_sim.Z)
     np.save(os.path.join(folder, 'psi_set.npy'), psi_subset)
 
     df_L = pd.DataFrame()
 
     for i, obs_model in enumerate(psi_subset):
+        np.random.seed(cfg[SEED])
         run_folder = folder + f'/inference/obs_model_{i}'
         os.makedirs(run_folder, exist_ok=True)
 

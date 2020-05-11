@@ -42,6 +42,9 @@ def generate_dataset(pomdp_, n_samples, path_to_save):
         pomdp_.df_Qz.to_csv(os.path.join(path_to_csv, f'Q_traj_{k}.csv'))
         visualize_pomdp_simulation(df_traj, pomdp_.df_b[pomdp_.S], pomdp_.df_Qz[['01', '10']],
                                    path_to_save=path_to_plot, tag=str(k))
+        print(llh_inhomogenous_mp(df_traj, pomdp_.df_Qz),
+              llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[0]], node=parent_list_[0]),
+              llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[1]], node=parent_list_[1]))
         return df_traj
 
     data_folder = path_to_save + f'/dataset'
@@ -132,7 +135,7 @@ def run(pomdp_, psi_set, run_folder, IMPORT_DATA=None):
         inference_folder = run_folder + f'/inference/obs_model_{i}'
         os.makedirs(inference_folder, exist_ok=True)
 
-        np.random.seed(i)
+        np.random.seed(cfg[SEED])
         pomdp_.reset()
         pomdp_.reset_obs_model(obs_model)
         L = inference_per_obs_model(pomdp_, obs_model, df_all, path_to_save=inference_folder)
@@ -154,6 +157,7 @@ def run(pomdp_, psi_set, run_folder, IMPORT_DATA=None):
 
 if __name__ == "__main__":
     IMPORT_DATA = None  # '1588966695_3sec_10train_4test_3model_deterministicPolicy_particle_filter300_seed0'  #
+    IMPORT_PSI = True
     t0 = time.time()
     config_file = '../configs/inference_mp.yaml'
     main_folder = '../_data/inference_mp/'
@@ -180,8 +184,10 @@ if __name__ == "__main__":
     with open(os.path.join(run_folder, 'config.yaml'), 'w') as f:
         yaml.dump(cfg, f)
 
-    # psi_subset = get_downsampled_obs_set(cfg[N_OBS_MODEL], pomdp_sim.Z)
-    psi_subset = np.load('../_data/inference_sampling/psi_set_3_2.npy')
+    if IMPORT_PSI:
+        psi_subset = np.load('../_data/inference_sampling/psi_set_3.npy')
+    else:
+        psi_subset = get_downsampled_obs_set(cfg[N_OBS_MODEL], pomdp_sim.Z)
     np.save(os.path.join(run_folder, 'psi_set.npy'), psi_subset)
 
     import_folder = main_folder + str(IMPORT_DATA) if IMPORT_DATA else None

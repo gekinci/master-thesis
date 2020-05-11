@@ -68,7 +68,8 @@ class ParticleFilter:
             p = p.iloc[:-1]
             return p
 
-        self.particles = [prop_p(p, t) for p in self.particles]
+        new_p = [prop_p(p, t) for p in self.particles]
+        return new_p
 
     def update_weights(self, obs):
         obs_ind = self.O.index(obs)
@@ -81,7 +82,7 @@ class ParticleFilter:
         self.particles = [self.particles[i] for i in resampled_ind]
 
     def update(self, obs, t):
-        self.propagate_particles(t)
+        self.particles = self.propagate_particles(t)
         self.update_weights(obs)
         if np.isnan(np.sum(self.weights)):
             print('All rejected! Nothing left :(')
