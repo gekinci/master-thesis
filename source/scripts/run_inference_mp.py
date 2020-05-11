@@ -12,7 +12,9 @@ from joblib import Parallel, delayed
 import matplotlib.pyplot as plt
 import logging
 import yaml
-import os
+import os, sys
+
+sys.path.append('/home/gizem/master_thesis/source/')
 
 
 def create_folder_tag(conf):
