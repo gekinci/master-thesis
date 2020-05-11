@@ -1,3 +1,6 @@
+import os, sys, getpass
+sys.path.append(f'/home/{getpass.getuser()}/master_thesis/source/')
+
 from simulations.pomdp import POMDPSimulation
 from ctbn.parameter_learning import *
 from utils.visualization import *
@@ -5,16 +8,12 @@ from utils.constants import *
 from utils.helpers import *
 from inference.sampling import *
 
-import seaborn as sns;
-
+import seaborn as sns
 sns.set()
 from joblib import Parallel, delayed
 import matplotlib.pyplot as plt
 import logging
 import yaml
-import os, sys
-
-sys.path.append('/home/gizem/master_thesis/source/')
 
 
 def create_folder_tag(conf):
