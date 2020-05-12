@@ -42,11 +42,11 @@ marginalize: True
 
 time_grain: 0.01
 t_max: 3 # default  20
-n_train: 10
-n_test: 4
+n_train: 2
+n_test: 1
 
-n_obs_model: 81
+n_obs_model: 2
 
 seed: 3
-import_data: False
+import_data: 1589321877_3sec_2train_1test_2model_deterministicPolicy_particle_filter200_seed3
 import_psi: False

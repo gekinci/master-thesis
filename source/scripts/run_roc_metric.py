@@ -19,15 +19,16 @@ def divisors(n):
 
 if __name__ == "__main__":
     main_folder = '../_data/roc_analysis'
-    config_file = '../configs/inference_mp.yaml'
+    config_file = '../configs/roc_analysis.yaml'
 
-    psi_set = np.load(os.path.join(main_folder, 'psi_set_3_2.npy'))
+    psi_set = np.load('../configs/psi_set_3.npy')
     n_classes = len(psi_set)
 
     with open(config_file, 'r') as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
 
-    n_samples = 200
+    n_samples = cfg[N_TRAIN]
+    IMPORT_DATA = cfg['import_data']
     run_folder = create_folder_for_experiment(folder_name=main_folder)
 
     np.random.seed(cfg[SEED])
@@ -37,6 +38,7 @@ if __name__ == "__main__":
         model_folder = run_folder + f'/psi_{i}'
         os.makedirs(model_folder, exist_ok=True)
 
+        np.random.seed(cfg[SEED])
         pomdp_sim.reset()
         pomdp_sim.reset_obs_model(obs_model)
 

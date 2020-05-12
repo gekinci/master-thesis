@@ -1,4 +1,5 @@
 import os, sys, getpass
+
 sys.path.append(f'/home/{getpass.getuser()}/master_thesis/source/')
 
 from simulations.pomdp import POMDPSimulation
@@ -9,6 +10,7 @@ from utils.helpers import *
 from inference.sampling import *
 
 import seaborn as sns
+
 sns.set()
 from joblib import Parallel, delayed
 import matplotlib.pyplot as plt
@@ -49,7 +51,7 @@ def generate_dataset(pomdp_, n_samples, path_to_save):
     csv_folder = data_folder + '/csv'
     os.makedirs(csv_folder, exist_ok=True)
 
-    traj_list = Parallel(n_jobs=20)(
+    traj_list = Parallel(n_jobs=25)(
         delayed(generate_trajectory)(pomdp_, traj_id, csv_folder, data_folder) for traj_id in range(1, n_samples + 1))
     df_all = pd.concat(traj_list)
     return df_all
