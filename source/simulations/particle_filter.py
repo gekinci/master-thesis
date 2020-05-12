@@ -71,21 +71,30 @@ class ParticleFilter:
         new_p = [prop_p(p, t) for p in self.particles]
         return new_p
 
-    def update_weights(self, obs):
+    def update_weights(self, obs, new_p):
         obs_ind = self.O.index(obs)
-        state_ind = [self.S.index(p.iloc[-1]['state']) for p in self.particles]
-        self.weights = np.array([self.obs_llh[ind][obs_ind] for ind in state_ind])
-        self.weights /= self.weights.sum()
+        state_ind = [self.S.index(p.iloc[-1]['state']) for p in new_p]
+        new_w = np.array([self.obs_llh[ind][obs_ind] for ind in state_ind])
+        new_w /= new_w.sum()
+        return new_w
 
     def resample_particles(self):
         resampled_ind = np.random.choice(self.n_particle, size=self.n_particle, p=self.weights)
         self.particles = [self.particles[i] for i in resampled_ind]
 
     def update(self, obs, t):
-        self.particles = self.propagate_particles(t)
-        self.update_weights(obs)
-        if np.isnan(np.sum(self.weights)):
-            print('All rejected! Nothing left :(')
+        UPDATE = True
+        while UPDATE:
+            new_particles = self.propagate_particles(t)
+            new_weights = self.update_weights(obs, new_particles)
+            if np.isnan(np.sum(new_weights)):
+                print('ALL REJECTED!! NO PARTICLE LEFT!!')
+                UPDATE = True
+            else:
+                UPDATE = False
+
+        self.particles = new_particles
+        self.weights = new_weights
         self.resample_particles()
 
         tmp = [p.iloc[-1]['state'] for p in self.particles]
@@ -94,5 +103,5 @@ class ParticleFilter:
 
         Q_new = self.reestimate_Q()
         self.sampling_ctbn.Q = Q_new
-        # print(Q_new)
+        print(Q_new)
         return belief, Q_new

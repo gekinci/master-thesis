@@ -11,11 +11,11 @@ Q_dict:  # default gamma-distributed
 
 Q_gamma_params: # default alpha:2, beta:2
   $X_{1}$:
-    alpha: [2,2]
-    beta: [.5,.5]
+    alpha: [5,2]
+    beta: [2,1]
   $X_{2}$:
-    alpha: [2,2]
-    beta: [.5,.5]
+    alpha: [1,4]
+    beta: [2,0.5]
 
 parent_list:  # default  ['X1', 'X2']
 states: [0, 1]  # default [0, 1]
@@ -34,16 +34,16 @@ obs_model: [[1., 0., 0.],
             [0., 0., 1.]]
 
 belief_update: particle_filter  # particle_filter or exact
-n_particle: 700
+n_particle: 200
 
 policy: deterministic  # deterministic, stochastic or function
 
-marginalize: False
+marginalize: True
 
 time_grain: 0.01
 t_max: 3 # default  20
-n_train: 6
-n_test: 2
+n_train: 10
+n_test: 4
 
 n_obs_model: 3
 

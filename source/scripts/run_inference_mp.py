@@ -25,10 +25,7 @@ def create_folder_tag(conf):
     b_type = conf[B_UPDATE]
     n_par = conf[N_PARTICLE] if b_type == 'particle_filter' else ''
     seed = conf[SEED]
-    if conf[MARGINALIZE]:
-        tag = f'_{t_max}sec_{n_train}train_{n_test}test_{n_obs_model}model_{policy_type}Policy_{b_type}{n_par}_marginalized_seed{seed}'
-    else:
-        tag = f'_{t_max}sec_{n_train}train_{n_test}test_{n_obs_model}model_{policy_type}Policy_{b_type}{n_par}_seed{seed}'
+    tag = f'_{t_max}sec_{n_train}train_{n_test}test_{n_obs_model}model_{policy_type}Policy_{b_type}{n_par}_seed{seed}'
     return tag
 
 
@@ -59,18 +56,19 @@ def generate_dataset(pomdp_, n_samples, path_to_save):
 
 
 def inference_per_obs_model(pomdp_, psi, df_all_, path_to_save):
-    def infer_trajectory(pomdp_, df_traj, path_to_save, MARGINALIZE=False):
+    def infer_trajectory(pomdp_, df_traj, path_to_save):
         traj_id = df_traj.loc[0, TRAJ_ID]
 
         df_Q = get_complete_df_Q(pomdp_, df_traj, traj_id, path_to_save=path_to_save)
+
         llh_X3 = llh_inhomogenous_mp(df_traj, df_Q)
-        llh_X1 = llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[0]], node=parent_list_[0])
-        llh_X2 = llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[1]], node=parent_list_[1])
-        if MARGINALIZE:
-            marg_llh_X1 = marginalized_llh_homogenous_mp(df_traj, params=cfg[GAMMA_PARAMS], node='X1')
-            marg_llh_X2 = marginalized_llh_homogenous_mp(df_traj, params=cfg[GAMMA_PARAMS], node='X2')
+        if pomdp_.cfg[B_UPDATE] == "particle_filter":
+            marg_llh_X1 = marginalized_llh_homogenous_mp(df_traj, params=cfg[GAMMA_PARAMS], node=parent_list_[0])
+            marg_llh_X2 = marginalized_llh_homogenous_mp(df_traj, params=cfg[GAMMA_PARAMS], node=parent_list_[1])
             llh_data = llh_X3 + marg_llh_X1 + marg_llh_X2
         else:
+            llh_X1 = llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[0]], node=parent_list_[0])
+            llh_X2 = llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[1]], node=parent_list_[1])
             llh_data = llh_X3 + llh_X1 + llh_X2
         return llh_data
 
@@ -172,6 +170,7 @@ if __name__ == "__main__":
 
     np.random.seed(cfg[SEED])
     pomdp_sim = POMDPSimulation(cfg, save_folder=run_folder)
+    print(pomdp_sim.parent_ctbn.Q)
 
     if pomdp_sim.policy_type == 'function':
         np.save(os.path.join(run_folder, 'policy.npy'), pomdp_sim.policy)

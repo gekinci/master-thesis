@@ -13,8 +13,6 @@ ACT_SPACE = 'action_space'
 OBS_MODEL = 'obs_model'
 POLICY = 'policy'
 
-MARGINALIZE = 'marginalize'
-
 TIME_GRAIN = 'time_grain'
 SEED = 'seed'
 N_TRAJ = 'n_traj'
