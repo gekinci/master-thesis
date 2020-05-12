@@ -48,3 +48,5 @@ n_test: 0
 n_obs_model: 81
 
 seed: 3
+import_data: False
+import_psi: False

@@ -41,8 +41,8 @@ def generate_dataset(pomdp_, n_samples, path_to_save):
         visualize_pomdp_simulation(df_traj, pomdp_.df_b[pomdp_.S], pomdp_.df_Qz[['01', '10']],
                                    path_to_save=path_to_plot, tag=str(k))
         print(llh_inhomogenous_mp(df_traj, pomdp_.df_Qz),
-              llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[0]], node=parent_list_[0]),
-              llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[1]], node=parent_list_[1]))
+              marginalized_llh_homogenous_mp(df_traj, params=cfg[GAMMA_PARAMS], node=parent_list_[0]),
+              marginalized_llh_homogenous_mp(df_traj, params=cfg[GAMMA_PARAMS], node=parent_list_[1]))
         return df_traj
 
     data_folder = path_to_save + f'/dataset'
@@ -55,7 +55,7 @@ def generate_dataset(pomdp_, n_samples, path_to_save):
     return df_all
 
 
-def inference_per_obs_model(pomdp_, psi, df_all_, path_to_save):
+def inference_per_obs_model(pomdp_, df_all_, path_to_save):
     def infer_trajectory(pomdp_, df_traj, path_to_save):
         traj_id = df_traj.loc[0, TRAJ_ID]
 
@@ -137,7 +137,7 @@ def run(pomdp_, psi_set, run_folder, IMPORT_DATA=None):
         np.random.seed(cfg[SEED])
         pomdp_.reset()
         pomdp_.reset_obs_model(obs_model)
-        L = inference_per_obs_model(pomdp_, obs_model, df_all, path_to_save=inference_folder)
+        L = inference_per_obs_model(pomdp_, df_all, path_to_save=inference_folder)
 
         df_L[r'$\psi_{}$'.format(i)] = L
         df_L_norm = df_L.cumsum().div((df_L.index + 1), axis=0)
@@ -155,8 +155,6 @@ def run(pomdp_, psi_set, run_folder, IMPORT_DATA=None):
 
 
 if __name__ == "__main__":
-    IMPORT_DATA = None  # '1588966695_3sec_10train_4test_3model_deterministicPolicy_particle_filter300_seed0'  #
-    IMPORT_PSI = False
     t0 = time.time()
     config_file = '../configs/inference_mp.yaml'
     main_folder = '../_data/inference_mp/'
@@ -164,6 +162,9 @@ if __name__ == "__main__":
     # READING AND SAVING CONFIG
     with open(config_file, 'r') as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
+
+    IMPORT_DATA = cfg['import_data']
+    IMPORT_PSI = cfg['import_psi']
 
     n_samples = cfg[N_TRAIN] + cfg[N_TEST]
     run_folder = create_folder_for_experiment(folder_name=main_folder, tag=create_folder_tag(cfg))

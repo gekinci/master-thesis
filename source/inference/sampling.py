@@ -54,12 +54,12 @@ def llh_homogenous_mp(df_traj, Q, node):
         qx = abs(Q[x][x])
         qxx = Q[x][int(1-x)]
         Mxx = M[x]
-        L += -qx*Tx + Mxx*np.log(qxx)
+        L += (-qx*Tx + Mxx*np.log(qxx))
     return L
 
 
 def marginalized_llh_homogenous_mp(df_traj, params, node):
-    n_states = df_traj[node].nunique()[0]
+    n_states = df_traj[node].nunique()
     marg_llh = 0
 
     alpha_list = params[node]['alpha']
