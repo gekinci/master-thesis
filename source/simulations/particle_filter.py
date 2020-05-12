@@ -84,11 +84,13 @@ class ParticleFilter:
 
     def update(self, obs, t):
         UPDATE = True
+        counter = 0
         while UPDATE:
             new_particles = self.propagate_particles(t)
             new_weights = self.update_weights(obs, new_particles)
             if np.isnan(np.sum(new_weights)):
-                print('ALL REJECTED!! NO PARTICLE LEFT!!')
+                counter += 1
+                print('ALL REJECTED!! NO PARTICLE LEFT!! ', counter)
                 UPDATE = True
             else:
                 UPDATE = False
@@ -103,5 +105,5 @@ class ParticleFilter:
 
         Q_new = self.reestimate_Q()
         self.sampling_ctbn.Q = Q_new
-        print(Q_new)
+        # print(Q_new)
         return belief, Q_new

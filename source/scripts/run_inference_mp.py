@@ -156,7 +156,7 @@ def run(pomdp_, psi_set, run_folder, IMPORT_DATA=None):
 
 if __name__ == "__main__":
     IMPORT_DATA = None  # '1588966695_3sec_10train_4test_3model_deterministicPolicy_particle_filter300_seed0'  #
-    IMPORT_PSI = True
+    IMPORT_PSI = False
     t0 = time.time()
     config_file = '../configs/inference_mp.yaml'
     main_folder = '../_data/inference_mp/'
