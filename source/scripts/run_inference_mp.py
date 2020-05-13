@@ -121,13 +121,13 @@ def run_test(df_llh, phi_set, n_train, n_test, path_to_save):
     plt.savefig(os.path.join(path_to_save + '/test_likelihood.png'))
 
 
-def run(pomdp_, psi_set, run_folder, IMPORT_DATA=None):
+def run(pomdp_, psi_set, n_samp, run_folder, IMPORT_DATA=None):
     # Generate (or read) dataset
     if IMPORT_DATA:
         df_all = pd.read_csv(f'{IMPORT_DATA}/dataset.csv', index_col=0)
-        df_all = df_all[df_all[TRAJ_ID] <= n_samples]
+        df_all = df_all[df_all[TRAJ_ID] <= n_samp]
     else:
-        df_all = generate_dataset(pomdp_, n_samples, path_to_save=run_folder)
+        df_all = generate_dataset(pomdp_, n_samp, path_to_save=run_folder)
     df_all.to_csv(os.path.join(run_folder, 'dataset.csv'))
 
     df_L = pd.DataFrame()
@@ -194,7 +194,7 @@ if __name__ == "__main__":
     np.save(os.path.join(run_folder, 'psi_set.npy'), psi_subset)
 
     import_folder = main_folder + str(IMPORT_DATA) if IMPORT_DATA else None
-    df_L = run(pomdp_sim, psi_subset, run_folder, IMPORT_DATA=import_folder)
+    df_L = run(pomdp_sim, psi_subset, n_samples, run_folder, IMPORT_DATA=import_folder)
 
     run_test(df_L, psi_subset, cfg[N_TRAIN], cfg[N_TEST], run_folder)
 
