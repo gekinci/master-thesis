@@ -1,4 +1,7 @@
-import os
+import os, sys, getpass
+
+sys.path.append(f'/home/{getpass.getuser()}/master_thesis/source/')
+
 import glob
 import yaml
 import pandas as pd
