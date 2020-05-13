@@ -22,8 +22,8 @@ states: [0, 1]  # default [0, 1]
 initial_prob:  # default equiprobable
 
 $Q_{3}$: {'0': [[-0.5, 0.5],
-                [25, -25]],
-          '1': [[-32, 32],
+                [2, -2]],
+          '1': [[-2.5, 2.5],
                 [0.02, -0.02]]}
 
 observation_space: [0, 1, 2]
@@ -45,8 +45,8 @@ t_max: 3 # default  20
 n_train: 10
 n_test: 4
 
-n_obs_model: 3
+n_obs_model: 81
 
 seed: 3
 import_data: False
-import_psi: True
+import_psi: False
