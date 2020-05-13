@@ -28,10 +28,7 @@ $Q_{3}$: {'0': [[-0.5, 0.5],
 
 observation_space: [0, 1, 2]
 action_space: [0, 1]
-obs_model: [[1., 0., 0.],
-            [0., 1., 0.],
-            [0., 1., 0.],
-            [0., 0., 1.]]
+obs_model:
 
 belief_update: particle_filter  # particle_filter or exact
 n_particle: 200

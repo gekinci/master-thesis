@@ -11,10 +11,10 @@ Q_dict:  # default gamma-distributed
 
 Q_gamma_params: # default alpha:2, beta:2
   $X_{1}$:
-    alpha: [4,1]
+    alpha: [1,2]
     beta: [0.5,2]
   $X_{2}$:
-    alpha: [5,2]
+    alpha: [2,2]
     beta: [2,1]
 
 parent_list:  # default  ['X1', 'X2']
@@ -45,8 +45,8 @@ t_max: 3 # default  20
 n_train: 10
 n_test: 4
 
-n_obs_model: 81
+n_obs_model: 3
 
 seed: 3
 import_data: False
-import_psi: False
+import_psi: True
