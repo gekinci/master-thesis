@@ -43,8 +43,8 @@ def generate_dataset(pomdp_, n_samples, path_to_save):
         visualize_pomdp_simulation(df_traj, pomdp_.df_b[pomdp_.S], pomdp_.df_Qz[['01', '10']],
                                    path_to_save=path_to_plot, tag=str(k))
         print(llh_inhomogenous_mp(df_traj, pomdp_.df_Qz),
-              marginalized_llh_homogenous_mp(df_traj, params=cfg[GAMMA_PARAMS], node=parent_list_[0]),
-              marginalized_llh_homogenous_mp(df_traj, params=cfg[GAMMA_PARAMS], node=parent_list_[1]))
+              marginalized_llh_homogenous_mp(df_traj, params=pomdp_.cfg[GAMMA_PARAMS], node=parent_list_[0]),
+              marginalized_llh_homogenous_mp(df_traj, params=pomdp_.cfg[GAMMA_PARAMS], node=parent_list_[1]))
         return df_traj
 
     data_folder = path_to_save + f'/dataset'
