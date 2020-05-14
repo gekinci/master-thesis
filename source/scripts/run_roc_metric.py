@@ -45,7 +45,7 @@ if __name__ == "__main__":
         psi_folder = run_folder + f'/psi_{i}'
         os.makedirs(psi_folder, exist_ok=True)
 
-        L_list += [run(pomdp_psi, psi_set, psi_folder, IMPORT_DATA=IMPORT_DATA)]
+        L_list += [run(pomdp_psi, psi_set, n_samples, psi_folder, IMPORT_DATA=IMPORT_DATA)]
 
     for n in divisors(n_samples):
         df_scores = pd.DataFrame()
