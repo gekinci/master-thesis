@@ -37,6 +37,7 @@ if __name__ == "__main__":
 
     # Generating all the data
     for i, obs_model in enumerate(psi_set):
+        print('psi_', i)
         cfg[OBS_MODEL] = obs_model
 
         np.random.seed(cfg[SEED])
