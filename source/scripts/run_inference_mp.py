@@ -65,8 +65,8 @@ def inference_per_obs_model(pomdp_, df_all_, path_to_save):
 
         llh_X3 = llh_inhomogenous_mp(df_traj, df_Q)
         if pomdp_.cfg[B_UPDATE] == "particle_filter":
-            marg_llh_X1 = marginalized_llh_homogenous_mp(df_traj, params=cfg[GAMMA_PARAMS], node=parent_list_[0])
-            marg_llh_X2 = marginalized_llh_homogenous_mp(df_traj, params=cfg[GAMMA_PARAMS], node=parent_list_[1])
+            marg_llh_X1 = marginalized_llh_homogenous_mp(df_traj, params=pomdp_.cfg[GAMMA_PARAMS], node=parent_list_[0])
+            marg_llh_X2 = marginalized_llh_homogenous_mp(df_traj, params=pomdp_.cfg[GAMMA_PARAMS], node=parent_list_[1])
             llh_data = llh_X3 + marg_llh_X1 + marg_llh_X2
         else:
             llh_X1 = llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[0]], node=parent_list_[0])
@@ -122,6 +122,7 @@ def run_test(df_llh, phi_set, n_train, n_test, path_to_save):
 
 
 def run(pomdp_, psi_set, n_samp, run_folder, IMPORT_DATA=None):
+    conf = pomdp_.cfg
     # Generate (or read) dataset
     if IMPORT_DATA:
         df_all = pd.read_csv(f'{IMPORT_DATA}/dataset.csv', index_col=0)
@@ -136,7 +137,7 @@ def run(pomdp_, psi_set, n_samp, run_folder, IMPORT_DATA=None):
         inference_folder = run_folder + f'/inference/obs_model_{i}'
         os.makedirs(inference_folder, exist_ok=True)
 
-        np.random.seed(cfg[SEED])
+        np.random.seed(conf[SEED])
         pomdp_.reset()
         pomdp_.reset_obs_model(obs_model)
         L = inference_per_obs_model(pomdp_, df_all, path_to_save=inference_folder)
@@ -145,7 +146,7 @@ def run(pomdp_, psi_set, n_samp, run_folder, IMPORT_DATA=None):
         df_L_norm = df_L.cumsum().div((df_L.index + 1), axis=0)
 
         plt.figure()
-        df_L_norm.head(cfg[N_TRAIN]).plot()
+        df_L_norm.head(conf[N_TRAIN]).plot()
         plt.xlabel('Number of trajectories')
         plt.ylabel('Average log-likelihood')
         plt.savefig(os.path.join(run_folder, 'llh.png'))
@@ -163,16 +164,16 @@ if __name__ == "__main__":
 
     # READING AND SAVING CONFIG
     with open(config_file, 'r') as f:
-        cfg = yaml.load(f, Loader=yaml.FullLoader)
+        config = yaml.load(f, Loader=yaml.FullLoader)
 
-    IMPORT_DATA = cfg['import_data']
-    IMPORT_PSI = cfg['import_psi']
+    IMPORT_DATA = config['import_data']
+    IMPORT_PSI = config['import_psi']
 
-    n_samples = cfg[N_TRAIN] + cfg[N_TEST]
+    n_samples = config[N_TRAIN] + config[N_TEST]
     run_folder = create_folder_for_experiment(folder_name=main_folder, tag=create_folder_tag(cfg))
 
-    np.random.seed(cfg[SEED])
-    pomdp_sim = POMDPSimulation(cfg, save_folder=run_folder)
+    np.random.seed(config[SEED])
+    pomdp_sim = POMDPSimulation(config, save_folder=run_folder)
     print(pomdp_sim.parent_ctbn.Q)
 
     if pomdp_sim.policy_type == 'function':
@@ -180,23 +181,23 @@ if __name__ == "__main__":
     else:
         pomdp_sim.policy.to_csv(os.path.join(run_folder, 'policy.csv'))
 
-    cfg['T'] = pomdp_sim.T.tolist()
-    cfg['Q3'] = pomdp_sim.Qz
-    cfg['parent_Q'] = pomdp_sim.parent_ctbn.Q
+    config['T'] = pomdp_sim.T.tolist()
+    config['Q3'] = pomdp_sim.Qz
+    config['parent_Q'] = pomdp_sim.parent_ctbn.Q
 
     with open(os.path.join(run_folder, 'config.yaml'), 'w') as f:
-        yaml.dump(cfg, f)
+        yaml.dump(config, f)
 
     if IMPORT_PSI:
         psi_subset = np.load('../configs/psi_set_3.npy')
     else:
-        psi_subset = get_downsampled_obs_set(cfg[N_OBS_MODEL], pomdp_sim.Z)
+        psi_subset = get_downsampled_obs_set(config[N_OBS_MODEL], pomdp_sim.Z)
     np.save(os.path.join(run_folder, 'psi_set.npy'), psi_subset)
 
     import_folder = main_folder + str(IMPORT_DATA) if IMPORT_DATA else None
     df_L = run(pomdp_sim, psi_subset, n_samples, run_folder, IMPORT_DATA=import_folder)
 
-    run_test(df_L, psi_subset, cfg[N_TRAIN], cfg[N_TEST], run_folder)
+    run_test(df_L, psi_subset, config[N_TRAIN], config[N_TEST], run_folder)
 
     t1 = time.time()
     print(f'It has been {(t1 - t0) / 3600} hours...PHEW!')

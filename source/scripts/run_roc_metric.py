@@ -106,4 +106,4 @@ if __name__ == "__main__":
         plt.title(r'ROC curve $\psi_{0}$ vs. ' + f'all (n={n})')
         plt.legend(loc="lower right")
         plt.savefig(run_folder + f'/AUROC_300samples_class{c}_llh_n{n}.png')
-        plt.show()
+        # plt.show()
