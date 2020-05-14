@@ -57,6 +57,7 @@ class POMDPSimulation:
 
     def reset_obs_model(self, new):
         self.Z = new
+        self.belief_particle_filter.reset_obs_model(new)
 
     def set_Q_agent(self):
         Q_agent = self.cfg[Q3] if self.cfg[Q3] else {k: random_q_matrix(self.n_states) for k in self.A}

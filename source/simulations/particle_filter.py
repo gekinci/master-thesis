@@ -25,6 +25,9 @@ class ParticleFilter:
         self.particles = self.initialize_particles()
         self.weights = np.tile(1 / self.n_particle, self.n_particle)
 
+    def reset_obs_model(self, new_model):
+        self.obs_llh = new_model
+
     def reset(self):
         self.sampling_ctbn.Q = {node: (np.array([[-1, 1], [1, -1]]) * (
                 np.array(self.Q_gamma_params[node]['alpha']) / np.array(self.Q_gamma_params[node]['beta']))).T for
