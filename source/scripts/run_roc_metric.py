@@ -37,16 +37,16 @@ if __name__ == "__main__":
 
     np.random.seed(cfg[SEED])
     pomdp = POMDPSimulation(cfg, save_folder=run_folder)
-    print(pomdp_sim.parent_ctbn.Q)
+    print(pomdp.parent_ctbn.Q)
 
-    if pomdp_sim.policy_type == 'function':
-        np.save(os.path.join(run_folder, 'policy.npy'), pomdp_sim.policy)
+    if pomdp.policy_type == 'function':
+        np.save(os.path.join(run_folder, 'policy.npy'), pomdp.policy)
     else:
-        pomdp_sim.policy.to_csv(os.path.join(run_folder, 'policy.csv'))
+        pomdp.policy.to_csv(os.path.join(run_folder, 'policy.csv'))
 
-    cfg['T'] = pomdp_sim.T.tolist()
-    cfg['Q3'] = pomdp_sim.Qz
-    cfg['parent_Q'] = pomdp_sim.parent_ctbn.Q
+    cfg['T'] = pomdp.T.tolist()
+    cfg['Q3'] = pomdp.Qz
+    cfg['parent_Q'] = pomdp.parent_ctbn.Q
 
     with open(os.path.join(run_folder, 'config.yaml'), 'w') as f:
         yaml.dump(cfg, f)
