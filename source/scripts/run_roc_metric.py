@@ -35,18 +35,32 @@ if __name__ == "__main__":
     run_folder = create_folder_for_experiment(folder_name=main_folder, tag=create_folder_tag(cfg))
     L_list = []
 
+    np.random.seed(cfg[SEED])
+    pomdp = POMDPSimulation(cfg, save_folder=run_folder)
+    print(pomdp_sim.parent_ctbn.Q)
+
+    if pomdp_sim.policy_type == 'function':
+        np.save(os.path.join(run_folder, 'policy.npy'), pomdp_sim.policy)
+    else:
+        pomdp_sim.policy.to_csv(os.path.join(run_folder, 'policy.csv'))
+
+    cfg['T'] = pomdp_sim.T.tolist()
+    cfg['Q3'] = pomdp_sim.Qz
+    cfg['parent_Q'] = pomdp_sim.parent_ctbn.Q
+
+    with open(os.path.join(run_folder, 'config.yaml'), 'w') as f:
+        yaml.dump(cfg, f)
+
     # Generating all the data
     for i, obs_model in enumerate(psi_set):
         print('psi_', i)
-        cfg[OBS_MODEL] = obs_model
 
-        np.random.seed(cfg[SEED])
-        pomdp_psi = POMDPSimulation(cfg, save_folder=run_folder)
+        pomdp.reset_obs_model(obs_model)
 
         psi_folder = run_folder + f'/psi_{i}'
         os.makedirs(psi_folder, exist_ok=True)
 
-        L_list += [run(pomdp_psi, psi_set, n_samples, psi_folder, IMPORT_DATA=IMPORT_DATA)]
+        L_list += [run(pomdp, psi_set, n_samples, psi_folder, IMPORT_DATA=IMPORT_DATA)]
 
     for n in divisors(n_samples):
         df_scores = pd.DataFrame()
