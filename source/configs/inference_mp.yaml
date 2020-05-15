@@ -42,8 +42,8 @@ marginalize: True
 
 time_grain: 0.01
 t_max: 3 # default  20
-n_train: 20
-n_test: 8
+n_train: 10
+n_test: 4
 
 n_obs_model: 3
 
