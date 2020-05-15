@@ -170,7 +170,7 @@ if __name__ == "__main__":
     IMPORT_PSI = config['import_psi']
 
     n_samples = config[N_TRAIN] + config[N_TEST]
-    run_folder = create_folder_for_experiment(folder_name=main_folder, tag=create_folder_tag(cfg))
+    run_folder = create_folder_for_experiment(folder_name=main_folder, tag=create_folder_tag(config))
 
     np.random.seed(config[SEED])
     pomdp_sim = POMDPSimulation(config, save_folder=run_folder)
@@ -200,4 +200,4 @@ if __name__ == "__main__":
     run_test(df_L, psi_subset, config[N_TRAIN], config[N_TEST], run_folder)
 
     t1 = time.time()
-    print(f'It has been {(t1 - t0) / 3600} hours...PHEW!')
+    print(f'It has been {np.round((t1 - t0) / 3600, 3)} hours...PHEW!')

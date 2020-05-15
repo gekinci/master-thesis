@@ -21,6 +21,7 @@ def divisors(n):
 
 
 if __name__ == "__main__":
+    t0 = time.time()
     main_folder = '../_data/roc_analysis'
     config_file = '../configs/roc_analysis.yaml'
 
@@ -105,5 +106,8 @@ if __name__ == "__main__":
         plt.ylabel('True Positive Rate')
         plt.title(r'ROC curve $\psi_{0}$ vs. ' + f'all (n={n})')
         plt.legend(loc="lower right")
-        plt.savefig(run_folder + f'/AUROC_300samples_class{c}_llh_n{n}.png')
+        plt.savefig(run_folder + f'/AUROC_{n_samples*n_classes}samples_class{c}_llh_n{n}.png')
         # plt.show()
+
+    t0 = time.time()
+    print(f'It has been {np.round((t1 - t0) / 3600, 3)} hours...PHEW!')
