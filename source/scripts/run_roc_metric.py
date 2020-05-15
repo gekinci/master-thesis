@@ -109,5 +109,5 @@ if __name__ == "__main__":
         plt.savefig(run_folder + f'/AUROC_{n_samples*n_classes}samples_class{c}_llh_n{n}.png')
         # plt.show()
 
-    t0 = time.time()
+    t1 = time.time()
     print(f'It has been {np.round((t1 - t0) / 3600, 3)} hours...PHEW!')
