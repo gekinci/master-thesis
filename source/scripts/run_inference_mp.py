@@ -60,7 +60,7 @@ def generate_dataset(pomdp_, n_samples, path_to_save):
 def inference_per_obs_model(pomdp_, df_all_, path_to_save):
     def infer_trajectory(pomdp_, df_traj, path_to_save):
         traj_id = df_traj.loc[0, TRAJ_ID]
-
+        np.random.seed(traj_id)
         df_Q = get_complete_df_Q(pomdp_, df_traj, traj_id, path_to_save=path_to_save)
 
         llh_X3 = llh_inhomogenous_mp(df_traj, df_Q)
