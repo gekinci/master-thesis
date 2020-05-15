@@ -7,11 +7,13 @@ import pandas as pd
 
 
 def get_time_of_stay_in_state(df_traj, node, df_all=None):
+    states = [0, 1]
     df = df_traj.copy()
     df.loc[:, 'block'] = (df[node].shift(1) != df[node]).astype(int).cumsum()
-    tmp = df.reset_index().groupby([node, 'block'])['index'].apply(np.array)
-    T = np.zeros(2)
-    for val in [0, 1]:
+    last_block = df.block.max()
+    tmp = df[df.block<last_block].reset_index().groupby([node, 'block'])['index'].apply(np.array)
+    T = np.zeros(len(states))
+    for val in states:
         if val in tmp.index:
             for arr in tmp.loc[val].values:
                 start = arr[0]
