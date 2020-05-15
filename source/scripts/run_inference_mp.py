@@ -137,9 +137,9 @@ def run(pomdp_, psi_set, n_samp, run_folder, IMPORT_DATA=None):
         inference_folder = run_folder + f'/inference/obs_model_{i}'
         os.makedirs(inference_folder, exist_ok=True)
 
-        np.random.seed(conf[SEED])
         pomdp_.reset()
         pomdp_.reset_obs_model(obs_model)
+        np.random.seed(conf[SEED])
         L = inference_per_obs_model(pomdp_, df_all, path_to_save=inference_folder)
 
         df_L[r'$\psi_{}$'.format(i)] = L
