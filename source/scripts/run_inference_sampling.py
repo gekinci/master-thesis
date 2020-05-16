@@ -23,7 +23,7 @@ def create_folder_tag(conf):
     t_max = conf[T_MAX]
     policy_type = conf[POLICY]
     b_type = conf[B_UPDATE]
-    n_par = conf[N_PARTICLE] if b_type == 'particle_filter' else ''
+    n_par = conf[N_PARTICLE] if b_type == PART_FILT else ''
     seed = conf[SEED]
 
     if conf[MARGINALIZE]:

@@ -21,6 +21,7 @@ N_TEST = 'n_test'
 N_OBS_MODEL = 'n_obs_model'
 
 B_UPDATE = 'belief_update'
+PART_FILT = 'particleFilter'
 N_PARTICLE = 'n_particle'
 
 # Column names

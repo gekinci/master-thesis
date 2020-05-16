@@ -33,7 +33,7 @@ obs_model: [[1., 0., 0.],
             [0., 1., 0.],
             [0., 0., 1.]]
 
-belief_update: particle_filter  # particle_filter or exact
+belief_update: PART_FILT  # particleFilter or exact
 n_particle: 200
 
 policy: deterministic  # deterministic, stochastic or function
@@ -41,12 +41,14 @@ policy: deterministic  # deterministic, stochastic or function
 marginalize: True
 
 time_grain: 0.01
-t_max: 3 # default  20
-n_train: 10
+t_max: 5 # default  20
+n_train: 20
 n_test: 4
 
 n_obs_model: 3
 
-seed: 3
+seed: 0
 import_data: False
 import_psi: True
+
+misc_tag: ''

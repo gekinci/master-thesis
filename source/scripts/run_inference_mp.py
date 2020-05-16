@@ -25,9 +25,11 @@ def create_folder_tag(conf):
     t_max = conf[T_MAX]
     policy_type = conf[POLICY]
     b_type = conf[B_UPDATE]
-    n_par = conf[N_PARTICLE] if b_type == 'particle_filter' else ''
+    n_par = conf[N_PARTICLE] if b_type == PART_FILT else ''
     seed = conf[SEED]
-    tag = f'_{t_max}sec_{n_train}train_{n_test}test_{n_obs_model}model_{policy_type}Policy_{b_type}{n_par}_seed{seed}'
+    misc_tag = conf['misc_tag']
+    tag = f'_{t_max}sec_{n_train}train_{n_test}test_{n_obs_model}model_{policy_type}Policy_{b_type}{n_par}_' \
+          f'seed{seed}_{misc_tag}'
     return tag
 
 
@@ -61,12 +63,12 @@ def inference_per_obs_model(pomdp_, df_all_, obs_id, path_to_save):
     def infer_trajectory(pomdp_, df_traj, path_to_save):
         traj_id = df_traj.loc[0, TRAJ_ID]
         n_traj = pomdp_.cfg[N_TRAIN] + pomdp_.cfg[N_TEST]
-        np.random.seed(n_traj*obs_id + traj_id)
+        np.random.seed(n_traj * (obs_id + 1) + traj_id)
 
         df_Q = get_complete_df_Q(pomdp_, df_traj, traj_id, path_to_save=path_to_save)
 
         llh_X3 = llh_inhomogenous_mp(df_traj, df_Q)
-        if pomdp_.cfg[B_UPDATE] == "particle_filter":
+        if pomdp_.cfg[B_UPDATE] == PART_FILT:
             marg_llh_X1 = marginalized_llh_homogenous_mp(df_traj, params=pomdp_.cfg[GAMMA_PARAMS], node=parent_list_[0])
             marg_llh_X2 = marginalized_llh_homogenous_mp(df_traj, params=pomdp_.cfg[GAMMA_PARAMS], node=parent_list_[1])
             llh_data = llh_X3 + marg_llh_X1 + marg_llh_X2

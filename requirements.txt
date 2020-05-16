@@ -1,8 +1,9 @@
 numpy
 scipy
-numba
 matplotlib
 seaborn
 networkx
 sklearn
 pandas
+pyyaml
+joblib

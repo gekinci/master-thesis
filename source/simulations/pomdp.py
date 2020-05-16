@@ -140,7 +140,7 @@ class POMDPSimulation:
         prev = df_traj.iloc[0]
         for i, row in df_traj.iterrows():
             if row[TIME] == 0. or (row[OBS] != prev[OBS]):
-                if self.belief_update == 'particle_filter':
+                if self.belief_update == PART_FILT:
                     new_b, new_Q = self.belief_particle_filter.update(int(row[OBS]), row[TIME])
                     self.T = get_amalgamated_trans_matrix(new_Q[self.parent_list[0]], new_Q[self.parent_list[1]])
                 else:
@@ -206,7 +206,7 @@ class POMDPSimulation:
         t = prev_step[TIME].values[0]
 
         if NEW_OBS:
-            if self.belief_update == 'particle_filter':
+            if self.belief_update == PART_FILT:
                 new_b, new_Q = self.belief_particle_filter.update(prev_step[OBS].values[0], t)
                 self.T = get_amalgamated_trans_matrix(new_Q[self.parent_list[0]], new_Q[self.parent_list[1]])
             else:
