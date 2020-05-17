@@ -179,7 +179,7 @@ if __name__ == "__main__":
     pomdp_sim = POMDPSimulation(config, save_folder=run_folder)
     print(pomdp_sim.parent_ctbn.Q)
 
-    if pomdp_sim.policy_type == 'function':
+    if pomdp_sim.policy_type == 'detFunction':
         np.save(os.path.join(run_folder, 'policy.npy'), pomdp_sim.policy)
     else:
         pomdp_sim.policy.to_csv(os.path.join(run_folder, 'policy.csv'))

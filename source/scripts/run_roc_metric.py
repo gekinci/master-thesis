@@ -40,7 +40,7 @@ if __name__ == "__main__":
     pomdp = POMDPSimulation(cfg, save_folder=run_folder)
     print(pomdp.parent_ctbn.Q)
 
-    if pomdp.policy_type == 'function':
+    if pomdp.policy_type == 'detFunction':
         np.save(os.path.join(run_folder, 'policy.npy'), pomdp.policy)
     else:
         pomdp.policy.to_csv(os.path.join(run_folder, 'policy.csv'))
