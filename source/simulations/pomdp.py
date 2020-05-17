@@ -67,7 +67,7 @@ class POMDPSimulation:
         return {**self.parent_ctbn.initialize_nodes(), **{agent_: np.random.choice(self.states, p=self.initial_probs)}}
 
     def generate_policy(self):
-        if self.policy_type == 'function':
+        if self.policy_type == 'detFunction':
             return np.random.random(len(self.S))
         else:
             policy = generate_belief_grid(step=0.01, cols=self.S)
@@ -76,14 +76,6 @@ class POMDPSimulation:
             policy[self.A] = policy[self.A].div(policy[self.A].sum(axis=1), axis=0)
             if self.policy_type == 'deterministic':
                 policy[self.A] = policy[self.A].round()
-                policy.loc[policy['00'] >= 0.5, '0'] = 0
-                policy.loc[policy['00'] >= 0.5, '1'] = 1
-                policy.loc[policy['01'] >= 0.5, '0'] = 0
-                policy.loc[policy['01'] >= 0.5, '1'] = 1
-                policy.loc[policy['10'] >= 0.5, '0'] = 0
-                policy.loc[policy['10'] >= 0.5, '1'] = 1
-                policy.loc[policy['11'] >= 0.5, '1'] = 0
-                policy.loc[policy['11'] >= 0.5, '0'] = 1
                 return policy
             elif self.policy_type == 'stochastic':
                 return policy
@@ -123,7 +115,7 @@ class POMDPSimulation:
             pass
 
     def get_prob_action(self, belief=None):
-        if self.policy_type == 'function':
+        if self.policy_type == 'detFunction':
             p_0 = np.round(np.sum(belief * self.policy))
             return pd.Series([p_0, 1 - p_0], index=[self.A])
         else:
@@ -178,29 +170,21 @@ class POMDPSimulation:
         return df_par_traj
 
     def draw_time_contQ(self, state, t_start, t_end):
-        if state == 0:
-            col_transition = '01'
-        elif state == 1:
-            col_transition = '10'  # TODO hardcoded
-        else:
-            raise Exception(f'State of cell unknown: {state}')
-
-        df_Q_ = self.df_Qz.truncate(before=to_decimal(t_start), after=to_decimal(t_end))
-
-        F = 1 - np.exp(-(df_Q_[col_transition].multiply(df_Q_[T_DELTA], axis="index")).cumsum().astype(float))
-        rnd = np.random.uniform()
-
-        if len(F.index[F < rnd]):
-            ind = F.index[F < rnd][-1]
-            t_diff = np.log((1 - rnd) / (1 - F.loc[ind])) / -self.df_Qz.loc[:ind, col_transition].values[-1]
-            t_next = np.float(ind) + t_diff
-        else:
-            t_next = np.nan
-
-        if t_next <= t_start:
-            t_next = np.nan
-
-        return t_next
+        change_list = []
+        upper_bound = np.max([self.Qz[k][int(state)][int(1 - state)] for k in self.Qz.keys()])
+        T = t_start
+        while T < t_end:
+            u = np.random.uniform()
+            tao = -np.log(u) / upper_bound
+            T += tao
+            s = np.random.uniform()
+            T_belief = self.df_b.loc[self.df_b.index < T, self.S].iloc[-1].values
+            T_q = self.get_Qz(self.get_prob_action(belief=T_belief))[int(state)][int(1 - state)]
+            if s <= T_q / upper_bound:
+                change_list += [T]
+            else:
+                continue
+        return change_list
 
     def do_step(self, prev_step, NEW_OBS, t_last_agent_change):
         t = prev_step[TIME].values[0]
@@ -213,36 +197,28 @@ class POMDPSimulation:
                 new_b = self.get_belief_exact(int(prev_step[OBS].values[0]), t)
             self.update_belief_jump(new_b, t)
 
-        tmp = self.parent_ctbn.do_step(prev_step)
-        t_par_change = tmp[TIME].values[0]
+        parent_event = self.parent_ctbn.do_step(prev_step)
+        t_parent_event = parent_event[TIME].values[0]
+        self.append_event(t_parent_event)
+        self.update_belief_cont(t, t_parent_event)
+        self.update_cont_Q(t=t, t_next=t_parent_event)
 
-        self.append_event(t_par_change)
+        t_agent_change_list = self.draw_time_contQ(prev_step[agent_].values[-1], t, t_parent_event)
 
-        self.update_belief_cont(t, t_par_change)
-        self.update_cont_Q(t=t, t_next=t_par_change)
+        agent_events = pd.DataFrame()
+        if t_agent_change_list:
+            new = prev_step.copy()
+            for t_agent_change in t_agent_change_list:
+                new.loc[:, TIME] = t_agent_change
+                new.loc[:, agent_] = int(1 - new[agent_])
+                agent_events = pd.concat([agent_events, new])
 
-        t_agent_change = self.draw_time_contQ(prev_step.iloc[0][agent_], t, t_par_change)
-
-        if t_agent_change < t_par_change:
-            next_step = prev_step.copy()
-            next_step.loc[:, TIME] = t_agent_change
-            next_step.loc[:, agent_] = int(1 - next_step[agent_])  # TODO only for binary
-
-            self.append_event(t_agent_change, event_q=np.append(
-                self.df_Qz.loc[self.df_Qz.index < to_decimal(t_agent_change)][self.S].iloc[-1], 0))
-
-            self.df_b.loc[self.df_b.index > to_decimal(t)] = np.nan
-            self.df_Qz.loc[self.df_Qz.index > to_decimal(t)] = np.nan
-
-            self.update_belief_cont(t, t_agent_change)
-            self.update_cont_Q(t=t, t_next=t_agent_change)
-
-            NEW_OBS = False
-            t_last_agent_change = t_agent_change
-        else:
-            next_step = tmp.copy()
-            next_step.loc[:, OBS] = next_step.apply(self.get_observation, axis=1)
-            NEW_OBS = next_step.iloc[0][OBS] != prev_step.iloc[0][OBS]
+                self.append_event(t_agent_change, event_q=np.append(
+                    self.df_Qz.loc[self.df_Qz.index < to_decimal(t_agent_change)][self.S].iloc[-1], 0))
+            parent_event[agent_] = agent_events.iloc[-1][agent_]
+        next_step = pd.concat([agent_events, parent_event])
+        next_step.loc[:, OBS] = next_step.apply(self.get_observation, axis=1)
+        NEW_OBS = next_step.iloc[-1][OBS] != prev_step.iloc[0][OBS]
 
         return next_step, NEW_OBS, t_last_agent_change
 
@@ -254,19 +230,20 @@ class POMDPSimulation:
 
         df_traj = pd.DataFrame().append(initial_states, ignore_index=True)
         df_traj.loc[:, OBS] = df_traj.apply(self.get_observation, axis=1)
-        prev_step = pd.DataFrame(df_traj[-1:].values, columns=df_traj.columns)
+        prev_step = df_traj.copy()  # pd.DataFrame(df_traj[-1:].values, columns=df_traj.columns)
         NEW_OBS = True
         t_last_agent_change = 0
 
         while t < self.t_max:
             new_step, NEW_OBS, t_last_agent_change = self.do_step(prev_step, NEW_OBS, t_last_agent_change)
-            t = new_step[TIME].values[0]
-            if t > self.t_max:
-                prev_step.loc[:, TIME] = self.t_max
-                df_traj = df_traj.append(prev_step, ignore_index=True)
-                break
+            t = new_step[TIME].values[-1]
             df_traj = df_traj.append(new_step, ignore_index=True)
+            if t > self.t_max:
+                df_traj = df_traj[df_traj[TIME] < self.t_max]
+                df_traj = df_traj.append(df_traj.iloc[-1], ignore_index=True)
+                df_traj.loc[df_traj.index[-1], TIME] = self.t_max
+                break
 
-            prev_step = new_step.copy()
+            prev_step = pd.DataFrame(new_step[-1:].values, columns=new_step.columns)
 
         return df_traj
