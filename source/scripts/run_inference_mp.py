@@ -181,6 +181,11 @@ if __name__ == "__main__":
 
     if pomdp_sim.policy_type == 'detFunction':
         np.save(os.path.join(run_folder, 'policy.npy'), pomdp_sim.policy)
+        b_debug = generate_belief_grid(step=0.01, cols=['00', '01', '10', '11'])
+        plt.figure()
+        plt.plot((b_debug * pomdp_sim.policy).sum(axis=1).round())
+        plt.plot((b_debug*pomdp_sim.policy).sum(axis=1))
+        plt.savefig(run_folder+'/policy_debug.png')
     else:
         pomdp_sim.policy.to_csv(os.path.join(run_folder, 'policy.csv'))
 
