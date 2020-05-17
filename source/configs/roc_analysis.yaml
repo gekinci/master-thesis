@@ -30,7 +30,7 @@ observation_space: [0, 1, 2]
 action_space: [0, 1]
 obs_model:
 
-belief_update: particle_filter  # particle_filter or exact
+belief_update: particleFilter  # particleFilter or exact
 n_particle: 200
 
 policy: detFunction  # deterministic, stochastic or detFunction
