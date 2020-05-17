@@ -128,7 +128,8 @@ class POMDPSimulation:
 
     def get_belief_traj(self, df_traj):
         self.reset()
-        self.belief_particle_filter.reset()
+        if self.belief_update == PART_FILT:
+            self.belief_particle_filter.reset()
         prev = df_traj.iloc[0]
         for i, row in df_traj.iterrows():
             if row[TIME] == 0. or (row[OBS] != prev[OBS]):
@@ -171,9 +172,9 @@ class POMDPSimulation:
 
     def draw_time_contQ(self, state, t_start, t_end):
         change_list = []
-        upper_bound = np.max([self.Qz[k][int(state)][int(1 - state)] for k in self.Qz.keys()])
         T = t_start
         while T < t_end:
+            upper_bound = np.max([self.Qz[k][int(state)][int(1 - state)] for k in self.Qz.keys()])
             u = np.random.uniform()
             tao = -np.log(u) / upper_bound
             T += tao
@@ -182,9 +183,10 @@ class POMDPSimulation:
             T_q = self.get_Qz(self.get_prob_action(belief=T_belief))[int(state)][int(1 - state)]
             if s <= T_q / upper_bound:
                 change_list += [T]
+                state = 1-state
             else:
                 continue
-        return change_list
+        return [x for x in change_list if x<t_end]
 
     def do_step(self, prev_step, NEW_OBS, t_last_agent_change):
         t = prev_step[TIME].values[0]

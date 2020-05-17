@@ -17,6 +17,8 @@ import matplotlib.pyplot as plt
 import logging
 import yaml
 
+N_TREADS = 1
+
 
 def create_folder_tag(conf):
     n_train = conf[N_TRAIN]
@@ -53,7 +55,7 @@ def generate_dataset(pomdp_, n_samples, path_to_save):
     csv_folder = data_folder + '/csv'
     os.makedirs(csv_folder, exist_ok=True)
 
-    traj_list = Parallel(n_jobs=25)(
+    traj_list = Parallel(n_jobs=N_TREADS)(
         delayed(generate_trajectory)(pomdp_, traj_id, csv_folder, data_folder) for traj_id in range(1, n_samples + 1))
     df_all = pd.concat(traj_list)
     return df_all
@@ -78,7 +80,7 @@ def inference_per_obs_model(pomdp_, df_all_, obs_id, path_to_save):
             llh_data = llh_X3 + llh_X1 + llh_X2
         return llh_data
 
-    llh_list = Parallel(n_jobs=20)(
+    llh_list = Parallel(n_jobs=N_TREADS)(
         delayed(infer_trajectory)(pomdp_, df_traj, path_to_save) for _, df_traj in list(df_all_.groupby(by=TRAJ_ID)))
     return llh_list
 
