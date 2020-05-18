@@ -11,18 +11,25 @@ Q3 = r'$Q_{3}$'
 OBS_SPACE = 'observation_space'
 ACT_SPACE = 'action_space'
 OBS_MODEL = 'obs_model'
-POLICY = 'policy'
 
-TIME_GRAIN = 'time_grain'
+TIME_INCREMENT = 'time_increment'
 SEED = 'seed'
 N_TRAJ = 'n_traj'
 N_TRAIN = 'n_train'
 N_TEST = 'n_test'
 N_OBS_MODEL = 'n_obs_model'
 
-B_UPDATE = 'belief_update'
+# policy
+POLICY_TYPE = 'policy_type'
+DET_FUNC = 'detFunction'
+DET_DF = 'deterministic_df'
+STOC_DF = 'stochastic_df'
+
+# belief update
+B_UPDATE_METHOD = 'belief_update_method'
 PART_FILT = 'particleFilter'
 N_PARTICLE = 'n_particle'
+EXACT = 'exact'
 
 # Column names
 TRAJ_ID = 'traj_id'

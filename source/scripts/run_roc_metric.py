@@ -31,22 +31,22 @@ if __name__ == "__main__":
     with open(config_file, 'r') as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
 
-    n_samples = cfg[N_TRAIN]
+    n_sample_per_class = cfg[N_TRAIN]
     IMPORT_DATA = cfg['import_data']
     run_folder = create_folder_for_experiment(folder_name=main_folder, tag=create_folder_tag(cfg))
     L_list = []
 
     np.random.seed(cfg[SEED])
-    pomdp = POMDPSimulation(cfg, save_folder=run_folder)
+    pomdp = POMDPSimulation(cfg)
     print(pomdp.parent_ctbn.Q)
 
-    if pomdp.policy_type == 'detFunction':
+    if pomdp.POLICY_TYPE == DET_FUNC:
         np.save(os.path.join(run_folder, 'policy.npy'), pomdp.policy)
     else:
         pomdp.policy.to_csv(os.path.join(run_folder, 'policy.csv'))
 
     cfg['T'] = pomdp.T.tolist()
-    cfg['Q3'] = pomdp.Qz
+    cfg['Q3'] = pomdp.Qset
     cfg['parent_Q'] = pomdp.parent_ctbn.Q
 
     with open(os.path.join(run_folder, 'config.yaml'), 'w') as f:
@@ -61,9 +61,9 @@ if __name__ == "__main__":
         psi_folder = run_folder + f'/psi_{i}'
         os.makedirs(psi_folder, exist_ok=True)
 
-        L_list += [run(pomdp, psi_set, n_samples, psi_folder, IMPORT_DATA=IMPORT_DATA)]
+        L_list += [run(pomdp, psi_set, n_sample_per_class, psi_folder, IMPORT_DATA=IMPORT_DATA)]
 
-    for n in divisors(n_samples):
+    for n in divisors(n_sample_per_class):
         df_scores = pd.DataFrame()
         y_labels = None
 
@@ -85,7 +85,7 @@ if __name__ == "__main__":
 
         df_scores.reset_index(drop=True, inplace=True)
 
-        n_samples = len(df_scores)
+        n_all_samples = len(df_scores)
         y_scores = df_scores.divide(df_scores.values.sum(axis=1), axis=0).values # Normalizing likelihoods
 
         fpr = dict()
@@ -106,7 +106,7 @@ if __name__ == "__main__":
         plt.ylabel('True Positive Rate')
         plt.title(r'ROC curve $\psi_{0}$ vs. ' + f'all (n={n})')
         plt.legend(loc="lower right")
-        plt.savefig(run_folder + f'/AUROC_{n_samples*n_classes}samples_class{c}_llh_n{n}.png')
+        plt.savefig(run_folder + f'/AUROC_{n_sample_per_class*n_classes}samples_class{c}_llh_n{n}.png')
         # plt.show()
 
     t1 = time.time()

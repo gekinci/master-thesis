@@ -24,6 +24,8 @@ class ParticleFilter:
                                 node in self.sampling_ctbn.node_list}
         self.particles = self.initialize_particles()
         self.weights = np.tile(1 / self.n_particle, self.n_particle)
+        # self.estimated_parent_Q = [[self.sampling_ctbn.Q[parent_list_[0]].flatten()],
+        #                            [self.sampling_ctbn.Q[parent_list_[1]].flatten()]]
 
     def reset_obs_model(self, new_model):
         self.obs_llh = new_model
@@ -108,5 +110,6 @@ class ParticleFilter:
 
         Q_new = self.reestimate_Q()
         self.sampling_ctbn.Q = Q_new
-        # print(Q_new)
+        # self.estimated_parent_Q[0] += [Q_new[parent_list_[0]].flatten()]
+        # self.estimated_parent_Q[1] += [Q_new[parent_list_[1]].flatten()]
         return belief, Q_new

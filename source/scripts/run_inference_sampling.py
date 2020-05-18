@@ -67,7 +67,7 @@ def get_complete_df_Q(pomdp_, df_orig, traj_id, path_to_save=None):
     pomdp_.get_belief_traj(df_orig)
     pomdp_.update_cont_Q()
 
-    pomdp_.df_Qz[T_DELTA] = np.append(to_decimal(pomdp_.time_grain),
+    pomdp_.df_Qz[T_DELTA] = np.append(to_decimal(pomdp_.time_increment),
                                       np.diff(pomdp_.df_Qz.index)).astype(float)
     pomdp_.df_Qz.fillna(method='ffill', inplace=True)
 
@@ -115,15 +115,15 @@ if __name__ == "__main__":
     folder = create_folder_for_experiment(folder_name='../_data/inference_sampling/', tag=create_folder_tag(cfg))
 
     np.random.seed(cfg[SEED])
-    pomdp_sim = POMDPSimulation(cfg, save_folder=folder)
+    pomdp_sim = POMDPSimulation(cfg)
 
-    if pomdp_sim.policy_type == 'function':
+    if pomdp_sim.POLICY_TYPE == DET_FUNC:
         np.save(os.path.join(folder, 'policy.npy'), pomdp_sim.policy)
     else:
         pomdp_sim.policy.to_csv(os.path.join(folder, 'policy.csv'))
 
     cfg['T'] = pomdp_sim.T.tolist()
-    cfg['Q3'] = pomdp_sim.Qz
+    cfg['Q3'] = pomdp_sim.Qset
     cfg['parent_Q'] = pomdp_sim.parent_ctbn.Q
 
     with open(os.path.join(folder, 'config.yaml'), 'w') as f:
@@ -138,7 +138,7 @@ if __name__ == "__main__":
     if IMPORT_PSI:
         psi_subset = np.load('../_data/inference_sampling/psi_set_3.npy')
     else:
-        psi_subset = get_downsampled_obs_set(cfg[N_OBS_MODEL], pomdp_sim.Z)
+        psi_subset = get_downsampled_obs_set(cfg[N_OBS_MODEL], pomdp_sim.PSI)
     np.save(os.path.join(folder, 'psi_set.npy'), psi_subset)
 
     df_L = pd.DataFrame()

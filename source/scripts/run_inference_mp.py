@@ -25,8 +25,8 @@ def create_folder_tag(conf):
     n_test = conf[N_TEST]
     n_obs_model = conf[N_OBS_MODEL]
     t_max = conf[T_MAX]
-    policy_type = conf[POLICY]
-    b_type = conf[B_UPDATE]
+    policy_type = conf[POLICY_TYPE]
+    b_type = conf[B_UPDATE_METHOD]
     n_par = conf[N_PARTICLE] if b_type == PART_FILT else ''
     seed = conf[SEED]
     misc_tag = conf['misc_tag']
@@ -47,8 +47,27 @@ def generate_dataset(pomdp_, n_samples, path_to_save):
         visualize_pomdp_simulation(df_traj, pomdp_.df_b[pomdp_.S], pomdp_.df_Qz[['01', '10']],
                                    path_to_save=path_to_plot, tag=str(k))
         print(llh_inhomogenous_mp(df_traj, pomdp_.df_Qz),
-              marginalized_llh_homogenous_mp(df_traj, params=pomdp_.cfg[GAMMA_PARAMS], node=parent_list_[0]),
-              marginalized_llh_homogenous_mp(df_traj, params=pomdp_.cfg[GAMMA_PARAMS], node=parent_list_[1]))
+              marginalized_llh_homogenous_mp(df_traj, params=pomdp_.config[GAMMA_PARAMS], node=parent_list_[0]),
+              marginalized_llh_homogenous_mp(df_traj, params=pomdp_.config[GAMMA_PARAMS], node=parent_list_[1]))
+        # if pomdp_.belief_update == PART_FILT:
+        #     plt.figure()
+        #     parent1_estimated_q = pd.DataFrame(pomdp_.belief_particle_filter.estimated_parent_Q[0], columns=pomdp_.S)
+        #     parent1_estimated_q[['01', '10']].plot()
+        #     plt.axhline(pomdp_.parent_ctbn.Q[parent_list_[0]][0][1], xmin=0, xmax=len(parent1_estimated_q),
+        #                 label='01-true', ls='--', c='b')
+        #     plt.axhline(pomdp_.parent_ctbn.Q[parent_list_[0]][1][0], xmin=0, xmax=len(parent1_estimated_q),
+        #                 label='10-true', ls='--', c='orange')
+        #     plt.legend()
+        #     plt.savefig(path_to_plot + '/parent1_estimatedQ.png')
+        #     plt.figure()
+        #     parent2_estimated_q = pd.DataFrame(pomdp_.belief_particle_filter.estimated_parent_Q[1], columns=pomdp_.S)
+        #     parent2_estimated_q[['01', '10']].plot()
+        #     plt.axhline(pomdp_.parent_ctbn.Q[parent_list_[1]][0][1], xmin=0, xmax=len(parent2_estimated_q),
+        #                 label='01-true', ls='--', c='b')
+        #     plt.axhline(pomdp_.parent_ctbn.Q[parent_list_[1]][1][0], xmin=0, xmax=len(parent2_estimated_q),
+        #                 label='10-true', ls='--', c='orange')
+        #     plt.legend()
+        #     plt.savefig(path_to_plot + '/parent2_estimatedQ.png')
         return df_traj
 
     data_folder = path_to_save + f'/dataset'
@@ -64,15 +83,15 @@ def generate_dataset(pomdp_, n_samples, path_to_save):
 def inference_per_obs_model(pomdp_, df_all_, obs_id, path_to_save):
     def infer_trajectory(pomdp_, df_traj, path_to_save):
         traj_id = df_traj.loc[0, TRAJ_ID]
-        n_traj = pomdp_.cfg[N_TRAIN] + pomdp_.cfg[N_TEST]
+        n_traj = pomdp_.config[N_TRAIN] + pomdp_.config[N_TEST]
         np.random.seed(n_traj * (obs_id + 1) + traj_id)
 
         df_Q = get_complete_df_Q(pomdp_, df_traj, traj_id, path_to_save=path_to_save)
 
         llh_X3 = llh_inhomogenous_mp(df_traj, df_Q)
-        if pomdp_.cfg[B_UPDATE] == PART_FILT:
-            marg_llh_X1 = marginalized_llh_homogenous_mp(df_traj, params=pomdp_.cfg[GAMMA_PARAMS], node=parent_list_[0])
-            marg_llh_X2 = marginalized_llh_homogenous_mp(df_traj, params=pomdp_.cfg[GAMMA_PARAMS], node=parent_list_[1])
+        if pomdp_.config[B_UPDATE_METHOD] == PART_FILT:
+            marg_llh_X1 = marginalized_llh_homogenous_mp(df_traj, params=pomdp_.config[GAMMA_PARAMS], node=parent_list_[0])
+            marg_llh_X2 = marginalized_llh_homogenous_mp(df_traj, params=pomdp_.config[GAMMA_PARAMS], node=parent_list_[1])
             llh_data = llh_X3 + marg_llh_X1 + marg_llh_X2
         else:
             llh_X1 = llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[0]], node=parent_list_[0])
@@ -91,7 +110,7 @@ def get_complete_df_Q(pomdp_, df_orig, traj_id, path_to_save=None):
     pomdp_.get_belief_traj(df_orig)
     pomdp_.update_cont_Q()
 
-    pomdp_.df_Qz[T_DELTA] = np.append(to_decimal(pomdp_.time_grain),
+    pomdp_.df_Qz[T_DELTA] = np.append(to_decimal(pomdp_.time_increment),
                                       np.diff(pomdp_.df_Qz.index)).astype(float)
     pomdp_.df_Qz.fillna(method='ffill', inplace=True)
 
@@ -128,7 +147,7 @@ def run_test(df_llh, phi_set, n_train, n_test, path_to_save):
 
 
 def run(pomdp_, psi_set, n_samp, run_folder, IMPORT_DATA=None):
-    conf = pomdp_.cfg
+    conf = pomdp_.config
     # Generate (or read) dataset
     if IMPORT_DATA:
         df_all = pd.read_csv(f'{IMPORT_DATA}/dataset.csv', index_col=0)
@@ -178,21 +197,21 @@ if __name__ == "__main__":
     run_folder = create_folder_for_experiment(folder_name=main_folder, tag=create_folder_tag(config))
 
     np.random.seed(config[SEED])
-    pomdp_sim = POMDPSimulation(config, save_folder=run_folder)
+    pomdp_sim = POMDPSimulation(config)
     print(pomdp_sim.parent_ctbn.Q)
 
-    if pomdp_sim.policy_type == 'detFunction':
+    if pomdp_sim.POLICY_TYPE == DET_FUNC:
         np.save(os.path.join(run_folder, 'policy.npy'), pomdp_sim.policy)
         b_debug = generate_belief_grid(step=0.01, cols=['00', '01', '10', '11'])
         plt.figure()
         plt.plot((b_debug * pomdp_sim.policy).sum(axis=1).round())
-        plt.plot((b_debug*pomdp_sim.policy).sum(axis=1))
-        plt.savefig(run_folder+'/policy_debug.png')
+        plt.plot((b_debug * pomdp_sim.policy).sum(axis=1))
+        plt.savefig(run_folder + '/policy_debug.png')
     else:
         pomdp_sim.policy.to_csv(os.path.join(run_folder, 'policy.csv'))
 
     config['T'] = pomdp_sim.T.tolist()
-    config['Q3'] = pomdp_sim.Qz
+    config['Q3'] = pomdp_sim.Qset
     config['parent_Q'] = pomdp_sim.parent_ctbn.Q
 
     with open(os.path.join(run_folder, 'config.yaml'), 'w') as f:
@@ -201,7 +220,7 @@ if __name__ == "__main__":
     if IMPORT_PSI:
         psi_subset = np.load('../configs/psi_set_3.npy')
     else:
-        psi_subset = get_downsampled_obs_set(config[N_OBS_MODEL], pomdp_sim.Z)
+        psi_subset = get_downsampled_obs_set(config[N_OBS_MODEL], pomdp_sim.PSI)
     np.save(os.path.join(run_folder, 'psi_set.npy'), psi_subset)
 
     import_folder = main_folder + str(IMPORT_DATA) if IMPORT_DATA else None
