@@ -24,13 +24,6 @@ def zero_div(x, y):
     return x / y if y != 0 else 0
 
 
-# def merge_independent_ctbn_traj
-# ectories(df1, df2):
-#     df_joined = pd.concat([df1, df2], ignore_index=True, sort=False).sort_values(
-#         by=constants.TIME).ffill().drop_duplicates(subset=constants.TIME, keep='last')
-#     return df_joined
-
-
 def random_q_matrix(n_values, params=None):
     if params:
         alpha_list = params['alpha']
@@ -50,13 +43,13 @@ def random_q_matrix(n_values, params=None):
 
 def get_amalgamated_trans_matrix(Q1, Q2):
     x1 = Q1[0][1]
-    y1 = Q1[1][0]
-    x2 = Q2[0][1]
+    x2 = Q1[1][0]
+    y1 = Q2[0][1]
     y2 = Q2[1][0]
-    T = np.array([[0, x2, x1, .0],
+    T = np.array([[0, y1, x1, .0],
                   [y2, 0, .0, x1],
-                  [y1, .0, 0, x2],
-                  [.0, y1, y2, 0]])
+                  [x2, .0, 0, y1],
+                  [.0, x2, y2, 0]])
     np.fill_diagonal(T, -T.sum(axis=1))
     return T
 

@@ -39,8 +39,8 @@ policy_type: detFunction  # deterministic_df, stochastic_df or detFunction (dete
 
 marginalize: True
 
-time_grain: 0.01
-t_max: 5 # default  20
+time_increment: 0.01
+t_max: 3 # default  20
 n_train: 10
 n_test: 4
 

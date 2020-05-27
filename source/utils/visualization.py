@@ -47,7 +47,8 @@ def plot_trajectories(df, node_list=None, path_to_save=None, tag=''):
     plt.close('all')
 
 
-def visualize_pomdp_simulation(df_traj, df_b, df_Q, node_list=None, path_to_save='../_data/', tag=''):
+def visualize_pomdp_simulation(df_traj, df_b, df_Q, node_list=None, path_to_save='../_data/', tag='',
+                               belief_method=EXACT):
     if node_list is None:
         node_list = [r'$X_{1}$', r'$X_{2}$', 'y', r'$X_{3}$']
 
@@ -64,13 +65,13 @@ def visualize_pomdp_simulation(df_traj, df_b, df_Q, node_list=None, path_to_save
     ax[0].set_ylabel('y(t)')
 
     for col in df_b.columns:
-        ax[1].plot(df_b.index, df_b[col])
+        ax[1].plot(df_b.index, df_b[col]) if belief_method == EXACT else ax[1].step(df_b.index, df_b[col], where='post')
     ax[1].set_ylabel(r'$b(x_{1},x_{2};t)$')
     ax[1].legend(['00', '01', '10', '11'],
                  bbox_to_anchor=(1.02, 1.0), loc='upper left')
 
     for col in df_Q.columns:
-        ax[2].plot(df_Q.index, df_Q[col])
+        ax[2].plot(df_Q.index, df_Q[col]) if belief_method == EXACT else ax[2].step(df_Q.index, df_Q[col], where='post')
     ax[2].set_ylabel(r'$Q_{3}(t)$')
     ax[2].set_xlabel('t')
     ax[2].legend([r'$q_{0}$', r'$q_{1}$'])

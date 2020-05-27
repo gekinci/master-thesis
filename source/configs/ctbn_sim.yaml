@@ -5,16 +5,25 @@
 
 graph_struct: {
   'X': [],
-  'Y': ['X'],
-  'Z': ['X'],
-  'W': ['Y'],
-  'Q': ['Z'],
-  'T': ['Z', 'M'],
-  'M': []
+  'Y': [],  # ['X'],
+#  'Z': ['X'],
+#  'W': ['Y'],
+#  'Q': ['Z'],
+#  'T': ['Z', 'M'],
+#  'M': []
 }
-t_max: 20  # default 20
+
+Q_dict:  # default gamma-distributed
+
+Q_gamma_params: # default alpha:2, beta:.5
+  X:
+    alpha: [5,10]
+    beta: [5,20]
+  Y:
+    alpha: [20,20]
+    beta: [20,10]
+
+t_max: 2  # default 20
 
 states: [0, 1]  # default [0, 1]
 initial_prob:  [0.5, 0.5]  # default equiprobable
-
-Q_dict:  # default randomly generated

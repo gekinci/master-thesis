@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import logging
 import yaml
 
-N_TREADS = 1
+N_TREADS = 25
 
 
 def create_folder_tag(conf):
@@ -41,33 +41,17 @@ def generate_dataset(pomdp_, n_samples, path_to_save):
         df_traj = pomdp_.sample_trajectory()
         df_traj.loc[:, TRAJ_ID] = k
 
+        df_b = pomdp_.belief_updater.df_belief.copy()
+        df_Q = pomdp_.df_Qz.copy()
+
         df_traj.to_csv(os.path.join(path_to_csv, f'traj_{k}.csv'))
-        pomdp_.df_b.to_csv(os.path.join(path_to_csv, f'belief_traj_{k}.csv'))
-        pomdp_.df_Qz.to_csv(os.path.join(path_to_csv, f'Q_traj_{k}.csv'))
-        visualize_pomdp_simulation(df_traj, pomdp_.df_b[pomdp_.S], pomdp_.df_Qz[['01', '10']],
-                                   path_to_save=path_to_plot, tag=str(k))
-        print(llh_inhomogenous_mp(df_traj, pomdp_.df_Qz),
+        df_b.to_csv(os.path.join(path_to_csv, f'belief_traj_{k}.csv'))
+        df_Q.to_csv(os.path.join(path_to_csv, f'Q_traj_{k}.csv'))
+        visualize_pomdp_simulation(df_traj, df_b[pomdp_.S], df_Q[['01', '10']],
+                                   path_to_save=path_to_plot, tag=str(k), belief_method=pomdp_.config[B_UPDATE_METHOD])
+        print(llh_inhomogenous_mp(df_traj, df_Q),
               marginalized_llh_homogenous_mp(df_traj, params=pomdp_.config[GAMMA_PARAMS], node=parent_list_[0]),
               marginalized_llh_homogenous_mp(df_traj, params=pomdp_.config[GAMMA_PARAMS], node=parent_list_[1]))
-        # if pomdp_.belief_update == PART_FILT:
-        #     plt.figure()
-        #     parent1_estimated_q = pd.DataFrame(pomdp_.belief_particle_filter.estimated_parent_Q[0], columns=pomdp_.S)
-        #     parent1_estimated_q[['01', '10']].plot()
-        #     plt.axhline(pomdp_.parent_ctbn.Q[parent_list_[0]][0][1], xmin=0, xmax=len(parent1_estimated_q),
-        #                 label='01-true', ls='--', c='b')
-        #     plt.axhline(pomdp_.parent_ctbn.Q[parent_list_[0]][1][0], xmin=0, xmax=len(parent1_estimated_q),
-        #                 label='10-true', ls='--', c='orange')
-        #     plt.legend()
-        #     plt.savefig(path_to_plot + '/parent1_estimatedQ.png')
-        #     plt.figure()
-        #     parent2_estimated_q = pd.DataFrame(pomdp_.belief_particle_filter.estimated_parent_Q[1], columns=pomdp_.S)
-        #     parent2_estimated_q[['01', '10']].plot()
-        #     plt.axhline(pomdp_.parent_ctbn.Q[parent_list_[1]][0][1], xmin=0, xmax=len(parent2_estimated_q),
-        #                 label='01-true', ls='--', c='b')
-        #     plt.axhline(pomdp_.parent_ctbn.Q[parent_list_[1]][1][0], xmin=0, xmax=len(parent2_estimated_q),
-        #                 label='10-true', ls='--', c='orange')
-        #     plt.legend()
-        #     plt.savefig(path_to_plot + '/parent2_estimatedQ.png')
         return df_traj
 
     data_folder = path_to_save + f'/dataset'
@@ -110,19 +94,21 @@ def get_complete_df_Q(pomdp_, df_orig, traj_id, path_to_save=None):
     pomdp_.get_belief_traj(df_orig)
     pomdp_.update_cont_Q()
 
-    pomdp_.df_Qz[T_DELTA] = np.append(to_decimal(pomdp_.time_increment),
-                                      np.diff(pomdp_.df_Qz.index)).astype(float)
+    pomdp_.df_Qz[T_DELTA] = np.append(np.diff(pomdp_.df_Qz.index), 0).astype(float)
     pomdp_.df_Qz.fillna(method='ffill', inplace=True)
+
+    df_b = pomdp_.belief_updater.df_belief.copy()
+    df_Q = pomdp_.df_Qz.copy()
 
     if path_to_save:
         csv_path = os.path.join(path_to_save, 'csv')
         os.makedirs(csv_path, exist_ok=True)
-        pomdp_.df_b.to_csv(os.path.join(csv_path, f'belief_traj_{traj_id}.csv'))
-        pomdp_.df_Qz.to_csv(os.path.join(csv_path, f'Q_traj_{traj_id}.csv'))
-        visualize_pomdp_simulation(df_orig, pomdp_.df_b[pomdp_.S], pomdp_.df_Qz[['01', '10']],
+        df_b.to_csv(os.path.join(csv_path, f'belief_traj_{traj_id}.csv'))
+        df_Q.to_csv(os.path.join(csv_path, f'Q_traj_{traj_id}.csv'))
+        visualize_pomdp_simulation(df_orig, df_b[pomdp_.S], df_Q[['01', '10']],
                                    node_list=[r'$X_{1}$', r'$X_{2}$', r'y'], path_to_save=path_to_save,
-                                   tag=str(traj_id))
-    return pomdp_.df_Qz
+                                   tag=str(traj_id), belief_method=pomdp_.config[B_UPDATE_METHOD])
+    return df_Q
 
 
 def run_test(df_llh, phi_set, n_train, n_test, path_to_save):
@@ -210,7 +196,7 @@ if __name__ == "__main__":
     else:
         pomdp_sim.policy.to_csv(os.path.join(run_folder, 'policy.csv'))
 
-    config['T'] = pomdp_sim.T.tolist()
+    # config['T'] = pomdp_sim.T.tolist() if config[B_UPDATE_METHOD] == EXACT else None
     config['Q3'] = pomdp_sim.Qset
     config['parent_Q'] = pomdp_sim.parent_ctbn.Q
 
