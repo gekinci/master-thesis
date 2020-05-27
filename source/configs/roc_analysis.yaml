@@ -11,13 +11,12 @@ Q_dict:  # default gamma-distributed
 
 Q_gamma_params: # default alpha:2, beta:2
   $X_{1}$:
-    alpha: [1,2]
-    beta: [0.5,2]
+    alpha: [5,10]
+    beta: [5,20]
   $X_{2}$:
-    alpha: [2,2]
-    beta: [2,1]
+    alpha: [20,20]
+    beta: [20,10]
 
-parent_list:  # default  ['X1', 'X2']
 states: [0, 1]  # default [0, 1]
 initial_prob:  # default equiprobable
 
@@ -30,14 +29,14 @@ observation_space: [0, 1, 2]
 action_space: [0, 1]
 obs_model:
 
-belief_update: particleFilter  # particleFilter or exact
+belief_update_method: particleFilter  # particleFilter or exact
 n_particle: 200
 
-policy: detFunction  # deterministic, stochastic or detFunction
+policy_type: detFunction  # deterministic_df, stochastic_df or detFunction (deterministic function)
 
 marginalize: True
 
-time_grain: 0.01
+time_increment: 0.01
 t_max: 5 # default  20
 n_train: 200
 n_test: 0

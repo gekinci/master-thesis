@@ -45,7 +45,7 @@ if __name__ == "__main__":
     else:
         pomdp.policy.to_csv(os.path.join(run_folder, 'policy.csv'))
 
-    cfg['T'] = pomdp.T.tolist()
+    # cfg['T'] = pomdp.T.tolist()
     cfg['Q3'] = pomdp.Qset
     cfg['parent_Q'] = pomdp.parent_ctbn.Q
 
