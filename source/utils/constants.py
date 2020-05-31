@@ -27,9 +27,10 @@ STOC_DF = 'stochastic_df'
 
 # belief update
 B_UPDATE_METHOD = 'belief_update_method'
-PART_FILT = 'particleFilter'
+PART_FILT = 'particle filter'
+VANILLA_PART_FILT = 'van_particleFilter'
+EXACT = 'exact update'
 N_PARTICLE = 'n_particle'
-EXACT = 'exact'
 
 # Column names
 TRAJ_ID = 'traj_id'

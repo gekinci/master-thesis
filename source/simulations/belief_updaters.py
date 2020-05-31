@@ -11,13 +11,13 @@ import scipy
 
 
 class ParticleFilterUpdate:
-    def __init__(self, cfg, n_particle, obs_llh, S, O):
+    def __init__(self, cfg, Q_params, n_particle, obs_llh, S, O):
         self.n_particle = n_particle
         self.obs_llh = obs_llh
         self.S = S
         self.O = O
 
-        self.Q_gamma_params = cfg[GAMMA_PARAMS]
+        self.Q_gamma_params = Q_params
         self.sampling_ctbn = CTBNSimulation(cfg)
         self.reset()
 
@@ -112,7 +112,7 @@ class ParticleFilterUpdate:
         counter = 0
         while UPDATE:
             new_particles = self.propagate_particles(t)
-            new_weights = self.update_weights(obs, new_particles)
+            new_weights = self.update_weights(obs, new_particles) if obs is not None else np.zeros(self.n_particle)
             if np.isnan(np.sum(new_weights)):
                 counter += 1
                 print('ALL REJECTED!! NO PARTICLE LEFT!! ', counter)
@@ -122,12 +122,13 @@ class ParticleFilterUpdate:
 
         self.particles = new_particles
         self.weights = new_weights
-        self.resample_particles()
 
         new_b = self.get_belief_df()
         self.df_belief = self.df_belief.combine_first(new_b)
 
-        self.particles = [p.tail(1).reset_index(drop=True) for p in self.particles]
+        if obs is not None:
+            self.resample_particles()
+            self.particles = [p.tail(1).reset_index(drop=True) for p in self.particles]
 
 
 class ExactUpdate:
@@ -176,7 +177,10 @@ class ExactUpdate:
     def update(self, obs, t):
         if t == 0.0:
             self.update_jump(obs, t)
-        else:
+        elif obs is not None:
             t_prev = self.df_belief.dropna().index[-1]
             self.append_event(t, t_prev)
             self.update_jump(obs, t)
+        else:
+            t_prev = self.df_belief.dropna().index[-1]
+            self.append_event(t, t_prev)

@@ -29,19 +29,22 @@ def get_downsampled_obs_set(n_sample, orig_phi, n_states=2, n_obs=3):
     return phi_subset
 
 
-def llh_inhomogenous_mp(df_traj, df_Q, node=agent_):
-    L = 0
-    df_trans = df_traj.loc[df_traj[node].diff() != 0]
-    trans_tuples = list(
-        zip(df_trans[node].astype(int), df_trans[node][1:].astype(int), df_trans[TIME], df_trans[TIME][1:]))
-    for i in trans_tuples:
-        trans_tag = ''.join(map(str, i[0:2]))
-        stay_tag = ''.join((str(i[0]), str(i[0])))
-        times = i[2:4]
-        q_trans = df_Q.truncate(after=to_decimal(times[1])).iloc[-1].loc[trans_tag]
-        df_Q_ = df_Q.truncate(before=to_decimal(times[0]), after=to_decimal(times[1]))
-        prob_stay_integral = (df_Q_[stay_tag].multiply(df_Q_[T_DELTA], axis="index")).cumsum().iloc[-1]
-        L += np.log(q_trans) + prob_stay_integral
+def llh_inhomogenous_mp(df_traj, df_Q_all, node=agent_):
+    L = []
+    for df_Q in df_Q_all:
+        l = 0
+        df_trans = df_traj.loc[df_traj[node].diff() != 0]
+        trans_tuples = list(
+            zip(df_trans[node].astype(int), df_trans[node][1:].astype(int), df_trans[TIME], df_trans[TIME][1:]))
+        for i in trans_tuples:
+            trans_tag = ''.join(map(str, i[0:2]))
+            stay_tag = ''.join((str(i[0]), str(i[0])))
+            times = i[2:4]
+            df_Q_ = df_Q.truncate(before=to_decimal(times[0]), after=to_decimal(times[1]))
+            q_trans = df_Q_.iloc[-1].loc[trans_tag]
+            prob_stay_integral = (df_Q_[stay_tag].multiply(df_Q_[T_DELTA], axis="index")).cumsum().iloc[-1]
+            l += np.log(q_trans) + prob_stay_integral
+        L += [l]
     return L
 
 

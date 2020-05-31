@@ -64,7 +64,7 @@ def generate_dataset(pomdp_, n_samples, path_to_save, IMPORT_DATA=None):
 def get_complete_df_Q(pomdp_, df_orig, traj_id, path_to_save=None):
     df_orig.loc[:, OBS] = df_orig.apply(pomdp_.get_observation, axis=1)
 
-    pomdp_.get_belief_traj(df_orig)
+    pomdp_.get_belief_for_inference(df_orig)
     pomdp_.update_cont_Q()
 
     pomdp_.df_Qz[T_DELTA] = np.append(to_decimal(pomdp_.time_increment),

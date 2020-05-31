@@ -48,44 +48,60 @@ def plot_trajectories(df, node_list=None, path_to_save=None, tag=''):
 
 
 def visualize_pomdp_simulation(df_traj, df_b, df_Q, node_list=None, path_to_save='../_data/', tag='',
-                               belief_method=EXACT):
-    if node_list is None:
-        node_list = [r'$X_{1}$', r'$X_{2}$', 'y', r'$X_{3}$']
+                               belief_method=None):
+    belief_method = [EXACT] if belief_method is None else belief_method
+    node_list = [r'$X_{1}$', r'$X_{2}$', 'y', r'$X_{3}$'] if node_list is None else node_list
+    df_Q_cols = ['01', '10']
+    df_b_cols = ['00', '01', '10', '11']
+    b_axis = 4 if len(df_b) > 1 else 1
+    q_axis = 2 if len(df_Q) > 1 else 1
 
     plot_trajectories(df_traj, node_list=node_list, path_to_save=path_to_save, tag=tag)
 
     t_max = df_traj[TIME].values[-1]
-    df_b = df_b.truncate(before=to_decimal(0), after=to_decimal(t_max))
-    df_Q = df_Q.truncate(before=to_decimal(0), after=to_decimal(t_max))
+    df_b = [df_.truncate(before=to_decimal(0), after=to_decimal(t_max)) for df_ in df_b]
+    df_Q = [df_.truncate(before=to_decimal(0), after=to_decimal(t_max)) for df_ in df_Q]
 
-    fig, ax = plt.subplots(3, 1, sharex=True)
+    fig, ax = plt.subplots(b_axis + q_axis + 1, 1, sharex=True, figsize=(15, 12))
 
     ax[0].step(df_traj[TIME], df_traj['y'], where='post')
     ax[0].set_ylim([-.5, 2.5])
     ax[0].set_ylabel('y(t)')
 
-    for col in df_b.columns:
-        ax[1].plot(df_b.index, df_b[col]) if belief_method == EXACT else ax[1].step(df_b.index, df_b[col], where='post')
-    ax[1].set_ylabel(r'$b(x_{1},x_{2};t)$')
-    ax[1].legend(['00', '01', '10', '11'],
-                 bbox_to_anchor=(1.02, 1.0), loc='upper left')
+    count = 1
+    if len(belief_method) == 1:
+        for col in df_b_cols:
+            ax[count].plot(df_b[0].index, df_b[0][col]) if EXACT in belief_method else \
+                ax[count].step(df_b[0].index, df_b[0][col], where='post')
+        ax[count].set_ylabel(r'$b(x_{1},x_{2};t)$')
+        ax[count].legend(['00', '01', '10', '11'], bbox_to_anchor=(1.02, 1.0), loc='upper left')
+        count += 1
+    else:
+        for col in df_b_cols:
+            for i, m in enumerate(belief_method):
+                ax[count].plot(df_b[1].index, df_b[1][col]) if m == EXACT else \
+                    ax[count].step(df_b[i].index, df_b[i][col], where='post')
+            ax[count].set_ylabel(r'$b(x_{1},x_{2}$' + f' = {col};t)')
+            count += 1
+        ax[count - 4].legend(belief_method, bbox_to_anchor=(1.02, 1.0), loc='upper left')
 
-    for col in df_Q.columns:
-        ax[2].plot(df_Q.index, df_Q[col]) if belief_method == EXACT else ax[2].step(df_Q.index, df_Q[col], where='post')
-    ax[2].set_ylabel(r'$Q_{3}(t)$')
-    ax[2].set_xlabel('t')
-    ax[2].legend([r'$q_{0}$', r'$q_{1}$'])
+    if len(df_Q) == 1:
+        for col in df_Q_cols:
+            ax[count].step(df_Q[0].index, df_Q[0][col], where='post')
+        ax[count].set_ylabel(r'$Q_{3}(t)$')
+        ax[count].set_title('from particle filter')
+        ax[count].set_xlabel('t')
+        ax[count].legend([r'$q_{0}$', r'$q_{1}$'], bbox_to_anchor=(1.02, 1.0), loc='upper left')
+        count += 1
+    else:
+        for col in df_Q_cols:
+            for i, m in enumerate(belief_method):
+                ax[count].step(df_Q[i].index, df_Q[i][col], where='post')
+            ax[count].set_ylabel(r'$q_{0}(t)$') if col == '01' else ax[count].set_ylabel(r'$q_{1}(t)$')
+            count += 1
+        ax[count - 2].legend(belief_method, bbox_to_anchor=(1.02, 1.0),
+                             loc='upper left')
 
     plt.tight_layout()
     fig.savefig(os.path.join(path_to_save, 'b_Q_plot_' + tag + '.png'))
     plt.close('all')
-
-
-if __name__ == '__main__':
-    S = ['00', '01', '10', '11']
-    folder = '../_data/pomdp_simulation/1582983024/'
-    df_belief = pd.read_csv(folder + 'df_belief.csv')
-    df_traj = pd.read_csv(folder + 'env_traj.csv')
-    df_Q = pd.read_csv(folder + 'df_Qz.csv')
-
-    visualize_pomdp_simulation(df_traj, df_belief[S], df_Q[S], node_list=['X1', 'X2', 'y'], path_to_save=folder)
