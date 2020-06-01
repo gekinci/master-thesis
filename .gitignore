@@ -12,3 +12,15 @@ docs/likelihood_model/
 docs/prob_def/
 docs/related_work/
 docs/BCS_Latex_Template/
+docs/thesis/*.txt
+docs/thesis/*.aux
+docs/thesis/*.bbl
+docs/thesis/*.blg
+docs/thesis/*.log
+docs/thesis/*.out
+docs/thesis/*.synctex.gz
+docs/thesis/*.toc
+docs/bibtex/others*
+docs/bibtex/books*
+docs/bibtex/Shared*
+docs/bibtex/*.bak

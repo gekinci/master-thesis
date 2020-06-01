@@ -1,0 +1,210 @@
+\DeclareRobustCommand{\rchi}{{\mathpalette\irchi\relax}}
+\newcommand{\irchi}[2]{\raisebox{\depth}{$#1\chi$}}
+
+\chapter{Foundations}
+
+\section{Problem Formulation}
+\begin{wrapfigure}{r}{5.5cm}
+	\caption{A wrapped figure going nicely inside the text.}\label{wrap-fig:1}
+	\includegraphics[width=5.5cm]{figure/h_model}}
+\end{wrapfigure} 
+Problem: Agent making decisions based on incoming messages, but observes only a summary of them \\
+Objective: To infer this observation model from agent's behaviour \\
+Assuming that the behaviour of agent has been shaped by evolution (close) to optimality
+$ X_{1} $ and $ X_{2} $ homogenous continuous-time Markov processes with $ \textbf{Q}_{1} $ and $ \textbf{Q}_{2} $ transition intensity matrices
+\begin{equation}
+\textbf{Q}_{i} \sim Gam(\alpha_{i}, \beta_{i}),\ \ i \in \left\lbrace 1,2\right\rbrace 
+\end{equation}
+$X_{3} $ inhomogeneous continuous-time Markov process  with set of actions $ a \in \left\lbrace a_{0}, a_{1}\right\rbrace  $ and set of transition intensity matrices $ \textbf{\textit{Q}}_{3} = \left\lbrace \textbf{Q}_{a_{0}}, \textbf{Q}_{a_{1}} \right\rbrace  $
+\begin{equation}
+\textbf{Q}_{a} \sim Gam(\alpha_{a}, \beta_{a})
+\end{equation}
+$ \rchi_{i} = \left\lbrace 0,1\right\rbrace  $
+$ \psi  := p(y(t) \mid X_{1}(t), X_{2}(t)) $ observation model\\
+$  b(x_{1}, x_{2}; t) $ : belief state
+$ \pi(a \mid b) $ : optimal policy of $ X_{3} $
+ $ X_{i}^{[0,T]} $: discrete valued trajectory in time interval $ [0, T] $
+
+\section{Continuous Time Bayesian Networks}
+
+\subsection{Time-Homogenous Continuous Time Markov Processes}
+The messages that are emitted by the parent nodes $X_{1}$ and $ X_{2} $ are modelled as independent time-homogeneous continuous-time Markov processes (CTMP). These processes are defined by transition intensity matrices $ Q_{X_{1}} $ and $ Q_{X{2}} $, whose intensities do not depend on time. In this matrix, the intensity $ q_{i} $ represents the instantaneous probability of leaving state i and $ q_{i,j} $ represents the instantaneous probability of switching from state $ i $ to $ j $. %TODO give a Q matrix and explain further
+
+Infinitesimal transition probabilities in terms of the entries of transition matrices $ q_{ij} $ can be written as \cite{Cohn2010a}:
+\begin{equation}
+p_{i,j}(h)=\delta_{ij}+q_{i,j} h+o(h)
+\end{equation}
+where $ p_{i, j}(t) \equiv Pr(X^{(t+s)}=j\mid X^{(s)}=i) $ are Markov transition functions and o(.) is a function decaying to zero faster than its argument.
+
+The \textit{forward} or \textit{master equation} is then derived as follows:
+
+\begin{equation}
+p_{j}(t)=\sum_{\forall i} p_{i, j}(h) p_{i}(t-h)
+\end{equation}
+
+\begin{equation}
+\begin{split}
+\lim_{h\rightarrow 0} p_{j}(t) & = \lim_{h\rightarrow 0} \sum_{\forall i} \left[ \delta_{ij}+q_{i,j} h+o(h)\right]  p_{i}(t-h) \\ & = \lim_{h\rightarrow 0} p_{j}(t-h) + \lim_{h\rightarrow 0} h \sum_{\forall i} q_{i,j} p_{i}(t-h)
+\end{split}
+\end{equation}
+
+\begin{equation}
+\lim_{h\rightarrow 0} \frac{p_{j}(t) - p_{j}(t-h)}{h} = \lim_{h\rightarrow 0} \sum_{\forall i} q_{i,j} p_{i}(t-h)
+\end{equation}
+
+\begin{equation}
+\begin{split}
+\frac{d}{dt} p_{j}(t) & = \sum_{\forall i} q_{i,j} p_{i}(t) \\ & = \sum_{\forall i \neq j}\left[  q_{i,j} p_{i}(t) - q_{j,i} p_{j}(t) \right]
+\end{split}
+\label{eq:ME}
+\end{equation}
+Eq.\ref{eq:ME} can be written in matrix form:
+\begin{equation}
+\frac{d}{dt} p = p\textbf{Q}
+\end{equation}
+The solution to ODE, the time-dependent probability distribution $ p(t) $ is, 
+\begin{equation}
+p(t)=p(0) \exp (t\textbf{Q})
+\end{equation}
+with initial distribution $ p(0) $.
+
+The amount of time staying in a state i is exponentially distributed with parameter $ q_{i} $. The probability density function f for staying in the state $ i $:
+\begin{equation}
+f(t)=q_{i} \exp \left(-q_{i} t\right), t\geq 0
+\label{eq:f(t)_homo}
+\end{equation}
+\subsubsection{Likelihood Function}
+To write down the likelihood of a trajectory sampled from a homogenous CTMC $ X $, first let us consider one transition $ d = <i,j,t> $, where transition happens after time t from state i to j. The likelihood of this transition is:
+\begin{equation}
+L_{X}(d \mid \textbf{Q})=\left(q_{i} \exp \left(-q_{i} t\right)\right)\left(\frac{q_{i,j}}{q_{i}}\right)
+\end{equation}
+We define sufficient statistics over a dataset $ D $ as $ T[i] $, total amount of time spent in state i, $ M[i,j] $ total number of transitions from state i to j, we can write down the likelihood of a trajectory $  X^{\left[0,T\right] } $,
+\begin{equation}
+\begin{split}
+L_{X}(\textbf{Q} : D) &=  \prod_{d \in D} L(d \mid \textbf{Q}) \\&=\left(\prod_{\forall i} q_{i}^{M[i]} \exp \left(-q_{i} T[i]\right)\right)\left(\prod_{\forall i} \prod_{\forall j \neq i} \left(\frac{q_{i,j}}{q_{i}}\right)^{M\left[i, j\right]}\right)
+\label{eq:lh_traj_homo}
+\end{split}
+\end{equation}
+with $ M[i] = \sum_{\forall j} M[i, j] $.
+
+\subsubsection{Marginalized Likelihood Function}
+
+$ X_{1} $ and $ X_{2} $ are independent homogenous Markov processes, with state space $ Val(X_{1, 2}) = \left\lbrace 0, 1 \right\rbrace $. The transition intensity matrices $ Q_{1} $ and $ Q_{2} $ can be written in the following form for convenience,
+\begin{center}
+	\begin{math}
+	\begin{pmatrix}
+	-q_{0} & q_{0} \\
+	q_{1} & -q_{1}
+	\end{pmatrix}
+	\end{math}\\
+\end{center}
+where the transition intensities $ q_{0} $ and $ q_{1} $ are gamma-distributed with parameters $ \alpha_{0}$, $ \beta_{0} $ and $ \alpha_{1} $, $ \beta_{1} $, respectively. The marginal likelihood of a sample trajectory from binary-valued homogenous Markov process X with transition intensity matrix Q can be written as follows:
+
+\begin{align}
+P(X^{[0, T]}) & = \int  P(X^{[0, T]}\mid Q)P(Q) dQ \\ & = \int_{0}^{\infty} \left( \prod_{x} \exp(-q_{x}T_{x}) \prod_{x'} q_{xx'}^{M[x, x']}\right) \frac{\beta_{xx'}^{\alpha_{xx'}}{q_{xx'}^{\alpha_{xx'}-1}}\exp(-\beta_{xx'}q_{xx'})}{\Gamma(\alpha_{xx'})} \ dq_{xx'} \\ & = \prod_{x\in{0,1}}\int_{0}^{\infty} q_{x}^{M_{x}} \ \exp(-q_{x}T_{x}) \  \frac{\beta_{x}^{\alpha_{x}} \ q_{x}^{\alpha_{x}-1}\ \exp(-\beta_{x}q_{x})}{\Gamma(\alpha_{x})} \ dq_{x} \\ & = \prod_{x\in{0,1}} \frac{\beta_{x}^{\alpha_{x}}}{\Gamma(\alpha_{x})} \int_{0}^{\infty} q_{x}^{M_{x} + \alpha_{x} -1} \ \exp(-q_{x}(T_{x}+\beta_{x})) \ dq_{x} \\ & = \prod_{x\in{0,1}} \frac{\beta_{x}^{\alpha_{x}}}{\Gamma(\alpha_{x})} \left( -(T_{x}+\beta_{x})^{M_{x} + \alpha_{x}}\ \Gamma(M_{x} + \alpha_{x}, \ q_{x}(T_{x}+\beta_{x})) \right) \Big|_0^\infty  \\ & = \prod_{x\in{0,1}} \frac{\beta_{x}^{\alpha_{x}}}{\Gamma(\alpha_{x})} \left( (T_{x}+\beta_{x})^{M_{x} + \alpha_{x}}\ \Gamma(M_{x} + \alpha_{x}) \right)
+\label{eq:Marg_traj}
+\end{align}
+
+where $ T_{x} $, the amount of time spent in state x, $ M[x,x'] $ the number of transitions from state x to x' and  $ M[x] = \sum_{x\neq x'}M[x,x'] $.\\
+
+%From Eq.11, the integral is solved using computer algebra system WolframAlpha as follows:
+%\begin{align}
+%\int x^{a} \ \exp(-xb) \ dx = -b^{-a-1} \ \Gamma(a+1, \ bx) + C
+%\label{eq:integral}
+%\end{align}
+%
+%Plugging Eq.\ref{eq:Marg_traj} in Eq.\ref{eq:Marg_llh} for both $ X_{1} $ and $ X_{2} $:
+%\begin{align}
+%\begin{split}
+%P(\textit{D} \mid \pi, \Phi ) = P(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \prod_{x_{1}\in{0,1}} \frac{\beta_{x_{1}}^{\alpha_{x_{1}}}}{\Gamma(\alpha_{x_{1}})} \ (T_{x_{1}}+\beta_{x_{1}})^{M_{x_{1}} + \alpha_{x_{1}}}\ \Gamma(M_{x_{1}} + \alpha_{x_{1}})  \\  \prod_{x_{2}\in{0,1}} \frac{\beta_{x_{2}}^{\alpha_{x_{2}}}}{\Gamma(\alpha_{x_{2}})} \ (T_{x_{2}}+\beta_{x_{2}})^{M_{x_{2}} + \alpha_{x_{2}}}\ \Gamma(M_{x_{2}} + \alpha_{x_{2}})
+%\label{eq:Marg_llh_final}
+%\end{split}
+%\end{align}
+
+\subsection{Time-inhomogeneous continuous-time Markov Processes}
+In an conventional CTBN, while every node is a Markov process itself, the leaf nodes are \textit{conditional} Markov processes, a type of inhomogeneous Markov process, where the intensities change over time, but not as a function of time rather as a function of parent states. \cite{Nodelman1995} %TODO explain time-dependence in the problem
+ 
+For inhomogeneous Markov processes, Eq.\ref{eq:f(t)_homo} becomes:
+\begin{equation}
+f(t) = q_{i}(t) \exp \left(-\int_{0}^{t} q_{i}(u) d u\right)
+\end{equation}
+\subsubsection{The Likelihood Function}
+Let X be an inhomogeneous Markov process, and $  X^{\left[0,T\right] } $ is a trajectory sampled from this process. We define $ m $ number of transitions, with $ 0 = t_{0} < t_{1} < ... < t_{m} $ are the times where transition occurred, and $ x_{0}, x_{1},..., x_{m} $ are the observed states. The likelihood of trajectory  $  X^{\left[0,T\right] } $ is  as follows: 
+\begin{equation}
+L(\textbf{Q}_{X} \colon  X^{\left[0,T\right]} ) = \prod_{k=1}^{m} \left[ q_{x_{k-1}} (t_{k}) \exp \left(-\int_{t_{k-1}}^{t_{k}} q_{x_{k-1}}(u) d u\right) \frac{q_{x_{k-1}, x_{k}} (t_{k})}{q_{x_{k-1}}(t_{k})}\right] 
+\label{eq:lh_traj_inhomo}
+\end{equation}
+
+%We can formulate our graphical model as $ S = [X, Y, Z] $, where $ Par(Z) = {X,Y} $ and $ Par(X) = Par(Y) =\emptyset $. We can then write the conditional probability:
+%\begin{equation}
+%\begin{split}
+%P\left(S^{\left(t+h\right)}=s' | S^{\left(t\right)}=s\right) = & P\left(X^{\left( t+h\right) }=x' | X^{\left(t\right)}=x, Par(X)^{\left(t\right)}={y,z}\right) \\&  P\left(Y^{\left( t+h\right) }=y' | Y^{\left(t\right)}=y\right) P\left(Z^{\left( t+h\right) }=z' | ^{\left(t\right)}=z\right)
+%\end{split} 
+%\end{equation}
+
+\section{Belief State in Partially Observable Markov Decision Processes}
+In our problem, cell Z does not have a direct access to its parents' states, rather it observes a summary of them. This is different than observing the states through noisy binary channels, and presents a POMDP problem. Even though it is assumed that the policy of Z is optimal given the true states of parents, the problem of inferring the observational model remains unsolved and to be addressed.
+
+\subsection{Exact Belief State Update}
+
+In a conventional POMDP, given the \textit{transition function}, $ T(s, a, s^{\prime})$  and \textit{observation function}, $ O(s^{\prime}, a, o) $, the belief state update is computed as follows \cite{Kaelbling2011} \footnote{Since it is assumed that there is no affect of agent $ X_{3} $'s action on the observation or transition function, $ a $ is omitted from the equation.}:
+\begin{equation}
+\begin{aligned}
+b^{\prime}\left(s^{\prime}\right) &=\operatorname{Pr}\left(s^{\prime} | o, a, b\right) =\operatorname{Pr}\left(s^{\prime} | o, b\right) \\
+&=\frac{\operatorname{Pr}\left(o | s^{\prime}, b\right) \operatorname{Pr}\left(s^{\prime} | b\right)}{\operatorname{Pr}(o | b)} \\
+&=\frac{\operatorname{Pr}\left(o | s^{\prime}\right) \sum_{s \in \mathcal{S}} \operatorname{Pr}\left(s^{\prime} | b, s\right) \operatorname{Pr}(s | b)}{\operatorname{Pr}(o | b)} \\
+&=\frac{O\left(s^{\prime}, o\right) \sum_{s \in \mathcal{S}} T\left(s, s^{\prime}\right) b(s)}{\operatorname{Pr}(o | b)}
+\end{aligned}
+\label{eq:b}
+\end{equation}
+
+In Eq.\ref{eq:b}, the transition function is time-independent. However, in our setting, the parent nodes X and Y are modelled as CTMCs with time-dependent transition matrices. 
+%To derive \textit{continuous-time belief state}, $ b(t) $, first we need to get the joint transition matrix of X and Y, two independent processes. This operation called \textit{amalgamation} is described in detail by Nodelman \textit{et al} \cite{Nodelman1995}. 
+%Let us denote this matrix by $ Q_{XY} $. 
+Now we can derive the belief state as follows: 
+\begin{equation}
+b(x_{1}, x_{2}; t) = P( X_{1}(t) = x_{1},  X_{2}(t) = x_{2}\mid y_{1}, ..., y_{t})
+\end{equation}
+Denote $ b(t) $, $ t \geq 0 $, as row vector with $ \left\lbrace b(x_{1}, x_{2};t)_{x_{i} \in \rchi_{i}}\right\rbrace  $.
+This posterior probability can be described by a system of ODEs
+\begin{equation}
+\frac{db(t)}{dt} = b(t)\ \textbf{T}
+\end{equation}
+where the initial condition $ b(0) $ is row vector with $ \left\lbrace P(X_{1}(0)=x_{1}, X_{2}(0)=x_{2})_{x_{i} \in \rchi_{i}}\right\rbrace $ \cite{article}.
+\textbf{T} is the joint transition intensity matrix of $ X_{1} $ and $ X_{2} $ and given by amalgamation operation between $ \textbf{Q}_{1} $ and  $ \textbf{Q}_{2} $ \cite{Nodelman1995}.
+\begin{equation}
+\textbf{T} = \textbf{Q}_{1} * \textbf{Q}_{2}
+\end{equation}
+The belief update at discrete times of observation $ y_{t} $
+\begin{align}
+b(x_{1}, x_{2}; t) & = P( X_{1}(t) = x_{1},  X_{2}(t) = x_{2}\mid y_{1}, ..., y_{t}) \nonumber\\ & = \frac{P(y_{1}, ..., y_{t}, X_{1}(t) = x_{1},  X_{2}(t) = x_{2})}{P(y_{1}, ..., y_{t})}  \nonumber\\ & = \frac{P(y_{t} \mid y_{1}, ..., y_{t-1}, X_{1}(t) = x_{1},  X_{2}(t) = x_{2})}{P(y_{t} \mid y_{1}, ..., y_{t-1})} \frac{P(y_{1}, ..., y_{t-1}, X_{1}(t) = x_{1},  X_{2}(t) = x_{2})}{P(y_{1}, ..., y_{t-1})}  \nonumber\\ & = Z_{t}^{-1} \ P(y_{t} \mid x_{1}, x_{2})\ P( X_{1}(t) = x_{1},  X_{2}(t) = x_{2}\mid y_{1}, ..., y_{t-1})  \nonumber\\ & = Z_{t}^{-1}\ {P(y_{t} \mid x_{1}, x_{2})}\ {b(x_{1}, x_{2}; t^{-})}
+\end{align}
+where $ Z_{t} = \sum_{x_{1}, x_{2}\in X} P(y_{t} \mid x_{1}, x_{2})\ b(x_{1}, x_{2}; t^{-}) $ is the normalization factor \cite{article}.
+%
+%\begin{equation}
+%b_{s^{\prime}}(t) =\frac{\operatorname{Pr}\left(o |s^{\prime}\right) \sum_{s \in \mathcal{S}} \operatorname{Pr}\left(S(t)=s^{\prime} | S(t-h)=s\right) b_{s}(t-h)}{\operatorname{Pr}(o | b)}
+%\end{equation}\\
+%\begin{equation}
+%\begin{aligned}
+%\lim_{h\rightarrow 0} b_{s^{\prime}}(t) &= C \lim_{h\rightarrow 0}\left[  \sum_{s \in \mathcal{S}} p_{s, s^{\prime}}(t) b_{s}(t-h)\right]\\
+%&= C \lim_{h\rightarrow 0}\left[  \sum_{s \in \mathcal{S}} \left[ \delta_{ss^{\prime}}+q_{s,s^{\prime}} h+o(h)\right]  b_{s}(t-h)\right]\\
+%&= C \lim_{h\rightarrow 0}\left[ b_{s^{\prime}}(t-h) + \sum_{s \in \mathcal{S}} q_{s,s^{\prime}} h  b_{s}(t-h)\right]
+%\end{aligned}
+%\end{equation}
+%Due to the scaling factor $ C =\frac{\operatorname{Pr}\left(o |s^{\prime}\right)}{\operatorname{Pr}(o | b)} $, cannot derive $ \frac{d}{dt} b = \textbf{Q}b$, .\\
+%However, we can use the conditional distribution of Markov processes as the transition function $ T(s'|s) $ to derive the continuous-time belief state. The conditional distribution over the value of X, a homogenous Markov process, at time t given its value at an earlier time s can be written as 
+%\begin{equation}
+%\operatorname{Pr}\left(X(t) \mid X(s)\right) = \exp(\textbf{Q}(t-s))
+%\end{equation}
+%Then the continuous-time belief state becomes:
+%\begin{equation}
+%b_{s^{\prime}}(t) =\frac{\operatorname{Pr}\left(o |s^{\prime}\right) \sum_{s \in \mathcal{S}}\left[ \exp(\textbf{Q}(h))\right]_{s,s'}  b_{s}(t-h)}{\operatorname{Pr}(o | b)}
+%\end{equation}
+
+\subsection{Belief State Update using Particle Filter}
+
+\subsubsection{Marginalized Continuous Time Bayesian Networks}
+
+\subsubsection{Particle Filter}
+
+\section{Likelihood Model of Communication System (?)}
