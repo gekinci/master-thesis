@@ -4,11 +4,6 @@ from utils.visualization import *
 from simulations.ctbn import CTBNSimulation
 from simulations.belief_updaters import *
 
-import matplotlib.pyplot as plt
-# import time
-import logging
-import scipy
-
 
 class POMDPSimulation:
     def __init__(self, cfg):
@@ -28,45 +23,43 @@ class POMDPSimulation:
         self.policy = self.generate_policy()
         self.PSI = np.array(cfg[OBS_MODEL])
 
-        self.belief_updater = []
-        self.df_Q_agent = []
-        self.df_belief = []
+        self.belief_updater_dict = {}
+        self.Q_agent_dict = {}
+        self.belief_dict = {}
         self.initial_states = {}
 
         self.reset()
 
     def reset(self):
-        self.belief_updater = []
-        self.df_Q_agent = []
-        self.df_belief = []
+        self.belief_updater_dict = {}
+        self.Q_agent_dict = {}
+        self.belief_dict = {}
         self.initial_states = self.initialize_nodes()
         for method in self.BELIEF_UPDATE_METHOD:
             if method == PART_FILT:
-                self.belief_updater += [
-                    ParticleFilterUpdate(self.config, self.config[GAMMA_PARAMS], self.config[N_PARTICLE], self.PSI,
-                                         self.S, self.O)]
-                self.df_Q_agent += [pd.DataFrame(columns=self.S + [T_DELTA])]
+                self.belief_updater_dict[method] = ParticleFilterUpdate(self.config, self.config[GAMMA_PARAMS],
+                                                                        self.config[N_PARTICLE], self.PSI, self.S,
+                                                                        self.O)
+                self.Q_agent_dict[method] = pd.DataFrame(columns=self.S + [T_DELTA])
             if method == EXACT:
                 T = get_amalgamated_trans_matrix(self.parent_ctbn.Q[parent_list_[0]],
                                                  self.parent_ctbn.Q[parent_list_[1]])
-                self.belief_updater += [ExactUpdate(self.config, T, self.PSI, self.S, self.O)]
-                self.df_Q_agent += [pd.DataFrame(columns=self.S + [T_DELTA])]
+                self.belief_updater_dict[method] = ExactUpdate(self.config, T, self.PSI, self.S, self.O)
+                self.Q_agent_dict[method] = pd.DataFrame(columns=self.S + [T_DELTA])
             if method == VANILLA_PART_FILT:
                 Q_params = {}
                 for key, val in self.config[GAMMA_PARAMS].items():
                     Q_params[key] = {}
                     for k, v in val.items():
                         Q_params[key][k] = [i * 1000000 for i in v]
-                self.belief_updater += [
-                    ParticleFilterUpdate(self.config, Q_params, self.config[N_PARTICLE], self.PSI, self.S, self.O)]
-                self.df_Q_agent += [pd.DataFrame(columns=self.S + [T_DELTA])]
-        print(self.BELIEF_UPDATE_METHOD)
-        print(self.belief_updater)
+                self.belief_updater_dict[method] = ParticleFilterUpdate(self.config, Q_params, self.config[N_PARTICLE],
+                                                                        self.PSI, self.S, self.O)
+                self.Q_agent_dict[method] = pd.DataFrame(columns=self.S + [T_DELTA])
 
     def reset_obs_model(self, new):
         self.PSI = new
-        for upd in self.belief_updater:
-            upd.reset_obs_model(new)
+        for m, updater in self.belief_updater_dict.items():
+            updater.reset_obs_model(new)
 
     def set_Qset_agent(self):
         Q_agent = self.config[Q3] if self.config[Q3] else {k: random_q_matrix(len(self.states)) for k in self.A}
@@ -116,26 +109,26 @@ class POMDPSimulation:
 
         t = 0 if t is None else t
         t_next = self.t_max if t_next is None else t_next
-        for i, upd in enumerate(self.belief_updater):
-            t_ = t[i] if type(t) == list else t
-            t_next_ = t_next[i] if type(t_next) == list else t_next
-            df_b = upd.df_belief.copy()
+        for m, updater in self.belief_updater_dict.items():
+            t_ = t[m] if type(t) == dict else t
+            t_next_ = t_next[m] if type(t_next) == dict else t_next
+            df_b = updater.df_belief.copy()
             ind = (df_b.index >= to_decimal(t_)) & (df_b.index <= to_decimal(t_next_))
-            df_Q = self.df_Q_agent[i].copy()
-            if self.BELIEF_UPDATE_METHOD[i] == EXACT:
+            df_Q = self.Q_agent_dict[m].copy()
+            if m == EXACT:
                 df_Q = df_Q.combine_first(df_b.loc[ind, self.S].apply(helper, axis=1))
                 t_diff = np.diff(df_Q.index)
                 df_Q.loc[:, T_DELTA] = np.append(t_diff, to_decimal(self.config[TIME_INCREMENT]) - t_diff[-1]).astype(
                     float)
-            elif self.BELIEF_UPDATE_METHOD[i] == PART_FILT or self.BELIEF_UPDATE_METHOD[i] == VANILLA_PART_FILT:
+            elif m == PART_FILT or m == VANILLA_PART_FILT:
                 df_Q = df_Q.combine_first(df_b.loc[ind, self.S].apply(helper, axis=1))
                 df_Q.index = [to_decimal(i) for i in df_Q.index]
                 df_Q.loc[:, T_DELTA] = np.append(np.diff(df_Q.index), 0).astype(float)
-            self.df_Q_agent[i] = df_Q.copy()
+            self.Q_agent_dict[m] = df_Q.copy()
 
     def update_belief_object(self, obs, t):
-        for upd in self.belief_updater:
-            upd.update(obs, t)
+        for _, updater in self.belief_updater_dict.items():
+            updater.update(obs, t)
 
     def get_belief_for_inference(self, df_traj):
         self.reset()
@@ -145,7 +138,7 @@ class POMDPSimulation:
             if row[TIME] == 0. or (row[OBS] != prev[OBS]) or ((i == len(df_traj) - 1) and len(t_to_append)):
                 self.update_belief_object(int(row[OBS]), row[TIME])
                 for t_ in t_to_append:
-                    for upd in self.belief_updater:
+                    for _, upd in self.belief_updater_dict.items():
                         upd.append_event(t_, t_ - self.config[TIME_INCREMENT])
                 t_to_append = []
             else:
@@ -153,13 +146,13 @@ class POMDPSimulation:
             prev = row.copy()
             if i == len(df_traj) - 1:
                 self.update_belief_object(None, self.t_max)
-
-        self.df_belief += [upd.df_belief for upd in self.belief_updater]
+        self.belief_dict = {m: upd.df_belief for m, upd in self.belief_updater_dict.items()}
 
     def draw_time_contQ(self, state, t_start, t_end):
         change_list = []
         T = t_start
-        df_b = self.belief_updater[0].df_belief.copy()
+        # The sampling of agent trajectory always done according to particle filter!!!
+        df_b = self.belief_updater_dict[PART_FILT].df_belief.copy()
         while T < t_end:
             upper_bound = np.max([self.Qset[k][int(state)][int(1 - state)] for k in self.Qset.keys()])
             u = np.random.uniform()
@@ -196,13 +189,12 @@ class POMDPSimulation:
                 new.loc[:, TIME] = t_agent_change
                 new.loc[:, agent_] = int(1 - new[agent_])
                 agent_events = pd.concat([agent_events, new])
-                for i, upd in enumerate(self.belief_updater):
-                    upd.append_event(t_agent_change, self.df_Q_agent[i].loc[
-                        self.df_Q_agent[i].index < to_decimal(t_agent_change)].index[-1])
-                self.update_cont_Q(
-                    t=[self.df_Q_agent[i].loc[self.df_Q_agent[i].index < to_decimal(t_agent_change)].index[-1] for i in
-                       range(len(self.df_Q_agent))],
-                    t_next=t_agent_change)
+                for m, upd in self.belief_updater_dict.items():
+                    upd.append_event(t_agent_change, self.Q_agent_dict[m].loc[
+                        self.Q_agent_dict[m].index < to_decimal(t_agent_change)].index[-1])
+                self.update_cont_Q(t={m: df_.loc[df_.index < to_decimal(t_agent_change)].index[-1] for m, df_ in
+                                      self.Q_agent_dict.items()},
+                                   t_next=t_agent_change)
             parent_event[agent_] = agent_events.iloc[-1][agent_]
         next_step = pd.concat([agent_events, parent_event])
         next_step.loc[:, OBS] = next_step.apply(self.get_observation, axis=1)
@@ -225,10 +217,10 @@ class POMDPSimulation:
                 df_traj = df_traj[df_traj[TIME] < self.t_max]
                 df_traj = df_traj.append(df_traj.iloc[-1], ignore_index=True)
                 df_traj.loc[df_traj.index[-1], TIME] = self.t_max
-                self.df_Q_agent = [df.truncate(after=to_decimal(self.t_max)) for df in self.df_Q_agent]
-                self.df_belief = [upd.df_belief.truncate(after=to_decimal(self.t_max)) for upd in self.belief_updater]
+                self.Q_agent_dict = {m: df.truncate(after=to_decimal(self.t_max)) for m, df in
+                                     self.Q_agent_dict.items()}
+                self.belief_dict = {m: upd.df_belief.truncate(after=to_decimal(self.t_max)) for m, upd in
+                                    self.belief_updater_dict.items()}
                 break
-
             prev_step = pd.DataFrame(new_step[-1:].values, columns=new_step.columns)
-
         return df_traj

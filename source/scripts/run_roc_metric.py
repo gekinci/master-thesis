@@ -45,7 +45,6 @@ if __name__ == "__main__":
     else:
         pomdp.policy.to_csv(os.path.join(run_folder, 'policy.csv'))
 
-    # cfg['T'] = pomdp.T.tolist()
     cfg['Q3'] = pomdp.Qset
     cfg['parent_Q'] = pomdp.parent_ctbn.Q
 
@@ -61,7 +60,8 @@ if __name__ == "__main__":
         psi_folder = run_folder + f'/psi_{i}'
         os.makedirs(psi_folder, exist_ok=True)
 
-        L_list += [run(pomdp, psi_set, n_sample_per_class, psi_folder, IMPORT_DATA=IMPORT_DATA)]
+        L_list += [
+            run(pomdp, psi_set, n_sample_per_class, psi_folder, IMPORT_DATA=IMPORT_DATA)[cfg[B_UPDATE_METHOD][0]]]
 
     for n in divisors(n_sample_per_class):
         df_scores = pd.DataFrame()
@@ -86,7 +86,7 @@ if __name__ == "__main__":
         df_scores.reset_index(drop=True, inplace=True)
 
         n_all_samples = len(df_scores)
-        y_scores = df_scores.divide(df_scores.values.sum(axis=1), axis=0).values # Normalizing likelihoods
+        y_scores = df_scores.divide(df_scores.values.sum(axis=1), axis=0).values  # Normalizing likelihoods
 
         fpr = dict()
         tpr = dict()
@@ -106,7 +106,7 @@ if __name__ == "__main__":
         plt.ylabel('True Positive Rate')
         plt.title(r'ROC curve $\psi_{0}$ vs. ' + f'all (n={n})')
         plt.legend(loc="lower right")
-        plt.savefig(run_folder + f'/AUROC_{n_sample_per_class*n_classes}samples_class{c}_llh_n{n}.png')
+        plt.savefig(run_folder + f'/AUROC_{n_sample_per_class * n_classes}samples_class{c}_llh_n{n}.png')
         # plt.show()
 
     t1 = time.time()

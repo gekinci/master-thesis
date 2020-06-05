@@ -22,17 +22,16 @@ if __name__ == "__main__":
 
     np.random.seed(config[SEED])
     df_traj = pomdp_sim.sample_trajectory()
-    df_Q = pomdp_sim.df_Q_agent
-    df_b = pomdp_sim.df_belief
+    dict_Q = pomdp_sim.Q_agent_dict
+    dict_b = pomdp_sim.belief_dict
 
     # SAVE AND VISUALIZE DATA
     save_policy(pomdp_sim, run_folder)
-    save_csvs(df_b, df_Q, run_folder, df_traj=df_traj)
-    visualize_pomdp_simulation(df_traj, df_b, df_Q, path_to_save=run_folder, tag='',
-                               belief_method=config[B_UPDATE_METHOD])
+    save_csvs(dict_b, dict_Q, run_folder, df_traj=df_traj)
+    visualize_pomdp_simulation(df_traj, dict_b, dict_Q, path_to_save=run_folder, tag='')
 
     # LIKELIHOOD OF INHOMOGENOUS PROCESS
-    llh_X3_true = llh_inhomogenous_mp(df_traj, df_Q)
+    llh_X3_true = llh_inhomogenous_mp(df_traj, dict_Q)
     print(llh_X3_true)
 
     # LIKELIHOOD OF HOMOGENOUS PROCESS
@@ -43,11 +42,14 @@ if __name__ == "__main__":
 
     # MARGINAL LIKELIHOOD OF HOMOGENOUS PROCESS
     marg_llh_X1 = marginalized_llh_homogenous_mp(df_traj, params=pomdp_sim.config[GAMMA_PARAMS], node=parent_list_[0])
+    print(marg_llh_X1)
     marg_llh_X2 = marginalized_llh_homogenous_mp(df_traj, params=pomdp_sim.config[GAMMA_PARAMS], node=parent_list_[1])
+    print(marg_llh_X2)
 
     # INFERENCE
     df_Q_inferred = get_complete_df_Q(pomdp_sim, df_traj, 1, path_to_save=run_folder)
 
     llh_X3_inf = llh_inhomogenous_mp(df_traj, df_Q_inferred)
-    llh_inference = llh_X3_inf + marg_llh_X1 + marg_llh_X2
+    llh_inference = {k: v + marg_llh_X1 + marg_llh_X2 for k, v in llh_X3_inf.items()}
     print(llh_X3_inf)
+    print(llh_inference)

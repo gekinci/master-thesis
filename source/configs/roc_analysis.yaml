@@ -29,7 +29,8 @@ observation_space: [0, 1, 2]
 action_space: [0, 1]
 obs_model:
 
-belief_update_method: particleFilter  # particleFilter or exact
+# "particleFilter", "exactUpdate", "particleFilter_van" in a list
+belief_update_method: ["particleFilter"]
 n_particle: 200
 
 policy_type: detFunction  # deterministic_df, stochastic_df or detFunction (deterministic function)
@@ -38,7 +39,7 @@ marginalize: True
 
 time_increment: 0.01
 t_max: 5 # default  20
-n_train: 200
+n_train: 1
 n_test: 0
 
 n_obs_model: 3

@@ -27,9 +27,9 @@ STOC_DF = 'stochastic_df'
 
 # belief update
 B_UPDATE_METHOD = 'belief_update_method'
-PART_FILT = 'particle filter'
-VANILLA_PART_FILT = 'van_particleFilter'
-EXACT = 'exact update'
+PART_FILT = 'particleFilter'
+VANILLA_PART_FILT = 'particleFilter_van'
+EXACT = 'exactUpdate'
 N_PARTICLE = 'n_particle'
 
 # Column names

@@ -28,14 +28,14 @@ $Q_{3}$: {'0': [[-0.5, 0.5],
 observation_space: [0, 1, 2]
 action_space: [0, 1]
 obs_model:
-  [[1., 0., 0.],
-   [0., 1., 0.],
-   [0., 1., 0.],
-   [0., 0., 1.]]
-#  [[0.98, 0.01, 0.01],
-#   [0.01, 0.98, 0.01],
-#   [0.01, 0.98, 0.01],
-#   [0.01, 0.01, 0.98]]
+#  [[1., 0., 0.],
+#   [0., 1., 0.],
+#   [0., 1., 0.],
+#   [0., 0., 1.]]
+  [[0.98, 0.01, 0.01],
+   [0.01, 0.98, 0.01],
+   [0.01, 0.98, 0.01],
+   [0.01, 0.01, 0.98]]
 #  [[0.95, 0.025, 0.025],
 #   [0.025, 0.95, 0.025],
 #   [0.025, 0.95, 0.025],
@@ -57,8 +57,8 @@ obs_model:
 #   [0.15, 0.7, 0.15],
 #   [0.15, 0.15, 0.7]]
 
-# 'particle filter', 'exact update', 'van_particleFilter' in a listDENEW
-belief_update_method: [ 'exact update', 'van_particleFilter', 'particle filter']
+# "particleFilter", "exactUpdate", "particleFilter_van" in a list
+belief_update_method: ["exactUpdate", "particleFilter_van", "particleFilter"]
 
 n_particle: 200
 time_increment: 0.01
@@ -68,8 +68,8 @@ policy_type: detFunction  # deterministic_df, stochastic_df or detFunction (dete
 marginalize: True
 
 t_max: 5 # default  20
-n_train: 1
-n_test: 0
+n_train: 10
+n_test: 4
 
 n_obs_model: 3
 
