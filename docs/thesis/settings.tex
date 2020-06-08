@@ -24,6 +24,10 @@
 %%% misc %%%
 \usepackage{blindtext}
 
+%%% algorithms %%%
+\usepackage{algorithmic}
+\usepackage[ruled, lined, longend]{algorithm2e}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,4 +78,7 @@
 %%% probability %%%
 \newcommand{\given}{\,|\,}
 \newcommand{\p}{p}
+
+\DeclareRobustCommand{\rchi}{{\mathpalette\irchi\relax}}
+\newcommand{\irchi}[2]{\raisebox{\depth}{$#1\chi$}}
 

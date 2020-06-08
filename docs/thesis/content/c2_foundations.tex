@@ -1,6 +1,3 @@
-\DeclareRobustCommand{\rchi}{{\mathpalette\irchi\relax}}
-\newcommand{\irchi}[2]{\raisebox{\depth}{$#1\chi$}}
-
 \chapter{Foundations}
 
 This chapter presents the theory and models applied in this thesis. First, the details of the communication problem is described, then the mathematical theory of the frameworks used to model this problem is introduced.
@@ -52,27 +49,27 @@ A continuous-time Markov process is time-homogenous when the transition intensit
 \begin{equation}
 p_{i,j}(h)=\delta_{ij}+q_{i,j} h+o(h)
 \end{equation}
-where $ p_{i, j}(t) \equiv Pr(X^{(t+s)}=j\mid X^{(s)}=i) $ are Markov transition functions and o(.) is a function decaying to zero faster than its argument.
+where $ p_{i, j}(h) \equiv Pr(X^{(t+h)}=j\mid X^{(t)}=i) $ are Markov transition functions and o(.) is a function decaying to zero faster than its argument.
 
 The \textit{master equation} is then derived as follows:
 \begin{align}
-	p_{j}(t) & =\sum_{\forall i} p_{i, j}(h) p_{i}(t-h) \nonumber \\
+	p_{j}(t) &= \operatorname{Pr}(X(t) = x_{j}) \nonumber\\
+		& =\sum_{\forall i} p_{i, j}(h) p_{i}(t-h) \nonumber \\
 	\lim_{h\rightarrow 0} p_{j}(t) 
 		& = \lim_{h\rightarrow 0} \sum_{\forall i} \left[ \delta_{ij}+q_{i,j} h+o(h)\right]  p_{i}(t-h) \nonumber \\ 
 		& = \lim_{h\rightarrow 0} p_{j}(t-h) + \lim_{h\rightarrow 0} h \sum_{\forall i} q_{i,j} p_{i}(t-h) \nonumber \\
 	\lim_{h\rightarrow 0} \frac{p_{j}(t) - p_{j}(t-h)}{h} 
 		&= \lim_{h\rightarrow 0} \sum_{\forall i} q_{i,j} p_{i}(t-h) \nonumber\\
-	\frac{d}{dt} p_{j}(t) & = \sum_{\forall i} q_{i,j} p_{i}(t) \nonumber\\ 
-		& = \sum_{\forall i \neq j}\left[  q_{i,j} p_{i}(t) - q_{j,i} p_{j}(t) \right]
-	\label{eq:ME}
+	\frac{d}{dt} p_{j}(t) & = \sum_{\forall i} q_{i,j} p_{i}(t)
+%		& = \sum_{\forall i \neq j}\left[  q_{i,j} p_{i}(t) - q_{j,i} p_{j}(t) \right]\nonumber
+	\label{eq:master_equation}
 \end{align}
-
-
-Eq.\ref{eq:ME} can be written in matrix form:
+Eq.\ref{eq:master_equation} can be written in matrix form:
 \begin{equation}
-\frac{d}{dt} p = p\textbf{Q}
+\frac{d}{dt} p(t) = p(t)\textbf{Q}
 \end{equation}
-The solution to ODE, the time-dependent probability distribution $ p(t) $ is, 
+where the time-dependent probability distribution $ p(t) $ is a row vector with entries $ {p_{i}(t)}_{x_{i}\in \rchi} $. 
+The solution of this ODE is, 
 \begin{equation}
 p(t)=p(0) \exp (t\textbf{Q})
 \end{equation}
@@ -148,68 +145,99 @@ L(\textbf{Q}_{X} \colon  X^{\left[0,T\right]} ) = \prod_{k=1}^{m} \left[ q_{x_{k
 %\end{equation}
 
 \section{Belief State in Partially Observable Markov Decision Processes}
-As the agent node $ X_{3} $ cannot observe the incoming messages directly, it needs to infer In our problem, cell Z does not have a direct access to its parents' states, rather it observes a summary of them. This is different than observing the states through noisy binary channels, and presents a POMDP problem. Even though it is assumed that the policy of the agent is optimal given the true states of parents, the problem of inferring the observational model remains unsolved and to be addressed.
+Partially observable Markov decision process (POMDP) framework provides a model of an agent which interacts with its environment, but unable to obtain certain information about its state. Instead, the agent gets an observation which is a stochastic function of the true state. The main goal, as similar to Markov decision processes (MDPs), is to learn a policy solving a task by optimizing a reward function. The problem of decision making under uncertainty can be decomposed into two parts for the agent. The first is to keep a belief state which is a sufficient statistic of its past experiences, and the second is to generate an optimal policy which will give an action based on the belief state. \cite{Murphy2000,Kaelbling2011}
 
-\subsection{Exact Belief State Update}
+In the problem considered in this thesis, the agent node $ X_{3} $ cannot observe the incoming messages directly, rather a summary of them. This presents a POMDP problem. However, since the optimal policy of the agent is assumed to be given, the theory for policy optimization is skipped. In this section, update methods for belief state is introduced.
 
-In a conventional POMDP, given the \textit{transition function}, $ T(s, a, s^{\prime})$  and \textit{observation function}, $ O(s^{\prime}, a, o) $, the belief state update is computed as follows \cite{Kaelbling2011} \footnote{Since it is assumed that there is no affect of agent $ X_{3} $'s action on the observation or transition function, $ a $ is omitted from the equation.}:
-\begin{equation}
-\begin{aligned}
-b^{\prime}\left(s^{\prime}\right) &=\operatorname{Pr}\left(s^{\prime} | o, a, b\right) =\operatorname{Pr}\left(s^{\prime} | o, b\right) \\
-&=\frac{\operatorname{Pr}\left(o | s^{\prime}, b\right) \operatorname{Pr}\left(s^{\prime} | b\right)}{\operatorname{Pr}(o | b)} \\
-&=\frac{\operatorname{Pr}\left(o | s^{\prime}\right) \sum_{s \in \mathcal{S}} \operatorname{Pr}\left(s^{\prime} | b, s\right) \operatorname{Pr}(s | b)}{\operatorname{Pr}(o | b)} \\
-&=\frac{O\left(s^{\prime}, o\right) \sum_{s \in \mathcal{S}} T\left(s, s^{\prime}\right) b(s)}{\operatorname{Pr}(o | b)}
-\end{aligned}
-\label{eq:b}
-\end{equation}
+In the following, belief state refers to the posterior probability distribution over the environment states.
 
-In Eq.\ref{eq:b}, the transition function is time-independent. However, in our setting, the parent nodes X and Y are modelled as CTMCs with time-dependent transition matrices. 
+\subsection{Exact/Bayes(?) Belief State Update}
+
+Consider a POMDP problem, with state space \textit{S}, action space \textit{A}, observation space $ \Omega $. In a scneario where a compact representation of the \textit{transition model}, $ T(s, a, s^{\prime})$,  and \textit{observation model}, $ O(s^{\prime}, a, o) $, is available, the belief state update can be obtain via Bayes' theorem \cite{Kaelbling2011}:
+\begin{align}
+b^{\prime}\left(s^{\prime}\right) &=\operatorname{Pr}\left(s^{\prime} | o, a, b\right) \nonumber\\
+&=\frac{\operatorname{Pr}\left(o | s^{\prime}, a, b\right) \operatorname{Pr}\left(s^{\prime} | a, b\right)}{\operatorname{Pr}(o | a, b)} \nonumber\\
+&=\frac{\operatorname{Pr}\left(o | s^{\prime}, a\right) \sum_{s \in \mathcal{S}} \operatorname{Pr}\left(s^{\prime} | a, b, s\right) \operatorname{Pr}(s | a, b)}{\operatorname{Pr}(o | a, b)} \nonumber\\
+&=\frac{O\left(s^{\prime}, a, o\right) \sum_{s \in \mathcal{S}} T\left(s,a, s^{\prime}\right) b(s)}{\operatorname{Pr}(o | a, b)}
+\label{eq:discrete_belief_update}
+\end{align}
+
+\subsection{Filtering for CTMP}
+Eq.\ref{eq:discrete_belief_update} is discrete-time solution of belief state. However, since in the model described in Section 2.1, the parent nodes are modelled as CTMPs, and the environment state for the agent is the state of an CTMP, the belief state should be solved in continuous-time. This is achieved by the inference of posterior probability of CTMP.
 %To derive \textit{continuous-time belief state}, $ b(t) $, first we need to get the joint transition matrix of X and Y, two independent processes. This operation called \textit{amalgamation} is described in detail by Nodelman \textit{et al} \cite{Nodelman1995}. 
 %Let us denote this matrix by $ Q_{XY} $. 
-Now we can derive the belief state as follows: 
+
+Let X be a CTMC with transition intensity matrix \textbf{Q}. Assume discrete-time observations denoted by $ y_{1}=y(t_{1}), ..., y_{N}=y(t_{N}) $. The belief state can be written as:
 \begin{equation}
-b(x_{1}, x_{2}; t) = P( X_{1}(t) = x_{1},  X_{2}(t) = x_{2}\mid y_{1}, ..., y_{t})
+	b(x_{i};t_{N}) = \operatorname{Pr}(X(t_{N}) = x_{i} \mid y_{1}, ..., y_{N})
 \end{equation}
-Denote $ b(t) $, $ t \geq 0 $, as row vector with $ \left\lbrace b(x_{1}, x_{2};t)_{x_{i} \in \rchi_{i}}\right\rbrace  $.
-This posterior probability can be described by a system of ODEs
+From the master equation given in Eq.\ref{eq:master_equation}, it follows that:
 \begin{equation}
-\frac{db(t)}{dt} = b(t)\ \textbf{T}
+ \frac{d}{dt} b(x_{j};t)  = \sum_{\forall i} q_{i,j} b(x_{i};t)
 \end{equation}
-where the initial condition $ b(0) $ is row vector with $ \left\lbrace P(X_{1}(0)=x_{1}, X_{2}(0)=x_{2})_{x_{i} \in \rchi_{i}}\right\rbrace $ \cite{article}.
-\textbf{T} is the joint transition intensity matrix of $ X_{1} $ and $ X_{2} $ and given by amalgamation operation between $ \textbf{Q}_{1} $ and  $ \textbf{Q}_{2} $ \cite{Nodelman1995}.
+The time-dependent belief state $ b(t) $ is a row vector with $ \left\lbrace b(x_{i};t)_{x_{i} \in \rchi}\right\rbrace  $.
+This posterior probability can be described by a system of ODEs:
 \begin{equation}
-\textbf{T} = \textbf{Q}_{1} * \textbf{Q}_{2}
+\frac{db(t)}{dt} = b(t)\textbf{Q}
 \end{equation}
-The belief update at discrete times of observation $ y_{t} $
+where the initial condition $ b(0) $ is row vector with $ \left\lbrace b(x_{i};t)_{x_{i} \in \rchi}\right\rbrace $ \cite{article}.
+
+The belief state update at discrete times of observation $ y_{t} $ is derived as 
 \begin{align}
-b(x_{1}, x_{2}; t) & = P( X_{1}(t) = x_{1},  X_{2}(t) = x_{2}\mid y_{1}, ..., y_{t}) \nonumber\\ & = \frac{P(y_{1}, ..., y_{t}, X_{1}(t) = x_{1},  X_{2}(t) = x_{2})}{P(y_{1}, ..., y_{t})}  \nonumber\\ & = \frac{P(y_{t} \mid y_{1}, ..., y_{t-1}, X_{1}(t) = x_{1},  X_{2}(t) = x_{2})}{P(y_{t} \mid y_{1}, ..., y_{t-1})} \frac{P(y_{1}, ..., y_{t-1}, X_{1}(t) = x_{1},  X_{2}(t) = x_{2})}{P(y_{1}, ..., y_{t-1})}  \nonumber\\ & = Z_{t}^{-1} \ P(y_{t} \mid x_{1}, x_{2})\ P( X_{1}(t) = x_{1},  X_{2}(t) = x_{2}\mid y_{1}, ..., y_{t-1})  \nonumber\\ & = Z_{t}^{-1}\ {P(y_{t} \mid x_{1}, x_{2})}\ {b(x_{1}, x_{2}; t^{-})}
+b(x_{i}; t_{N}) & = \operatorname{Pr}( X(t_{N}) = x_{i},\mid y_{1}, ..., y_{N}) \nonumber\\ & = \frac{\operatorname{Pr}(y_{1}, ..., y_{N}, X(t_{N}) = x_{i})}{\operatorname{Pr}(y_{1}, ..., y_{N})}  \nonumber\\ & = \frac{\operatorname{Pr}(y_{N} \mid y_{1}, ..., y_{N-1}, X(t_{N}) = x_{i})}{\operatorname{Pr}(y_{N} \mid y_{1}, ..., y_{N-1})} \frac{\operatorname{Pr}(y_{1}, ..., y_{N-1}, X(t_{N}) = x_{i})}{\operatorname{Pr}(y_{1}, ..., y_{N-1})}  \nonumber\\ & = Z_{N}^{-1} \ \operatorname{Pr}(y_{N} \mid X(t_{N})=x_{i})\ \operatorname{Pr}( X(t_{N}) = x_{i}\mid y_{1}, ..., y_{N-1})  \nonumber\\ & = Z_{N}^{-1}\ {\operatorname{Pr}(y_{N} \mid X(t_{N})=x_{i})}\ {b(x_{i}; t_{N}^{-})}
 \end{align}
-where $ Z_{t} = \sum_{x_{1}, x_{2}\in X} P(y_{t} \mid x_{1}, x_{2})\ b(x_{1}, x_{2}; t^{-}) $ is the normalization factor \cite{article}.
-%
-%\begin{equation}
-%b_{s^{\prime}}(t) =\frac{\operatorname{Pr}\left(o |s^{\prime}\right) \sum_{s \in \mathcal{S}} \operatorname{Pr}\left(S(t)=s^{\prime} | S(t-h)=s\right) b_{s}(t-h)}{\operatorname{Pr}(o | b)}
-%\end{equation}\\
-%\begin{equation}
-%\begin{aligned}
-%\lim_{h\rightarrow 0} b_{s^{\prime}}(t) &= C \lim_{h\rightarrow 0}\left[  \sum_{s \in \mathcal{S}} p_{s, s^{\prime}}(t) b_{s}(t-h)\right]\\
-%&= C \lim_{h\rightarrow 0}\left[  \sum_{s \in \mathcal{S}} \left[ \delta_{ss^{\prime}}+q_{s,s^{\prime}} h+o(h)\right]  b_{s}(t-h)\right]\\
-%&= C \lim_{h\rightarrow 0}\left[ b_{s^{\prime}}(t-h) + \sum_{s \in \mathcal{S}} q_{s,s^{\prime}} h  b_{s}(t-h)\right]
-%\end{aligned}
-%\end{equation}
-%Due to the scaling factor $ C =\frac{\operatorname{Pr}\left(o |s^{\prime}\right)}{\operatorname{Pr}(o | b)} $, cannot derive $ \frac{d}{dt} b = \textbf{Q}b$, .\\
-%However, we can use the conditional distribution of Markov processes as the transition function $ T(s'|s) $ to derive the continuous-time belief state. The conditional distribution over the value of X, a homogenous Markov process, at time t given its value at an earlier time s can be written as 
-%\begin{equation}
-%\operatorname{Pr}\left(X(t) \mid X(s)\right) = \exp(\textbf{Q}(t-s))
-%\end{equation}
-%Then the continuous-time belief state becomes:
-%\begin{equation}
-%b_{s^{\prime}}(t) =\frac{\operatorname{Pr}\left(o |s^{\prime}\right) \sum_{s \in \mathcal{S}}\left[ \exp(\textbf{Q}(h))\right]_{s,s'}  b_{s}(t-h)}{\operatorname{Pr}(o | b)}
-%\end{equation}
+where $ Z_{N} = \sum_{x_{i}\in \rchi} \operatorname{Pr}(y_{N} \mid X(t_{N})=x_{i})\ b(x_{i}; t_{N}^{-}) $ is the normalization factor \cite{article}.
 
 \subsection{Belief State Update using Particle Filter}
+In a more realistic scenario, the exact update of belief state may not be feasible for several reasons. 
+%TODO explain why do we need particle filter, how is this in the literature, how did we end up here
+
 
 \subsubsection{Marginalized Continuous Time Bayesian Networks}
+The marginal process description of a CTMC/CTBN is given as 
+\begin{multline}
+p(X_n(t + dt) = x' \mid X_n(t)=x, U_n(t)=u, X_{[0, t)})\\
+\begin{split}
+&= \int p(X_n(t + dt) = x' \mid X_n(t)=x, U_n(t)=u, Q^u_n, X_{[0, t)})p(Q^u_n)dQ^u_n\\
+&= \delta(x, x') + \underbrace{\mathbb{E}[Q^u_n (x, x') \mid X_{[0, t]} = x_{[0, t]}]}_{\equiv f^u_n(x'\mid x_{[0, t]})}dt + o(dt),
+\end{split}
+\end{multline}
+where we introduced $f$ for brevity. This expression also holds for $K$ trajectories that have been independently drawn from the CTBN; in line with the paper, we denote the joint history of all $K$ trajectories until time point $t$ as $\xi_t = \{x^1_{[0, t]}, ..., x^K_{[0, t]}\}$.
+
+\bigskip
+By integrating out the rate matrices $Q^u_n$, we introduced dependencies between all trajectories; this is readily seen by evaluation of the above expectation:
+\begin{align}
+\mathbb{E}[Q^u_n (x, x') \mid \xi_t] &=\frac{\alpha^u_n(x, x') + r^u_n(x, x')}{\beta^u_n(x, x') + T^u_n(x)}\\
+&=\frac{\alpha^u_n(x, x') + \sum_k r^u_{n, k}(x, x')}{\beta^u_n(x, x') + \sum_k T^u_{n, k}(x)}.
+\end{align}
+The expectation of the rate matrix depends on the summary statistics $T^u_n = \sum_k T^u_{n,k}$, $r^u_n = \sum_k r^u_{n,k}$ from all observed trajectories up to the current point in time. Hence, to draw $K$ trajectories from a marginalised CTBN exactly, they have to be simulated jointly, inducing a joint path measure $p(\{X^k_{[0, T]} : k = 1, ..., K\})$.
+Because this is computationally infeasible, we would like to approximate this resulting joint distribution
+by a set of $K$ factorising variational distributions: $\prod_k q(X^k_{[0, T]})$ such that
+\begin{equation}
+\min_q \mathrm{KL}\,\left(\prod_k q(X^k_{[0, T]})\mid\mid p(\{X^k_{[0, T]}\}_k)\right).
+\end{equation}
+
 
 \subsubsection{Particle Filter}
+%TODO The explaination and the algorithm
+
+\scalebox{1}{\begin{algorithm}[H]
+		\KwIn{Measurement data $ y_{k} $ at time $ t_{k} $, set of particles $\textbf{p}^{k-1} $, estimated $ \hat{Q} $}
+		\KwResult{New set of particles $ \textbf{p}^{k} $, representing $ b(t_{k}) $}
+		\vspace{+4pt}
+		\begin{algorithmic}[1]
+			\FOR{$p_{m} \in \textbf{p}^{k-1}$}
+			\STATE {$p_{m} = \left\lbrace x_{m}, \hat{Q}\right\rbrace \leftarrow Propagate\ particle\ through\ marginal\ process\ model\ from\ t_{k-1}\ to\ t_{k}$ }
+			\STATE{$w_{m} \leftarrow p(y_{k} \mid X(t_{k})=x_{m}) $} 
+			\tcp*[h] {observation likelihood}
+			\STATE {$\hat{Q} \leftarrow sufficient\ statistics\ added\ from\  p_{m}[t_{k-1}, t_{k}]$}
+			\ENDFOR
+			\STATE{$ w_{m} \leftarrow \frac{w_{m}}{\sum_{m} w_{m}}$} \tcp*[h]{normalize weights}
+			\FOR{$ p_{m} \in \textbf{p}_{k} $} 
+			\STATE{$ p_{m} \leftarrow Sample\ from\ p_{k}\ with\ probabilities\ w_{m}\ with\ replacement$}
+			\ENDFOR
+		\end{algorithmic}
+		\caption{Marginal particle filter}
+\end{algorithm}}
 
 \section{Likelihood Model of Communication System (?)}
