@@ -30,7 +30,13 @@
 	\thispagestyle{empty}
 	\newpage
 	\setcounter{page}{1}
-
+	
+	\pagenumbering{roman}
+	\input{content/list_of_symbols.tex}
+	
+	\clearpage
+	\pagenumbering{arabic}
+	
 	\input{content/c1_introduction.tex}
 	\input{content/c2_foundations.tex}
 	\input{content/c3_simulation_experiments.tex}
