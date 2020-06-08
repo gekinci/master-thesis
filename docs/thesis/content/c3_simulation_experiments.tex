@@ -1,6 +1,15 @@
-\chapter{Simulation and Experiments}
+\chapter{Experimental Setup}
 
 Environment with exact belief update and belief update using particle filter
+\textbf{T} is the joint transition intensity matrix of $ X_{1} $ and $ X_{2} $ and given by amalgamation operation between $ \textbf{Q}_{1} $ and  $ \textbf{Q}_{2} $ \cite{Nodelman1995}.
+\begin{equation}
+\textbf{T} = \textbf{Q}_{1} * \textbf{Q}_{2}
+\end{equation}
+
+
+\begin{equation}
+b(x_{1}, x_{2}; t) = P( X_{1}(t) = x_{1},  X_{2}(t) = x_{2}\mid y_{1}, ..., y_{t})
+\end{equation}
 
 \section{Data Generation}
 \subsection{Sampling Trajectories}
