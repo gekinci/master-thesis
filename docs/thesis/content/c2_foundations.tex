@@ -194,28 +194,28 @@ In a more realistic scenario, the exact update of belief state may not be feasib
 
 
 \subsubsection{Marginalized Continuous Time Bayesian Networks}
-The marginal process description of a CTMC/CTBN is given as 
-\begin{multline}
-p(X_n(t + dt) = x' \mid X_n(t)=x, U_n(t)=u, X_{[0, t)})\\
-\begin{split}
-&= \int p(X_n(t + dt) = x' \mid X_n(t)=x, U_n(t)=u, Q^u_n, X_{[0, t)})p(Q^u_n)dQ^u_n\\
-&= \delta(x, x') + \underbrace{\mathbb{E}[Q^u_n (x, x') \mid X_{[0, t]} = x_{[0, t]}]}_{\equiv f^u_n(x'\mid x_{[0, t]})}dt + o(dt),
-\end{split}
-\end{multline}
-where we introduced $f$ for brevity. This expression also holds for $K$ trajectories that have been independently drawn from the CTBN; in line with the paper, we denote the joint history of all $K$ trajectories until time point $t$ as $\xi_t = \{x^1_{[0, t]}, ..., x^K_{[0, t]}\}$.
-
-\bigskip
-By integrating out the rate matrices $Q^u_n$, we introduced dependencies between all trajectories; this is readily seen by evaluation of the above expectation:
-\begin{align}
-\mathbb{E}[Q^u_n (x, x') \mid \xi_t] &=\frac{\alpha^u_n(x, x') + r^u_n(x, x')}{\beta^u_n(x, x') + T^u_n(x)}\\
-&=\frac{\alpha^u_n(x, x') + \sum_k r^u_{n, k}(x, x')}{\beta^u_n(x, x') + \sum_k T^u_{n, k}(x)}.
-\end{align}
-The expectation of the rate matrix depends on the summary statistics $T^u_n = \sum_k T^u_{n,k}$, $r^u_n = \sum_k r^u_{n,k}$ from all observed trajectories up to the current point in time. Hence, to draw $K$ trajectories from a marginalised CTBN exactly, they have to be simulated jointly, inducing a joint path measure $p(\{X^k_{[0, T]} : k = 1, ..., K\})$.
-Because this is computationally infeasible, we would like to approximate this resulting joint distribution
-by a set of $K$ factorising variational distributions: $\prod_k q(X^k_{[0, T]})$ such that
-\begin{equation}
-\min_q \mathrm{KL}\,\left(\prod_k q(X^k_{[0, T]})\mid\mid p(\{X^k_{[0, T]}\}_k)\right).
-\end{equation}
+%The marginal process description of a CTMC/CTBN is given as 
+%\begin{multline}
+%p(X_n(t + dt) = x' \mid X_n(t)=x, U_n(t)=u, X_{[0, t)})\\
+%\begin{split}
+%&= \int p(X_n(t + dt) = x' \mid X_n(t)=x, U_n(t)=u, Q^u_n, X_{[0, t)})p(Q^u_n)dQ^u_n\\
+%&= \delta(x, x') + \underbrace{\mathbb{E}[Q^u_n (x, x') \mid X_{[0, t]} = x_{[0, t]}]}_{\equiv f^u_n(x'\mid x_{[0, t]})}dt + o(dt),
+%\end{split}
+%\end{multline}
+%where we introduced $f$ for brevity. This expression also holds for $K$ trajectories that have been independently drawn from the CTBN; in line with the paper, we denote the joint history of all $K$ trajectories until time point $t$ as $\xi_t = \{x^1_{[0, t]}, ..., x^K_{[0, t]}\}$.
+%
+%\bigskip
+%By integrating out the rate matrices $Q^u_n$, we introduced dependencies between all trajectories; this is readily seen by evaluation of the above expectation:
+%\begin{align}
+%\mathbb{E}[Q^u_n (x, x') \mid \xi_t] &=\frac{\alpha^u_n(x, x') + r^u_n(x, x')}{\beta^u_n(x, x') + T^u_n(x)}\\
+%&=\frac{\alpha^u_n(x, x') + \sum_k r^u_{n, k}(x, x')}{\beta^u_n(x, x') + \sum_k T^u_{n, k}(x)}.
+%\end{align}
+%The expectation of the rate matrix depends on the summary statistics $T^u_n = \sum_k T^u_{n,k}$, $r^u_n = \sum_k r^u_{n,k}$ from all observed trajectories up to the current point in time. Hence, to draw $K$ trajectories from a marginalised CTBN exactly, they have to be simulated jointly, inducing a joint path measure $p(\{X^k_{[0, T]} : k = 1, ..., K\})$.
+%Because this is computationally infeasible, we would like to approximate this resulting joint distribution
+%by a set of $K$ factorising variational distributions: $\prod_k q(X^k_{[0, T]})$ such that
+%\begin{equation}
+%\min_q \mathrm{KL}\,\left(\prod_k q(X^k_{[0, T]})\mid\mid p(\{X^k_{[0, T]}\}_k)\right).
+%\end{equation}
 
 
 \subsubsection{Particle Filter}
