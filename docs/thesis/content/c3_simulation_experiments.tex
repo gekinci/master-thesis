@@ -1,15 +1,27 @@
 \chapter{Experimental Setup}
-
+The dependencies are represented by set of parents for each node $ \textbf{U}_{X_{n}} = Par(X_n) $ and for the model described in \autoref{fig:graph_model} can be written as follows:
+\begin{align*}
+\textbf{U}_{X_{1}}, \textbf{U}_{X_{2}} & = \emptyset \\
+\textbf{U}_{X_{3}} & = \left\lbrace X_1, X_2 \right\rbrace 
+\end{align*}
 Environment with exact belief update and belief update using particle filter
 \textbf{T} is the joint transition intensity matrix of $ X_{1} $ and $ X_{2} $ and given by amalgamation operation between $ \textbf{Q}_{1} $ and  $ \textbf{Q}_{2} $ \cite{Nodelman1995}.
 \begin{equation}
 \textbf{T} = \textbf{Q}_{1} * \textbf{Q}_{2}
 \end{equation}
 
-
+%To derive \textit{continuous-time belief state}, $ b(t) $, first we need to get the joint transition matrix of X and Y, two independent processes. This operation called \textit{amalgamation} is described in detail by Nodelman \textit{et al} \cite{Nodelman1995}. 
+%Let us denote this matrix by $ Q_{XY} $. 
 \begin{equation}
 b(x_{1}, x_{2}; t) = P( X_{1}(t) = x_{1},  X_{2}(t) = x_{2}\mid y_{1}, ..., y_{t})
 \end{equation}
+
+%We can formulate our graphical model as $ S = [X, Y, Z] $, where $ Par(Z) = {X,Y} $ and $ Par(X) = Par(Y) =\emptyset $. We can then write the conditional probability:
+%\begin{equation}
+%\begin{split}
+%P\left(S^{\left(t+h\right)}=s' | S^{\left(t\right)}=s\right) = & P\left(X^{\left( t+h\right) }=x' | X^{\left(t\right)}=x, Par(X)^{\left(t\right)}={y,z}\right) \\&  P\left(Y^{\left( t+h\right) }=y' | Y^{\left(t\right)}=y\right) P\left(Z^{\left( t+h\right) }=z' | ^{\left(t\right)}=z\right)
+%\end{split} 
+%\end{equation}
 
 \section{Data Generation}
 \subsection{Sampling Trajectories}
@@ -17,3 +29,28 @@ b(x_{1}, x_{2}; t) = P( X_{1}(t) = x_{1},  X_{2}(t) = x_{2}\mid y_{1}, ..., y_{t
 \subsubsection{Thinning Algorithm}
 \section{Inference of Deterministic Observation Model}
 Our dataset contains a number of trajectories from all the nodes involved in the communication. $ \textbf{D} = \left\lbrace D_{1},..., D_{N}\right\rbrace $. Every trajectory comprises of state transitions in time interval $  [0, T] $, and the times of these transitions.
+
+\subsubsection{Algorithm}
+%TODO The explaination and the algorithm
+
+\scalebox{1}{\begin{algorithm}[H]
+		\KwIn{Measurement data $ y_{k} $ at time $ t_{k} $, set of particles $\textbf{p}^{k-1} $, estimated $ \hat{Q} $}
+		\KwResult{New set of particles $ \textbf{p}^{k} $, representing $ b(t_{k}) $}
+		\vspace{+4pt}
+		\begin{algorithmic}[1]
+			\FOR{$p_{m} \in \textbf{p}^{k-1}$}
+			\STATE {$p_{m} = \left\lbrace x_{m}, \hat{Q}\right\rbrace \leftarrow Propagate\ particle\ through\ marginal\ process\ model\ from\ t_{k-1}\ to\ t_{k}$ }
+			\STATE{$w_{m} \leftarrow p(y_{k} \mid X(t_{k})=x_{m}) $} 
+			\tcp*[h] {observation likelihood}
+			\STATE {$\hat{Q} \leftarrow sufficient\ statistics\ added\ from\  p_{m}[t_{k-1}, t_{k}]$}
+			\ENDFOR
+			\STATE{$ w_{m} \leftarrow \frac{w_{m}}{\sum_{m} w_{m}}$} \tcp*[h]{normalize weights}
+			\FOR{$ p_{m} \in \textbf{p}_{k} $} 
+			\STATE{$ p_{m} \leftarrow Sample\ from\ p_{k}\ with\ probabilities\ w_{m}\ with\ replacement$}
+			\ENDFOR
+		\end{algorithmic}
+		\caption{Marginal particle filter}
+\end{algorithm}}
+
+
+\section{Likelihood Model of Communication System (?)}
