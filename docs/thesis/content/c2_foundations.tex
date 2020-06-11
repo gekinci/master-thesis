@@ -1,16 +1,19 @@
 \chapter{Foundations}
 
-This chapter presents the theory and models applied in this thesis. First, the details of the communication problem is described, then the mathematical theory of the frameworks used to model this problem is introduced.
+This chapter presents the theory and models applied in this thesis. First, the details of the communication problem is described briefly to put the theory into perspective, and then the mathematical theory of the frameworks used to model this problem is introduced.
 
 \section{Problem Formulation}
+\label{sec:prob_formulation}
 \begin{wrapfigure}{r}{4cm}
 	\begin{center}
 		\includegraphics[width=2.5cm]{figures/h_model}
 		\caption{Graphical model.}
 	\end{center}
-	\label{wrap-fig:1}
+	\label{fig:graph_model}
 \end{wrapfigure} 
-The communication model considered in this thesis is given in Figure \ref{wrap-fig:1}. The parent nodes, $X_{1}$ and $ X_{2}$, emit messages which carry information about their states. These messages are translated by an observation model, $\psi$, and agent node, $ X_{3} $ makes a decision based on this translated message, $ y $. The main objective is to infer the observation model given the trajectories of nodes.
+The communication model considered in this thesis is given in \autoref{fig:graph_model}. The parent nodes, $X_{1}$ and $ X_{2}$, emit messages which carry information about their states. These messages are translated by an observation model, $\psi$, and agent node, $ X_{3} $ makes a decision based on this translated message, $ y $. The main objective is to infer the observation model given set of trajectories of nodes.
+
+The transition models of the nodes and the dependencies between them are modelled as continuous-time Bayesian network (CTBN), denoted by \textbf{X}. The network \textbf{X} represents a stohastic process over a structured multivariate state space $ \rchi = [\rchi_1,..., \rchi_n] $. 
 
 The messages that are emitted by the parent nodes $X_{1}$ and $ X_{2} $ are modelled as independent homogeneous continuous-time Markov processes $X_{i}(t)$, with state space $ \rchi_{i} = \left\lbrace x_{1}, x_{2}, ..., x_{n} \right\rbrace  $ for $ i \in \left\lbrace 1,2 \right\rbrace $. These processes are defined by transition intensity matrices $ Q_{i} $, where intensities do not depend on time. These matrices are assumed to be gamma distributed.
 \begin{equation}
@@ -20,14 +23,15 @@ The agent node does not have a direct access to the messages, but observes a tra
 \begin{equation}
 \psi \coloneqq p(y(t) \mid X_{1}(t), X_{2}(t))
 \end{equation}
-The agent  $ X_{3} $ is modelled as inhomogeneous continuous-time Markov process with state space $ \rchi_{3} = \left\lbrace x_{1}, x_{2}, ..., x_{n} \right\rbrace  $, set of actions $ a \in \left\lbrace a_{0}, a_{1}, ..., a_{k}\right\rbrace  $ and set of transition intensity matrices $ \textbf{\textit{Q}}_{3} = \left\lbrace \textbf{Q}_{a_{0}}, \textbf{Q}_{a_{1}}, ..., \textbf{Q}_{a_{k}} \right\rbrace $. 
+The agent  $ X_{3} $ is modelled as inhomogenouos continuous-time Markov process with state space $ \rchi_{3} = \left\lbrace x_{1}, x_{2}, ..., x_{n} \right\rbrace  $, set of actions $ a \in \left\lbrace a_{0}, a_{1}, ..., a_{k}\right\rbrace  $ and set of transition intensity matrices $ \textbf{\textit{Q}}_{3} = \left\lbrace \textbf{Q}_{a_{0}}, \textbf{Q}_{a_{1}}, ..., \textbf{Q}_{a_{k}} \right\rbrace $. 
 \begin{equation}
 \textbf{Q}_{a} \sim Gam(\alpha_{a}, \beta_{a})
 \end{equation}
-Given the observation, the agent forms a belief over the parent states, $  b(x_{1}, x_{2}; t) $, that summarizes the past observations.\cite{Kaelbling2011} The policy of the agent, $ \pi(a \mid b) $, is assumed to be shaped by evolution (close) to optimality. Based on the belief state, the agent takes an action, which in the setting described above means to change its internal dynamics through choice of intensity matrix. 
-
-\section{Continuous Time Markov Processes}
-
+Given the observation, the agent forms a belief over the parent states, $  b(x_{1}, x_{2}; t) $, that summarizes the past observations.\cite{KAELBLING199899} The policy of the agent, $ \pi(a \mid b) $, is assumed to be shaped by evolution (close) to optimality. Based on the belief state, the agent takes an action, which in the setting described above means to change its internal dynamics through choice of intensity matrix. 
+\section{Continuous Time Bayesian Networks}
+A continuous-time Bayesian network (CTBN) is a graphical model that represents a collection of nodes whose values evolve continuously over time. In CTBN framework, through a directed graph, the dependencies of a set of Markov processes (MPs) can be modelled efficiently relying on two assumptions. First assumption is that only one node can transition at a time. Secondly, the instantenous dynamics of each node depends only on its parent nodes. \cite{Cohn2010a, Nodelman1995} 
+%In the following, every node of a CTBN is considered to be a Markov process.
+\subsection{Continuous Time Markov Processes}
 A continuous-time Markov process (CTMP) is a continuous-time stochastic process which satisfies Markov property, namely, the probability distribution over the states at a future time is conditionally independent of the past states given the current state.\cite{Cohn2010a} Let X be a CTMP with state space $ \rchi = \left\lbrace x_{1}, x_{2}, ..., x_{n} \right\rbrace  $. Then the Markov property can be written as follows:
 \begin{equation}
 	\operatorname{Pr}\left(X^{\left(t_{k}\right)}=x_{t_{k}} | X^{\left(t_{k-1}\right)}=x_{t_{k-1}}, \ldots, X^{\left(t_{0}\right)}=x_{t_{0}}\right)=\operatorname{Pr}\left(X^{\left(t_{k}\right)}=x_{t_{k}} | X^{\left(t_{k-1}\right)}=x_{t_{k-1}}\right)
@@ -41,15 +45,17 @@ A CTMP is represented by its transition intensity matrix, $ \textbf{Q} $. In thi
 	{\vdots}  & 	{\vdots}  & 	{\ddots}  & {\hdots}  \\
 	q_{n,1} &  q_{n,2} &  {\hdots} & -q_{n}
 	\end{bmatrix}
+\label{eq:Q_matrix}
 \end{equation}
 where $ q_{i} = \sum_{i \neq j} q_{i,j}$.\cite{Nodelman1995}
 
-\subsection{Homogenous Continuous Time Markov Processes}
-A continuous-time Markov process is time-homogenous when the transition intensities do not depend on time. Let X be a homogenous CTMP, with transition intensity matrix \textbf{Q}. Infinitesimal transition probability from state $ x_{i} $ to $ x_{j} $ in terms of the transition intensities $ q_{i,j} $ can be written as \cite{Cohn2010a}:
+\subsubsection{Homogenous Continuous Time Markov Processes}
+A continuous-time Markov process is time-homogenous when the transition intensities do not depend on time. Let X be a homogenous CTMP, with transition intensity matrix $ \textbf{Q}_X $. Infinitesimal transition probability from state $ x_{i} $ to $ x_{j} $ in terms of the transition intensities $ q_{i,j} $ can be written as \cite{Cohn2010a}:
 \begin{equation}
 p_{i,j}(h)=\delta_{ij}+q_{i,j} h+o(h)
+\label{eq:Markov_trans_func}
 \end{equation}
-where $ p_{i, j}(h) \equiv Pr(X^{(t+h)}=j\mid X^{(t)}=i) $ are Markov transition functions and o(.) is a function decaying to zero faster than its argument.
+where $ p_{i, j}(h) \equiv Pr(X(t+h)=x_j\mid X(t)=x_i) $ are Markov transition functions, $ \delta_{i,j} = \delta(x_i,x_j)$ is Kronecker delta and o(.) is a function decaying to zero faster than its argument.
 
 The \textit{master equation} is then derived as follows:
 \begin{align}
@@ -64,7 +70,7 @@ The \textit{master equation} is then derived as follows:
 %		& = \sum_{\forall i \neq j}\left[  q_{i,j} p_{i}(t) - q_{j,i} p_{j}(t) \right]\nonumber
 	\label{eq:master_equation}
 \end{align}
-Eq.\ref{eq:master_equation} can be written in matrix form:
+Equation \ref{eq:master_equation} can be written in matrix form:
 \begin{equation}
 \frac{d}{dt} p(t) = p(t)\textbf{Q}
 \end{equation}
@@ -81,19 +87,19 @@ f(t) & = q_{i} \exp \left(-q_{i} t\right), t\geq 0  \label{eq:f(t)_homo}\\
 F(t) & = 1 - \exp \left(-q_{i} t\right), t\geq 0 
 \end{align}
 Given the transitioning from state $ x_{i} $, the probability of landing on state $ x_{j} $ is $ q_{i,j}/q_{i} $.
-\subsubsection{Likelihood Function}
+\paragraph{Likelihood Function}
 Consider a single transition denoted as $ d = <x_{i},x_{j},t> $, where transition occurs from state $ x_{i} $ to $ x_{j} $ after spending t amount of time at state $ x_{i} $. The likelihood of this transition is the product of the probability of having remained at state $ x_{i} $ for that long, and the probability of transitioning to $ x_{j} $.
 \begin{equation}
 \operatorname{Pr}(d  \mid \textbf{Q}) = \left( q_{i}exp(-q_{i}t) \right) \left( \frac{q_{i,j}}{q_{i}} \right)
 \end{equation}
-The likelihood of a trajectory sampled from a homogenous CTMC, $ X^{[0,T]} $, can be decomposed as the product of the likelihood of single transitions. The sufficient statistics summarizing this trajectory can be written as $ T[x_{i}] $, total amount of time spent in state $ x_{i} $, $ M[x_{i}, x_{j}] $ total number of transitions from state $ x_{i} $ to $ x_{j} $, we can write down the likelihood of a trajectory $  X^{\left[0,T\right] } $,
+The likelihood of a trajectory sampled from a homogenous CTMC, $ X^{[0,T]} $, can be decomposed as the product of the likelihood of single transitions. The sufficient statistics summarizing this trajectory can be written as $ T[x_{i}] $, total amount of time spent in state $ x_{i} $, $ M[x_{i}, x_{j}] $ total number of transitions from state $ x_{i} $ to $ x_{j} $. Then the likelihood of a trajectory $  X^{\left[0,T\right] } $ can be written as:
 \begin{align}
 \operatorname{Pr}(X^{[0,T]}  \mid \textbf{Q}) &=  \prod_{d \in X^{[0,T]}} \operatorname{Pr}(d \mid \textbf{Q}) \nonumber\\&=\left(\prod_{ i} q_{i}^{M[x_{i}]} \exp \left(-q_{i} T[x_{i}]\right)\right)\left(\prod_{ i} \prod_{ j \neq i} \left(\frac{q_{i,j}}{q_{i}}\right)^{M\left[x_{i}, x_{j}\right]}\right) \nonumber\\ & = \prod_{i}  exp(-q_{i}T[x_{i}]) \prod_{j \neq i}  q_{i,j}^{M[x_{i},x_{j}]}
 \label{eq:lh_traj_homo}
 \end{align}
 where $ M[x_{i}] = \sum_{j \neq i} M[x_{i}, x_{j}] $ is the total number transitions leaving state $ x_{i} $.
 
-\subsubsection{Marginalized Likelihood Function} 
+\paragraph{Marginalized Likelihood Function} 
 Let $ X $ be a homogenous CTMP. For convenience, it is assumed to be binary-valued, $ \rchi = \left\lbrace x_{0}, x_{1} \right\rbrace $. The transition intensity matrix can be written in the following form:
 \begin{equation}
 \textbf{Q} = 
@@ -123,37 +129,42 @@ P(X^{[0, T]}) & = \int  P(X^{[0, T]}\mid Q)P(Q) dQ \nonumber\\ & = \int_{0}^{\in
 %\label{eq:Marg_llh_final}
 %\end{split}
 %\end{align}
-\subsection{Inhomogeneous Continuous Time Markov Processes}
-%In an conventional CTBN, while every node is a Markov process itself, the leaf nodes are \textit{conditional} Markov processes, a type of inhomogeneous Markov process, where the intensities change over time, but not as a function of time rather as a function of parent states. \cite{Nodelman1995} %TODO explain time-dependence in the problem
-A continuous-time Markov process is time-inhomogenous when the transition intensities changes over time.
-For CTMP, Eq.\ref{eq:f(t)_homo} becomes:
-\begin{equation}
-f(t) = q_{i}(t) \exp \left(-\int_{0}^{t} q_{i}(u) d u\right)
-\end{equation}
-\subsubsection{Likelihood Function}
-Let X be an inhomogeneous Markov process. $  X^{\left[0,T\right] } $ is a trajectory sampled from this process with $ m $ number of transitions, $ 0 = t_{0} < t_{1} < ... < t_{m} $ are the times where transition occurred, and $ x_{t_{0}}, x_{t_{1}},..., x_{t_{m}} $ are the observed states. The likelihood of trajectory  $  X^{\left[0,T\right] } $ can be written as follows: 
-\begin{equation}
-L(\textbf{Q}_{X} \colon  X^{\left[0,T\right]} ) = \prod_{k=1}^{m} \left[ q_{x_{k-1}} (t_{k}) \exp \left(-\int_{t_{k-1}}^{t_{k}} q_{x_{k-1}}(u) d u\right) \frac{q_{x_{k-1}, x_{k}} (t_{k})}{q_{x_{k-1}}(t_{k})}\right] 
-\label{eq:lh_traj_inhomo}
-\end{equation}
+\subsubsection{Conditional Markov Processes}
+A continuous-time Markov process is \textit{time-inhomogenous} when the transition intensities changes over time. In a CTBN, while every node is a Markov process, the leaf nodes are characterized as \textit{conditional} Markov processes, a type of inhomogeneous MP, where the intensities change over time, but not as a function of time rather as a function of parent states. \cite{Nodelman1995} 
 
-%We can formulate our graphical model as $ S = [X, Y, Z] $, where $ Par(Z) = {X,Y} $ and $ Par(X) = Par(Y) =\emptyset $. We can then write the conditional probability:
+Let X be a conditional Markov process, which has a set of parents $ \textbf{U} = Par(X)$. Its intensity matrix, \textit{conditional intensity matrix}, $ \textbf{Q}_{X\given \textbf{U}} $ can be viewed as a set of homogenous intensity matrices $ \textbf{Q}_{X\given \textbf{u}} $, with entries $ q_{i,j}^{\textbf{u}} $ (similar to \autoref{eq:Q_matrix}), for each instantiation of parent nodes $ \textbf{U} $.\cite{Nodelman1995} Markov transition function for a conditional Markov process can be written as follows:
+\begin{align}
+\operatorname{Pr}(X(t + h) = x_j \mid X(t)=x_i, \textbf{U}(t)=u, Q^u) = \delta(i,j) + q_{i,j}^\textbf{u} h + o(h)
+\label{eq:CIM_trans_funct}
+\end{align}
+
+%For inhomogeneous CTMP, Equation \ref{eq:f(t)_homo} becomes:
 %\begin{equation}
-%\begin{split}
-%P\left(S^{\left(t+h\right)}=s' | S^{\left(t\right)}=s\right) = & P\left(X^{\left( t+h\right) }=x' | X^{\left(t\right)}=x, Par(X)^{\left(t\right)}={y,z}\right) \\&  P\left(Y^{\left( t+h\right) }=y' | Y^{\left(t\right)}=y\right) P\left(Z^{\left( t+h\right) }=z' | ^{\left(t\right)}=z\right)
-%\end{split} 
+%f(t) = q_{i}(t) \exp \left(-\int_{0}^{t} q_{i}(u) d u\right)
 %\end{equation}
+\subsection{The CTBN Model}
+Evidently, a homogenouos CTMP can be considered as a conditional MP whose set of parents is empty. Thus, a CTBN can be formed as a set of conditional Markov processes.
+
+Let \textbf{X} be a CTBN with local variables $ X_n $, $ n \in \left\lbrace 1,...N \right\rbrace $, each with a state space $ \rchi_n $. Given the dependencies of each variable as set of its parents $ \textbf{U}_n = Par(X_n) $, the transition model of each local variable $ X_n $ is modelled as conditional Markov processes, and their transition function is as \autoref{eq:CIM_trans_funct}. \cite{Nodelman1995}
+%Let X be an inhomogeneous Markov process. $  X^{\left[0,T\right] } $ is a trajectory sampled from this process with $ m $ number of transitions, $ 0 = t_{0} < t_{1} < ... < t_{m} $ are the times where transition occurred, and $ x_{t_{0}}, x_{t_{1}},..., x_{t_{m}} $ are the observed states. The likelihood of trajectory  $  X^{\left[0,T\right] } $ can be written as follows: 
+%\begin{equation}
+%\operatorname{Pr}(X^{[0,T]}  \mid \textbf{Q}) = \prod_{k=1}^{m} \left[ q_{x_{k-1}} (t_{k}) \exp \left(-\int_{t_{k-1}}^{t_{k}} q_{x_{k-1}}(u) d u\right) \frac{q_{x_{k-1}, x_{k}} (t_{k})}{q_{x_{k-1}}(t_{k})}\right] 
+%\label{eq:lh_traj_inhomo}
+%\end{equation}
+\subsubsection{Likelihood Funtion}
+I MAY NOT USE THIS LATER ON; I WILL SEE %TODO
+
 
 \section{Belief State in Partially Observable Markov Decision Processes}
-Partially observable Markov decision process (POMDP) framework provides a model of an agent which interacts with its environment, but unable to obtain certain information about its state. Instead, the agent gets an observation which is a stochastic function of the true state. The main goal, as similar to Markov decision processes (MDPs), is to learn a policy solving a task by optimizing a reward function. The problem of decision making under uncertainty can be decomposed into two parts for the agent. The first is to keep a belief state which is a sufficient statistic of its past experiences, and the second is to generate an optimal policy which will give an action based on the belief state. \cite{Murphy2000,Kaelbling2011}
+Partially observable Markov decision process (POMDP) framework provides a model of an agent which interacts with its environment, but unable to obtain certain information about its state. Instead, the agent gets an observation which is a stochastic function of the true state. The main goal, as similar to Markov decision processes (MDPs), is to learn a policy solving a task by optimizing a reward function. The problem of decision making under uncertainty can be decomposed into two parts for the agent. The first is to keep a belief state which is a sufficient statistic of its past experiences, and the second is to generate an optimal policy which will give an action based on the belief state. \cite{Murphy2000,KAELBLING199899}
 
 In the problem considered in this thesis, the agent node $ X_{3} $ cannot observe the incoming messages directly, rather a summary of them. This presents a POMDP problem. However, since the optimal policy of the agent is assumed to be given, the theory for policy optimization is skipped. In this section, update methods for belief state is introduced.
 
 In the following, belief state refers to the posterior probability distribution over the environment states.
 
 \subsection{Exact/Bayes(?) Belief State Update}
-
-Consider a POMDP problem, with state space \textit{S}, action space \textit{A}, observation space $ \Omega $. In a scneario where a compact representation of the \textit{transition model}, $ T(s, a, s^{\prime})$,  and \textit{observation model}, $ O(s^{\prime}, a, o) $, is available, the belief state update can be obtain via Bayes' theorem \cite{Kaelbling2011}:
+\label{sec:exact_update}
+Consider a POMDP problem, with discrete state space \textit{S}, action space \textit{A}, observation space $ \Omega $. In a scneario where a compact representation of the \textit{transition model}, $ T(s, a, s^{\prime})$,  and \textit{observation model}, $ O(s^{\prime}, a, o) $, is available, the belief state update can be obtain via Bayes' theorem \cite{KAELBLING199899}:
 \begin{align}
 b^{\prime}\left(s^{\prime}\right) &=\operatorname{Pr}\left(s^{\prime} | o, a, b\right) \nonumber\\
 &=\frac{\operatorname{Pr}\left(o | s^{\prime}, a, b\right) \operatorname{Pr}\left(s^{\prime} | a, b\right)}{\operatorname{Pr}(o | a, b)} \nonumber\\
@@ -163,15 +174,16 @@ b^{\prime}\left(s^{\prime}\right) &=\operatorname{Pr}\left(s^{\prime} | o, a, b\
 \end{align}
 
 \subsection{Filtering for CTMP}
-Eq.\ref{eq:discrete_belief_update} is discrete-time solution of belief state. However, since in the model described in Section 2.1, the parent nodes are modelled as CTMPs, and the environment state for the agent is the state of an CTMP, the belief state should be solved in continuous-time. This is achieved by the inference of posterior probability of CTMP.
-%To derive \textit{continuous-time belief state}, $ b(t) $, first we need to get the joint transition matrix of X and Y, two independent processes. This operation called \textit{amalgamation} is described in detail by Nodelman \textit{et al} \cite{Nodelman1995}. 
-%Let us denote this matrix by $ Q_{XY} $. 
+\label{sec:filtering_CTMC}
+Equation \ref{eq:discrete_belief_update} is discrete-time solution of belief state. However, since in the model described in Section 2.1, the parent nodes are modelled as CTMPs, thus the environment state for the agent is the state of a CTMP, the belief state should be solved in continuous-time. This is achieved by the inference of posterior probability of CTMP. \cite{article}
 
-Let X be a CTMC with transition intensity matrix \textbf{Q}. Assume discrete-time observations denoted by $ y_{1}=y(t_{1}), ..., y_{N}=y(t_{N}) $. The belief state can be written as:
+\textit{Filtering problem} in statistical context, as opposed to deterministic digital filtering, refers to inference of the conditional probability of the true state of the system at some point in time, given the history of observations. \cite{Godsill2019}
+
+Let X be a CTMP with transition intensity matrix \textbf{Q}. Assume discrete-time observations denoted by $ y_{1}=y(t_{1}), ..., y_{N}=y(t_{N}) $. The belief state can be written as:
 \begin{equation}
 	b(x_{i};t_{N}) = \operatorname{Pr}(X(t_{N}) = x_{i} \mid y_{1}, ..., y_{N})
 \end{equation}
-From the master equation given in Eq.\ref{eq:master_equation}, it follows that:
+From the master equation given in Equation \ref{eq:master_equation}, it follows that:
 \begin{equation}
  \frac{d}{dt} b(x_{j};t)  = \sum_{\forall i} q_{i,j} b(x_{i};t)
 \end{equation}
@@ -189,22 +201,43 @@ b(x_{i}; t_{N}) & = \operatorname{Pr}( X(t_{N}) = x_{i},\mid y_{1}, ..., y_{N}) 
 where $ Z_{N} = \sum_{x_{i}\in \rchi} \operatorname{Pr}(y_{N} \mid X(t_{N})=x_{i})\ b(x_{i}; t_{N}^{-}) $ is the normalization factor \cite{article}.
 
 \subsection{Belief State Update using Particle Filter}
-In a more realistic scenario, the exact update of belief state may not be feasible for several reasons. 
-%TODO explain why do we need particle filter, how is this in the literature, how did we end up here
+In a more realistic scenario, the exact update of belief state may not be feasible for several reasons. The computation of Bayes belief update is expensive for large state spaces. Moreover, a problem with continuous state spaces require a belief state represented as probability distributions over infinite state space rather than a collection of probabilities as given in Sec.\ref{sec:exact_update}. \cite{Carlo1904} Another reason could be lack of compact representation of transition and/or observation models. Under such circumstances, the belief state is obtained using sample-based approximation methods. \cite{Carlo1904} 
 
+It should be noted that, since the belief state is nothing but the contidional probability of true states given the observations, the problem at hand poses a filtering problem as described in Section \ref{sec:filtering_CTMC}.
 
-\subsubsection{Marginalized Continuous Time Bayesian Networks}
-%The marginal process description of a CTMC/CTBN is given as 
-%\begin{multline}
-%p(X_n(t + dt) = x' \mid X_n(t)=x, U_n(t)=u, X_{[0, t)})\\
-%\begin{split}
-%&= \int p(X_n(t + dt) = x' \mid X_n(t)=x, U_n(t)=u, Q^u_n, X_{[0, t)})p(Q^u_n)dQ^u_n\\
-%&= \delta(x, x') + \underbrace{\mathbb{E}[Q^u_n (x, x') \mid X_{[0, t]} = x_{[0, t]}]}_{\equiv f^u_n(x'\mid x_{[0, t]})}dt + o(dt),
-%\end{split}
-%\end{multline}
-%where we introduced $f$ for brevity. This expression also holds for $K$ trajectories that have been independently drawn from the CTBN; in line with the paper, we denote the joint history of all $K$ trajectories until time point $t$ as $\xi_t = \{x^1_{[0, t]}, ..., x^K_{[0, t]}\}$.
+\subsubsection{Particle Filtering}
+Particle filtering is one of the most commonly used Sequential Monte Carlo (SMC) algorithms. The popularity of this method thrives from the fact that, unlike other approximation methods such as Kalman Filter, it does not assume a linear Gaussion model. This advantage offers a great flexibility and finds application in a wide range of areas.\cite{Doucet2009}
+
+The key idea in particle filtering is to approximate a target distribution $ p(x) $ by a set of samples (particles) drawn from that distribution. This is achieved sequentially updating the particles through two steps. First step is \textit{importance sampling}. Since the target distribution is not available, the particles are generated from a \textit{proposal distribution} $ q(x) $ and weighted in the account of the difference between target and proposal distributions. The second step is to resample the particles using these weights. \cite{Godsill2019}
+%\begin{align*}
+%	x^{(i)} & \sim q(x) \\
+%	q(x) & \approx \frac{1}{N} \sum_{i=1}^{N} \delta_{x^{(i)}}(x) \\
+%	w(x) & = \frac{p(x)}{q(x)}
+%\end{align*}
+
+In this application, the particles to represent the belief state are drawn from marginalized CTBN.
+\subsubsection{Marginalized Continuous Time Markov Process}
+Let \textbf{X} be a CTBN with local variables $ X_n $, $ n\in \left\lbrace 1,...,N \right\rbrace $. The marginal process description of \textbf{X} considering a single trajectory in interval $ [0,t) $ is given as follows:
+\begin{multline}
+\operatorname{Pr}(X_n(t + h) = x' \mid X_n(t)=x, U_n(t)=u, \textbf{X}^{[0, t)})\\
+\begin{split}
+&= \int \operatorname{Pr}(X_n(t + h) = x' \mid X_n(t)=x, U_n(t)=u, Q^u_n, \textbf{X}^{[0, t)})p(Q^u_n)dQ^u_n\\
+&= \delta(x, x') + \mathbb{E}[Q^u_n (x, x') \mid \textbf{X}^{[0, t]} = \textbf{x}^{[0, t]}]h + o(h),
+\end{split}
+\end{multline}
+By integrating out the intensity matrix $ Q^u_n $, the parameter is replaced by its expected value given the history of the process. It should be noted that by doing so, the process becomes parameter-free, and thus self-exciting. \\
+\begin{equation}
+	p\left(Q | \mathbf{x}_{t}, \mathcal{G}\right)=\frac{p\left(\mathbf{x}_{t} | Q, \mathcal{G}\right) p(Q | \mathcal{G})}{p\left(\mathbf{x}_{t} | \mathcal{G}\right)}
+\end{equation}
+\begin{align}
+	p(\xi_{t} | Q ) = \prod_{n=1}^{N} \prod_{u \in \mathcal{U}_{n}} \prod_{x \in \mathcal{X}_{n}} \prod_{x^{\prime} \in \mathcal{X}_{n} \backslash x}
+	\exp \left[Q_{n}^{u}\left(x, x^{\prime}\right) T_{n}^{u}(x)\right] Q_{n}^{u}\left(x, x^{\prime}\right)^{r_{n}^{u}\left(x, x^{\prime}\right)}
+\end{align}
+\begin{equation}
+	\mathrm{E}\left[Q_{n}^{u}\left(x, x^{\prime}\right) | \xi_{t}\right]=\frac{\alpha_{n}^{u}\left(x, x^{\prime}\right)+r_{n}^{u}\left(x, x^{\prime}\right)}{\beta_{n}^{u}\left(x, x^{\prime}\right)+T_{n}^{u}(x)}
+\end{equation}
+%This expression also holds for $K$ trajectories that have been independently drawn from the CTBN; in line with the paper, we denote the joint history of all $K$ trajectories until time point $t$ as $\xi_t = \{x^1_{[0, t]}, ..., x^K_{[0, t]}\}$.
 %
-%\bigskip
 %By integrating out the rate matrices $Q^u_n$, we introduced dependencies between all trajectories; this is readily seen by evaluation of the above expectation:
 %\begin{align}
 %\mathbb{E}[Q^u_n (x, x') \mid \xi_t] &=\frac{\alpha^u_n(x, x') + r^u_n(x, x')}{\beta^u_n(x, x') + T^u_n(x)}\\
@@ -216,28 +249,3 @@ In a more realistic scenario, the exact update of belief state may not be feasib
 %\begin{equation}
 %\min_q \mathrm{KL}\,\left(\prod_k q(X^k_{[0, T]})\mid\mid p(\{X^k_{[0, T]}\}_k)\right).
 %\end{equation}
-
-
-\subsubsection{Particle Filter}
-%TODO The explaination and the algorithm
-
-\scalebox{1}{\begin{algorithm}[H]
-		\KwIn{Measurement data $ y_{k} $ at time $ t_{k} $, set of particles $\textbf{p}^{k-1} $, estimated $ \hat{Q} $}
-		\KwResult{New set of particles $ \textbf{p}^{k} $, representing $ b(t_{k}) $}
-		\vspace{+4pt}
-		\begin{algorithmic}[1]
-			\FOR{$p_{m} \in \textbf{p}^{k-1}$}
-			\STATE {$p_{m} = \left\lbrace x_{m}, \hat{Q}\right\rbrace \leftarrow Propagate\ particle\ through\ marginal\ process\ model\ from\ t_{k-1}\ to\ t_{k}$ }
-			\STATE{$w_{m} \leftarrow p(y_{k} \mid X(t_{k})=x_{m}) $} 
-			\tcp*[h] {observation likelihood}
-			\STATE {$\hat{Q} \leftarrow sufficient\ statistics\ added\ from\  p_{m}[t_{k-1}, t_{k}]$}
-			\ENDFOR
-			\STATE{$ w_{m} \leftarrow \frac{w_{m}}{\sum_{m} w_{m}}$} \tcp*[h]{normalize weights}
-			\FOR{$ p_{m} \in \textbf{p}_{k} $} 
-			\STATE{$ p_{m} \leftarrow Sample\ from\ p_{k}\ with\ probabilities\ w_{m}\ with\ replacement$}
-			\ENDFOR
-		\end{algorithmic}
-		\caption{Marginal particle filter}
-\end{algorithm}}
-
-\section{Likelihood Model of Communication System (?)}
