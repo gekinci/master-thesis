@@ -145,8 +145,9 @@ Consider a trajectory drawn from CTBN $ \textbf{X} $, such that $ \textbf{X}^{[0
 \begin{align}
 \operatorname{Pr}( \textbf{X}  | \textbf{\textit{Q}} ) = \prod_{n=1}^{N} \prod_{\textbf{u} \in \mathcal{\textbf{U}}_{n}} \prod_{x_i \in \mathcal{X}_{n}} \prod_{x_j \in \mathcal{X}_{n} \backslash x_i}
 \exp \left[q_{i,j\mid \textbf{u}}^{n} T_{n}[x_i\mid \textbf{u}]\right] (q_{i,j\mid \textbf{u}}^{n})^{M_{n}[x_i, x_j\mid \textbf{u}]}
+\label{eq:lh_CTBN}
 \end{align}
-where $ T_n[.] $ and $ M_n[.] $ indicates the sufficient statistics for $ X_n $
+where $ T_n[.] $ and $ M_n[.] $ indicates the sufficient statistics for $ X_n $.
 
 \section{Belief State in Partially Observable Markov Decision Processes}
 \label{sec:belief_POMDP}
@@ -217,28 +218,37 @@ The key idea in particle filtering is to approximate a target distribution $ p(x
 
 In this application, the particles to represent the belief state are drawn from marginalized CTBN.
 \subsubsection{Marginalized Continuous Time Markov Process}
-Let \textbf{X} be a CTBN with local variables $ X_n $, $ n\in \left\lbrace 1,...,N \right\rbrace $, and set of conditional intensity matrices \textbf{\textit{Q}}. The marginal process description of \textbf{X} considering a single trajectory in interval $ [0,t) $ is given as follows:
+Let \textbf{X} be a CTBN with local variables $ X_n $, $ n\in \left\lbrace 1,...,N \right\rbrace $, and set of conditional intensity matrices \textbf{\textit{Q}}. In the following, it is assumed that every non-diagonal entry in $ \textbf{Q}_{n}\mid \textbf{u} $ is Gamma distributed with shape and rate parameters, $ \alpha^n_{i,j\mid \textbf{u}} $ and $ \beta^n_{i,j\mid \textbf{u}} $.
+
+The marginal process description of \textbf{X} considering a single trajectory in interval $ [0,t) $ is given as follows:
 \begin{multline}
-\operatorname{Pr}(X_n(t + h) = x' \mid X_n(t)=x, U_n(t)=u, \textbf{X}^{[0, t)})\\
+\operatorname{Pr}(X_n(t + h) = x_j \mid X_n(t)=x_i, \textbf{U}_n(t)=\textbf{u}, \textbf{X}^{[0, t)})\\
 \begin{split}
-&= \int \operatorname{Pr}(X_n(t + h) = x' \mid X_n(t)=x, U_n(t)=u, Q^u_n, \textbf{X}^{[0, t)})p(Q^u_n)dQ^u_n\\
-&= \delta(x, x') + \mathbb{E}[Q^u_n (x, x') \mid \textbf{X}^{[0, t]} = \textbf{x}^{[0, t]}]h + o(h),
+&= \int \operatorname{Pr}(X_n(t + h) = x_j \mid X_n(t)=x_i, \textbf{U}_n(t)=\textbf{u}, Q_{n\mid \textbf{u}}, \textbf{X}^{[0, t)})p(Q_{n\mid \textbf{u}})dQ_{n\mid \textbf{u}}\\
+&= \delta_{i,j} + \mathbb{E}[q_{i,j\mid \textbf{u}} \mid \textbf{X}^{[0, t]} = \textbf{x}^{[0, t]}]\ h + o(h),
 \end{split}
+\label{eq:marginal_CTBN}
 \end{multline}
-By integrating out the intensity matrix $ Q^u_n $, the parameter is replaced by its expected value given the history of the process. It should be noted that by doing so, the process becomes parameter-free, and thus self-exciting. 
+By integrating out the intensity matrix $ Q_{n\mid \textbf{u}} $, the parameter is replaced by its expected value given the history of the process. It should be noted that by doing so, the process becomes parameter-free, and thus self-exciting. 
 
-Consider K trajectories drawn from CTBN \textbf{X}, denoted by $ \xi_t = \left\lbrace \textbf{X}^{[0,t], 1}, \textbf{X}^{[0,t], 2}, ..., \textbf{X}^{[0,t], K} \right\rbrace  $. Since given Q
-
+The derivation of the conditional expectation for marginal CTBN follows from the Bayes's rule:
 \begin{equation}
-	p\left(Q | \mathbf{x}_{t}\right)=\frac{p\left(\mathbf{x}_{t} | Q\right) p(Q)}{p\left(\mathbf{x}_{t}\right)}
+p\left(\textbf{Q} | \textbf{X}_{[0,t]}\right)=\frac{p\left(\textbf{X}_{[0,t]} | \textbf{Q}\right) p(\textbf{Q})}{p\left(\textbf{X}_{[0,t]}\right)}
+\label{eq:Q_bayes}
 \end{equation}
+\autoref{eq:Q_bayes}, written for single trajectory $ \textbf{X}_{[0,t]} $, can be extended for multiple trajectories. Consider K trajectories drawn from CTBN \textbf{X}, denoted by $ \xi_t = \left\lbrace \textbf{X}^{[0,t], 1}, \textbf{X}^{[0,t], 2}, ..., \textbf{X}^{[0,t], K} \right\rbrace  $. Since the trajectories are conditionally independent, given \textbf{Q}, using \autoref{eq:lh_CTBN} the likelihood of set $ \xi_t $ is written as,
 \begin{align}
-	p(\xi_{t} | Q ) = \prod_{n=1}^{N} \prod_{u \in \mathcal{U}_{n}} \prod_{x \in \mathcal{X}_{n}} \prod_{x^{\prime} \in \mathcal{X}_{n} \backslash x}
-	\exp \left[Q_{n}^{u}\left(x, x^{\prime}\right) T_{n}^{u}(x)\right] Q_{n}^{u}\left(x, x^{\prime}\right)^{r_{n}^{u}\left(x, x^{\prime}\right)}
+\operatorname{Pr}( \xi_t  | \textbf{\textit{Q}} ) = \prod_{n=1}^{N} \prod_{\textbf{u} \in \mathcal{\textbf{U}}_{n}} \prod_{x_i \in \mathcal{X}_{n}} \prod_{x_j \in \mathcal{X}_{n} \backslash x_i}
+\exp \left[q_{i,j\mid \textbf{u}}^{n} T_{n}[x_i\mid \textbf{u}]\right] (q_{i,j\mid \textbf{u}}^{n})^{M_{n}[x_i, x_j\mid \textbf{u}]}
+\label{eq:lh_dataset_CTBN}
 \end{align}
+where the joint sufficient statistics of $ X_n $ over all K trajectories are denoted by  $ T_{n}[x_i\mid \textbf{u}] = \sum_{k=1}^{K} T_{n}^k[x_i\mid \textbf{u}] $ and $ M_{n}[x_i, x_j\mid \textbf{u}] =\sum_{k=1}^{K} M_{n}^k[x_i, x_j\mid \textbf{u}]$.
+
+Given independent Gamma-priors on transition intensities, the expectation in \autoref{eq:marginal_CTBN} can be evaluated as following:
 \begin{equation}
-	\mathbb{E}\left[Q_{n}^{u}\left(x, x^{\prime}\right) | \xi_{t}\right]=\frac{\alpha_{n}^{u}\left(x, x^{\prime}\right)+r_{n}^{u}\left(x, x^{\prime}\right)}{\beta_{n}^{u}\left(x, x^{\prime}\right)+T_{n}^{u}(x)}
+	\mathbb{E}\left[q_{i,j\mid \textbf{u}}^{n} | \xi_{t}\right]=\frac{\alpha^n_{i,j\mid \textbf{u}}+M_{n}[x_i, x_j\mid \textbf{u}]}{\beta^n_{i,j\mid \textbf{u}}+T_{n}[x_i \mid \textbf{u}]}
 \end{equation}
+The algorithm for marginal process is given in the following chapter.
 %This expression also holds for $K$ trajectories that have been independently drawn from the CTBN; in line with the paper, we denote the joint history of all $K$ trajectories until time point $t$ as $\xi_t = \{x^1_{[0, t]}, ..., x^K_{[0, t]}\}$.
 %
 %By integrating out the rate matrices $Q^u_n$, we introduced dependencies between all trajectories; this is readily seen by evaluation of the above expectation:
