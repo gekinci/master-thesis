@@ -33,15 +33,15 @@ q^i_{1} &  -q^i_{1}
 \end{align}
 It should be noted that in \autoref{eq:Q_parents}, the suffixes are simplified using the fact that $ q_{i} = \sum_{i \neq j} q_{i,j}$.
 
-The agent  $ X_{3} $ is modelled as inhomogenouos continuous-time Markov process with binary states $ \rchi_{3} = \left\lbrace 0, 1 \right\rbrace  $ and set of actions $ a \in \left\lbrace a_0, a_1\right\rbrace  $, and set of transition intensity matrices which contains one matrix corresponding to each action, $ \textbf{\textit{Q}}_{3} = \left\lbrace \textbf{Q}_{a_{0}}, \textbf{Q}_{a_{1}} \right\rbrace $.
+The agent  $ X_{3} $ is modelled as inhomogenouos continuous-time Markov process with binary states $ \rchi_{3} = \left\lbrace 0, 1 \right\rbrace  $ and set of actions $ a \in \left\lbrace a_0, a_1\right\rbrace  $, and set of transition intensity matrices which contains one matrix corresponding to each action, $ \textbf{\textit{Q}}_{3 \mid a} = \left\lbrace \textbf{Q}_{3\mid a_{0}}, \textbf{Q}_{3\mid a_{1}} \right\rbrace $.
 %\begin{equation}
 %\textbf{Q}_{a_k} \sim Gam(\alpha_{a_k}, \beta_{a_k})
 %\end{equation}
 
-The dependencies are represented by set of parents for each node $ \textbf{U}_{X_{n}} = Par(X_n) $ and for the model shown in \autoref{fig:h_model} can be written as follows:
+The dependencies are represented by set of parents for each node $ \textbf{U}_{n} = Par(X_n) $ and for the model shown in \autoref{fig:h_model} can be written as follows:
 \begin{align*}
-\textbf{U}_{X_{1}}, \textbf{U}_{X_{2}} & = \emptyset \\
-\textbf{U}_{X_{3}} & = \left\lbrace X_1, X_2 \right\rbrace 
+\textbf{U}_{1}, \textbf{U}_{2} & = \emptyset \\
+\textbf{U}_{3} & = \left\lbrace X_1, X_2 \right\rbrace 
 \end{align*}
 
 \subsection{POMDP Model}
@@ -91,24 +91,28 @@ where $ Z_{N} = \sum_{x_{i}\in \rchi} \operatorname{Pr}(y_{N} \mid X(t_{N})=x_{i
 
 \subsubsection{POMDP Model with Belief State Update Using Particle Filter}
 
-\scalebox{1}{\begin{algorithm}[H]
-		\KwIn{Measurement data $ y_{k} $ at time $ t_{k} $, set of particles $\textbf{p}^{k-1} $, estimated $ \hat{Q} $}
-		\KwResult{New set of particles $ \textbf{p}^{k} $, representing $ b(t_{k}) $}
-		\vspace{+4pt}
-		\begin{algorithmic}[1]
-			\FOR{$p_{m} \in \textbf{p}^{k-1}$}
-			\STATE {$p_{m} = \left\lbrace x_{m}, \hat{Q}\right\rbrace \leftarrow Propagate\ particle\ through\ marginal\ process\ model\ from\ t_{k-1}\ to\ t_{k}$ }
-			\STATE{$w_{m} \leftarrow p(y_{k} \mid X(t_{k})=x_{m}) $} 
-			\tcp*[h] {observation likelihood}
-			\STATE {$\hat{Q} \leftarrow sufficient\ statistics\ added\ from\  p_{m}[t_{k-1}, t_{k}]$}
-			\ENDFOR
-			\STATE{$ w_{m} \leftarrow \frac{w_{m}}{\sum_{m} w_{m}}$} \tcp*[h]{normalize weights}
-			\FOR{$ p_{m} \in \textbf{p}_{k} $} 
-			\STATE{$ p_{m} \leftarrow Sample\ from\ p_{k}\ with\ probabilities\ w_{m}\ with\ replacement$}
-			\ENDFOR
-		\end{algorithmic}
-		\caption{Marginal particle filter}
-\end{algorithm}}
+{\begin{algorithm}[H]
+	\SetKwInOut{KwIn}{Input}
+	\SetKwInOut{KwOut}{Output}
+	\KwIn{Measurement data $ y_{k} $ at time $ t_{k} $, set of particles $\textbf{p}^{k-1} $, estimated $ \hat{Q} $}
+	\KwOut{New set of particles $ \textbf{p}^{k} $, representing $ b(t_{k}) $}
+	
+	\vspace{+4pt}
+	\begin{algorithmic}[1]
+		\FOR{$p_{m} \in \textbf{p}^{k-1}$}
+		\STATE {$p_{m} = \left\lbrace x_{m}, \hat{Q}\right\rbrace \leftarrow Propagate\ particle\ through\ marginal\ process\ model\ from\ t_{k-1}\ to\ t_{k}$ }
+		\STATE{$w_{m} \leftarrow p(y_{k} \mid X(t_{k})=x_{m}) $} 
+		\tcp*[h] {observation likelihood}
+		\STATE {$\hat{Q} \leftarrow sufficient\ statistics\ added\ from\  p_{m}[t_{k-1}, t_{k}]$}
+		\ENDFOR
+		\STATE{$ w_{m} \leftarrow \frac{w_{m}}{\sum_{m} w_{m}}$} \tcp*[h]{normalize weights}
+		\FOR{$ p_{m} \in \textbf{p}_{k} $} 
+		\STATE{$ p_{m} \leftarrow Sample\ from\ p_{k}\ with\ probabilities\ w_{m}\ with\ replacement$}
+		\ENDFOR
+	\end{algorithmic}
+	\caption{Marginal particle filter}
+\end{algorithm}
+
 \subsubsection{Optimal Policy}
 
 The optimal policy is defined as a polynomial function of belief state.
@@ -120,8 +124,28 @@ where \textbf{w} is a row vector of weights.\\
 
 \section{Data Generation}
 \subsection{Sampling Trajectories}
-\subsubsection{Gillespie Algorithm}
-\subsubsection{Thinning Algorithm}
+\paragraph*{Gillespie Algorithm}
+\paragraph*{Thinning Algorithm}
+\subsection{Sampling Algorithm}
+\begin{algorithm}
+	\SetKwInOut{KwIn}{Input}
+	\SetKwInOut{KwOut}{Output}
+	\SetKwInOut{Init}{Initialize}
+	
+	\KwIn{Structure of the network with N local variables $ X_{1}, X_{2}, ..., X_{n} $ as a dict in the format of $ \left\lbrace X_{i}: [par(X_{i})]\right\rbrace $ with state-space $ S = \left\lbrace x_{0}, ..., x_{m} \right\rbrace $  \\ $ T_{max} $ to terminate simulation}
+	\KwOut{Sample trajectory of the network}
+	\Init{Initialize node values $ X_{i}^{0} = x_{j} \in S$\\Transition intensity matrices $ \textbf{Q}_{X_{i}} $, $ q_{jk} \in [0,1]$ for $ j\neq k $ }
+	
+	\begin{algorithmic}[1]
+		\WHILE{$ t < T_{max} $}
+		\STATE{$ \tau \sim \exp(\sum_{\forall i} \sum_{\forall j \neq k} \ q^{X_{i}}_{j,k}) $}
+		\STATE{\textit{transitioning node is randomly drawn with probability}  $ P(X_{i}) = \frac{q^{X_{i}}_{i}}{\sum_{\forall i} q^{X_{i}}_{i}}$}
+		\STATE{\textit{next state is randomly drawn with probability} $ P(x_{j}) = \frac{q^{X_{i}}_{i}}{\sum_{\forall i} q^{X_{i}}_{i}} $}
+		\STATE{$ t \leftarrow t + \tau $}
+		\ENDWHILE
+	\end{algorithmic}
+	\caption{Generative CTBN}
+\end{algorithm}
 \section{Inference of Observation Model}
 Our dataset contains a number of trajectories from all the nodes involved in the communication. $ \textbf{D} = \left\lbrace D_{1},..., D_{N}\right\rbrace $. Every trajectory comprises of state transitions in time interval $  [0, T] $, and the times of these transitions.
 
