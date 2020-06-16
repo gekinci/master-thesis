@@ -70,8 +70,10 @@ def generate_dataset(pomdp_, n_samples, path_to_save):
         visualize_pomdp_simulation(df_traj, dict_b, dict_Q, path_to_save=path_to_plot, tag=str(k))
         print('seed:', k, 'llh_X3:', llh_inhomogenous_mp(df_traj, dict_Q),
               'llh_X1:',
+              llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[0]], node=parent_list_[0]),
               marginalized_llh_homogenous_mp(df_traj, params=pomdp_.config[GAMMA_PARAMS], node=parent_list_[0]),
               'llh_X2:',
+              llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[1]], node=parent_list_[1]),
               marginalized_llh_homogenous_mp(df_traj, params=pomdp_.config[GAMMA_PARAMS], node=parent_list_[1]))
         return df_traj
 
@@ -99,7 +101,7 @@ def inference_per_obs_model(pomdp_, df_all_, obs_id, path_to_save):
                                                      node=parent_list_[0])
         marg_llh_X2 = marginalized_llh_homogenous_mp(df_traj, params=pomdp_.config[GAMMA_PARAMS],
                                                      node=parent_list_[1])
-        llh_data = {k: v + marg_llh_X1 + marg_llh_X2 for k, v in llh_X3.items()}
+        llh_data = {k: v for k, v in llh_X3.items()} # + marg_llh_X1 + marg_llh_X2
         # else:
         #     llh_X1 = llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[0]], node=parent_list_[0])
         #     llh_X2 = llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[1]], node=parent_list_[1])
