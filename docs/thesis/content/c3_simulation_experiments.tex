@@ -1,7 +1,7 @@
 \externaldocument[-f]{c2_foundations}
 \chapter{Experimental Setup}
 
-This chapter presents the methodology used in this thesis. First, it is explained how different frameworks introduced in \autoref{chap:2} are put into use. Then, the algorithms used in data generation and inference is given in detail. The results from these experiments are presented in the succeeding chapter.
+This chapter presents the methodology used in this thesis. First, it is explained how different frameworks introduced in \cref{chap:2} are put into use. Then, the algorithms used in data generation and inference is given in detail. The results from these experiments are presented in the succeeding chapter.
 
 \section{The Model}
 \begin{wrapfigure}{r}{3cm}
@@ -11,7 +11,7 @@ This chapter presents the methodology used in this thesis. First, it is explaine
 	\end{center}
 	\label{fig:h_model}
 \end{wrapfigure} 
-A detailed graphical model explored in this thesis is given in the \autoref{fig:h_model}. This model presents an intersection of continuous-time Bayesian network and partially observable Markov decision process frameworks. 
+A detailed graphical model explored in this thesis is given in the \cref{fig:h_model}. This model presents an intersection of continuous-time Bayesian network and partially observable Markov decision process frameworks. 
 \begin{itemize}
 	\item The transition models of the nodes $ X_1, X_2$ and $ X_3 $, and the dependencies between them are modelled as CTBN.
 	\item The interaction of agent node $ X_3 $ and its environment is modelled as POMDP.
@@ -29,106 +29,219 @@ The parent nodes $X_{1}$ and $ X_{2} $ emits their states as messages. The dynam
 q^i_{1} &  -q^i_{1}
 \end{bmatrix}
 \label{eq:Q_parents}\\
-\textbf{Q}_{i} &\sim Gam(\boldsymbol{\alpha}^i, \boldsymbol{\beta}^i)\ \ for\ i \in \left\lbrace 1,2\right\rbrace \nonumber
+\textbf{Q}_{i} &\sim Gam(\boldsymbol{\alpha}^i, \boldsymbol{\beta}^i)\ \ for\ i \in \left\lbrace 1,2\right\rbrace \label{eq:gamma_priors}
 \end{align}
 It should be noted that in \autoref{eq:Q_parents}, the suffixes are simplified using the fact that $ q_{i} = \sum_{i \neq j} q_{i,j}$.
 
-The agent  $ X_{3} $ is modelled as inhomogenouos continuous-time Markov process with binary states $ \rchi_{3} = \left\lbrace 0, 1 \right\rbrace  $ and set of actions $ a \in \left\lbrace a_0, a_1\right\rbrace  $, and set of transition intensity matrices which contains one matrix corresponding to each action, $ \textbf{\textit{Q}}_{3} = \left\lbrace \textbf{Q}_{a_{0}}, \textbf{Q}_{a_{1}} \right\rbrace $.
+The agent  $ X_{3} $ is modelled as inhomogenouos continuous-time Markov process with binary states $ \rchi_{3} = \left\lbrace 0, 1 \right\rbrace  $ and set of actions $ a \in \left\lbrace a_0, a_1\right\rbrace  $, and set of transition intensity matrices which contains one matrix corresponding to each action, $ \textbf{\textit{Q}}_{3 \mid a} = \left\lbrace \textbf{Q}_{3\mid a_{0}}, \textbf{Q}_{3\mid a_{1}} \right\rbrace $.
 %\begin{equation}
 %\textbf{Q}_{a_k} \sim Gam(\alpha_{a_k}, \beta_{a_k})
 %\end{equation}
 
-The dependencies are represented by set of parents for each node $ \textbf{U}_{X_{n}} = Par(X_n) $ and for the model shown in \autoref{fig:h_model} can be written as follows:
+The dependencies are represented by set of parents for each node $ \textbf{U}_{n} = Par(X_n) $ and for the model shown in \cref{fig:h_model} can be written as follows:
 \begin{align*}
-\textbf{U}_{X_{1}}, \textbf{U}_{X_{2}} & = \emptyset \\
-\textbf{U}_{X_{3}} & = \left\lbrace X_1, X_2 \right\rbrace 
+\textbf{U}_{1}, \textbf{U}_{2} & = \emptyset \\
+\textbf{U}_{3} & = \left\lbrace X_1, X_2 \right\rbrace 
 \end{align*}
 
 \subsection{POMDP Model}
-In a conventional POMDP scenario, there are two problem to be addressed, one is belief state update and the other is policy optimization. As mentioned in \autoref{sec:belief_POMDP}, in the problem at hand, the policy of agent $ X_3 $ is assumed to be optimal and given. Thus, the POMDP model of the agent only consists of belief state update. A detailed view of the agents interaction from POMDP framework perspective is given in the \autoref{fig:POMDP_pers}. \\
-\textbf{SHOULD I ADD 'inspired by ...' WITH CITATION TO POMDP PAPER?}\\
+In a conventional POMDP scenario, there are two problems to be addressed, one is belief state update and the other is policy optimization. As mentioned in \cref{sec:belief_POMDP}, in the problem at hand, the policy of agent $ X_3 $ is assumed to be optimal and given. Thus, the POMDP model of the agent only consists of belief state update. A detailed view of the agents interaction with its environment from POMDP framework perspective is given in the \cref{fig:POMDP_pers}. \\
 \begin{figure}[htb]
 	\begin{center}
-		\includegraphics[width=.75\textwidth]{figures/POMDP_pers}
+		\includegraphics[width=.75\textwidth]{figures/POMDP_graph}
 		\caption{Closer look to agent-environment interaction from the perspective of POMDP framework.}
 		\label{fig:POMDP_pers}
 	\end{center}
 \end{figure}\\
-The agent node $ X_3 $ does not have a direct access to the messages, but observes a translation of them. The observation model is defined as the likelihood of a translation given the parent messages.
+It should be noted that, the interaction in \cref{fig:POMDP_pers} is only one-sided, the state or action of the agent does not affect the environment.
+\subsubsection{Observation Model}
+The messages sent by the parent nodes are translated by the observation model. The agent node $ X_3 $ does not have a direct access to the messages, but observes a translation of them. The observation model gives a probability distribution over the observation for each combination of parent messages.
 \begin{equation}
-\psi \coloneqq \operatorname{Pr}(y(t) \mid X_{1}(t), X_{2}(t))
+\psi(x_1, x_2) = \operatorname{Pr}(y(t) \mid X_{1}(t), X_{2}(t))
 \end{equation}
-The state estimator (labelled as SE in \autoref{fig:POMDP_pers}) forms a belief over the parent states, $  b(x_{1}, x_{2}; t) $. 
+
+\subsubsection{Belief State}
+The state estimator (labelled as SE in \cref{fig:POMDP_pers}) forms a belief over the parent states, denoted by $  b(x_{1}, x_{2}; t) $. 
 \begin{equation}
 b(x_{1}, x_{2}; t) = \operatorname{Pr}( X_{1}(t) = x_{1},  X_{2}(t) = x_{2}\mid y_{1}, ..., y_{t})
 \end{equation}
-Given the optimal policy, $ \pi(b(t)) $, the agent takes an action based on the belief state. In the setting described above, taking an action means to change its internal dynamics to the transition intensity matrix corresponding to that action.
-\begin{align}
-a(t) &= \pi(b(t))\\
-\textbf{Q}_3(t) & = \textbf{\textit{Q}}_3[a(t)]
-\end{align}
-\textbf{WORK ON THESE NOTATIONS}\\
+\paragraph*{Exact Belief State Update}
+Given the transition intensity matrices of parent nodes, $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, the continuous-time belief state update poses a filtering problem for CTMPs (\cref{sec:filtering_CTMC}). 
 
-\subsubsection{POMDP Model with Exact Belief State Update}
-Given the transition intensity matrices of parent nodes, $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, the belief state update poses a filtering problem for CTMPs (\autoref{sec:filtering_CTMC}). 
-
-Consider a subsystem of CTBN model, consisting of only the parent nodes, $ X_1 $ and $ X_2 $. These two processes can be represented as one single \textit{joint} process, P, with joint state space $ \textit{P} = \left\lbrace (x_1, x_2)\right\rbrace  = \left\lbrace (0,0), (0,1), (1,0), (1,1)\right\rbrace  $. The transition intensity matrix of the new joint system, $ \textbf{Q}_P $ is obtained by amalgamation operation between $ \textbf{Q}_{1} $ and  $ \textbf{Q}_{2} $ \cite{Nodelman1995}.
-%TODO x_1 and x_2 notation is not mentioned before, clarify!
+Consider a subsystem of CTBN model, consisting of only the parent nodes, $ X_1 $ and $ X_2 $. These two processes can be represented as one single \textit{joint} process, $ X_P $, with multivariate state space $ \rchi_{P} = \left\lbrace (x_1, x_2)\right\rbrace_{x_1\in \rchi_1, x_2 \in \rchi_2}  = \left\lbrace (0,0), (0,1), (1,0), (1,1)\right\rbrace  $. The transition intensity matrix of the new joint system, $ \textbf{Q}_P $ is obtained by amalgamation operation between $ \textbf{Q}_{1} $ and  $ \textbf{Q}_{2} $ (see \cref{ap:amalgamation}) \cite{Nodelman1995}.
 \begin{equation}
 \textbf{Q}_P = \textbf{Q}_{1} * \textbf{Q}_{2}
 \end{equation}
-\textbf{AMALGAMATION EXPLANATION AT APPENDIX?}\\
-Consider discrete-time observations, denoted by $ y_{1}=y(t_{1}), ..., y_{N}=y(t_{N}) $. Following \autoref{eq:b_cont} and \autoref{eq:b_jump}, the belief state update is evaluated as
-%TODO give initial condition
+Then, the filtering problem can be formulated according to this joint process of parents.
+\begin{equation}
+b(x_p; t) = \operatorname{Pr}( X_P(t) = x_{p} \mid y_{1}, ..., y_{t})
+\end{equation}
+Consider discrete-time observations from this process, denoted by $ y_{1}=y(t_{1}), ..., y_{N}=y(t_{N}) $ and time-dependent belief state $ b(t) $ as a row vector with $ \left\lbrace b(x_p;t)\right\rbrace_{x_p \in \rchi_P} $. Following \autoref{eq:b_cont} and \autoref{eq:b_jump}, the belief state update is evaluated as
 \begin{equation}
 b(t) = b(0) \exp(t\textbf{Q}_P)
 \end{equation}
-with reset condition at discrete times of observation $ y_{t} $ 
+with the initial condition $ b(0) $.
+The update at discrete times of observation $ y_{t} $ is
 \begin{align}
-b(x_{i}; t_{N}) &= Z_{N}^{-1}\ {\operatorname{Pr}(y_{N} \mid X(t_{N})=x_{i})}\ {b(x_{i}; t_{N}^{-})} \\ & = Z_{N}^{-1}\ \psi \ {b(x_{i}; t_{N}^{-})}
+b(x_p; t_{N}) &= Z_{N}^{-1}\ {\operatorname{Pr}(y_{N} \mid X_P(t_{N})=x_p)}\ {b(x_p; t_{N}^{-})} \\ & = Z_{N}^{-1}\ \psi(x_p) \ {b(x_p; t_{N}^{-})}
 \end{align}
-where $ Z_{N} = \sum_{x_{i}\in \rchi} \operatorname{Pr}(y_{N} \mid X(t_{N})=x_{i})\ b(x_{i}; t_{N}^{-}) $ is the normalization factor.
+where $ Z_{N} = \sum_{x_p\in \rchi_P} \psi(x_p)\ b(x_p; t_{N}^{-}) $ is the normalization factor.
 
-\subsubsection{POMDP Model with Belief State Update Using Particle Filter}
+\paragraph*{Belief State Update Using Particle Filter}
 
-\scalebox{1}{\begin{algorithm}[H]
-		\KwIn{Measurement data $ y_{k} $ at time $ t_{k} $, set of particles $\textbf{p}^{k-1} $, estimated $ \hat{Q} $}
-		\KwResult{New set of particles $ \textbf{p}^{k} $, representing $ b(t_{k}) $}
-		\vspace{+4pt}
-		\begin{algorithmic}[1]
-			\FOR{$p_{m} \in \textbf{p}^{k-1}$}
-			\STATE {$p_{m} = \left\lbrace x_{m}, \hat{Q}\right\rbrace \leftarrow Propagate\ particle\ through\ marginal\ process\ model\ from\ t_{k-1}\ to\ t_{k}$ }
-			\STATE{$w_{m} \leftarrow p(y_{k} \mid X(t_{k})=x_{m}) $} 
-			\tcp*[h] {observation likelihood}
-			\STATE {$\hat{Q} \leftarrow sufficient\ statistics\ added\ from\  p_{m}[t_{k-1}, t_{k}]$}
-			\ENDFOR
-			\STATE{$ w_{m} \leftarrow \frac{w_{m}}{\sum_{m} w_{m}}$} \tcp*[h]{normalize weights}
-			\FOR{$ p_{m} \in \textbf{p}_{k} $} 
-			\STATE{$ p_{m} \leftarrow Sample\ from\ p_{k}\ with\ probabilities\ w_{m}\ with\ replacement$}
-			\ENDFOR
-		\end{algorithmic}
-		\caption{Marginal particle filter}
-\end{algorithm}}
+The assumption that full information of parent dynamics being available is unrealistic. In an environment as described above, the agent most probably doesn't have access to the parameters $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, rather may have some prior beliefs over them. Thus, in order to simulate a more realistic model and be able to marginalize out these parameters from inference problem, the joint process (introduced in previous section) is replaced with its marginalized counterpart. Using the Gamma-priors over $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $ (\autoref{eq:gamma_priors}) and sufficient statistics over the particle history, the particles are drawn from this marginalized process. With every new observation, the particles are propogated through the process, while the sufficient statistics are updated and the parameters are re-estimated after each particle using the \autoref{eq:estimated_Q}. The belief state then obtained as the distribution of states over the particles,
+\begin{equation}
+b(x_p; t) = \frac{1}{N} \sum_{i=1}^{N} \delta_{p_i(t), x_p}
+\end{equation}
+where $ N $ is the number of particles, $ \textbf{p} $ is the set of particles, and $\delta$ is the Kronecker delta.
+
+\begin{algorithm}[H]
+	\SetKwInOut{KwIn}{Input}
+	\SetKwInOut{KwOut}{Output}
+	\KwIn{Observation $ y_{k} $ at time $ t_{k} $, set of particles $\textbf{p}^{k-1} $, estimated $ \hat{Q} $}
+	\KwOut{New set of particles $ \textbf{p}^{k} $, $ \textbf{b}^{[t_{k-1}, t_{k}]} $}
+	
+	\vspace{+4pt}
+	\begin{algorithmic}[1]
+		\FOR{$p_{m} \in \textbf{p}^{k-1}$}
+		\STATE {$p_{m} = \left\lbrace x_{m}, \hat{Q}\right\rbrace \leftarrow Propagate\ particle\ through\ marginal\ process\ from\ t_{k-1}\ to\ t_{k}$ }\\
+		
+		\STATE {$\hat{Q} \leftarrow sufficient\ statistics\ added\ from\  p_{m}[t_{k-1}, t_{k}]$} \\
+		\tcp*[h] {observation likelihood assigned as particle weight}
+		\STATE{$w_{m} \leftarrow p(y_{k} \mid X_P(t_{k})=x_{m}) $} 
+		\ENDFOR \\
+		\tcp*[h]{belief state from $ t_{k-1} $ to $ t_{k} $}
+		\STATE{$ \textbf{b}^{[t_{k-1}, t_{k}]} \leftarrow \left\lbrace \frac{1}{N} \sum_{i=1}^{N} \delta_{p_i^{[t_{k-1}, t_{k}]} , x_p}\right\rbrace_{x_p \in \rchi_P} $}\\
+		\tcp*[h]{normalize weights}
+		\STATE{$ w_{m} \leftarrow \frac{w_{m}}{\sum_{m} w_{m}}$   }\\
+		\tcp*[h]{  resample particles}
+		\FOR{$ p_{m} \in \textbf{p}_{k} $} 
+		\STATE{$ p_{m} \leftarrow Sample\ from\ p_{k}\ with\ probabilities\ w_{m}\ with\ replacement$}
+		\ENDFOR 
+	\end{algorithmic}
+	\caption{Marginal particle filter for belief state update}
+\end{algorithm}
+
 \subsubsection{Optimal Policy}
 
-The optimal policy is defined as a polynomial function of belief state.
+The optimal policy is defined using a polynomial function of belief state.
+\begin{equation}
+\pi(b) = 
+\begin{cases}
+a_0 & \quad \text{if } \textbf{w}b^\intercal > 0.5 \\
+a_1 & \quad \text{otherwise}
+\end{cases}
+\end{equation}
+where \textbf{w} is a row vector of weights.
+
+Given the optimal policy, $ \pi(b) $, the agent takes an action based on the belief state. In the setting described above, taking an action means to change its internal dynamics to the transition intensity matrix corresponding to that action.
 \begin{align}
-\pi(b(t)) = \textbf{w}\ b(t)^T
+a(t) &= \pi(b(t))\\
+\textbf{Q}_3(t) & = \begin{cases}
+\textbf{Q}_{3\mid a_{0}} & \quad \text{if } a(t) = a_0 \\
+\textbf{Q}_{3\mid a_{1}} & \quad \text{otherwise}
+\end{cases}
 \end{align}
-where \textbf{w} is a row vector of weights.\\
-\textbf{INCONSISTENT WITH NOTATION USED BEFORE}
 
 \section{Data Generation}
-\subsection{Sampling Trajectories}
-\subsubsection{Gillespie Algorithm}
-\subsubsection{Thinning Algorithm}
+The dataset contains a number of trajectories drawn from CTBN \textbf{X}. Following the notation in \cref{chap:2}, K trajectories in time interval $ [0, T] $ are denoted by $ \xi_T = \left\lbrace \textbf{X}^{[0,T], 1}, \textbf{X}^{[0,T], 2}, ..., \textbf{X}^{[0,T], K} \right\rbrace  $, where $ \textbf{X}^{[0,T],k} = \left\lbrace X_1^{[0,T],k} , X_2^{[0,T],k}, X_3^{[0,T],k}\right\rbrace $ denotes a single trajectory for all nodes. Every trajectory comprises of state transitions in the interval, and the times of these transitions. 
+
+\subsection{Sampling Algorithm}
+In order to sample trajectories from CTBN, two sampling algortihms introduced in \cref{sec:sampling_alg} are combined. Gillespie algorithm is used to sample from the parent nodes, $ X_1 $ and $ X_2 $, while thinning algorithm is applied to overcome the challenges that come with conditional intensity matrix of the agent, $ X_3 $. It should be noted that, \cref{alg:generative_ctbn} is applicable to any nodes in a CTBN, both homogenous and conditional MPs. However, since in this setting, the intensity matrix is conditioned on the belief state and the policy, instead of directly on the parent states, a more general algorithm suitable for inhomogenous MPs, thinning algorithm, is preferred. \cref{alg:sampling} describes the procedure followed to draw samples using particle filtering. 
+
+\begin{algorithm}[H]
+	\SetKwInOut{KwIn}{Input}
+	\SetKwInOut{KwOut}{Output}
+	\SetKwInOut{Init}{Initialize}
+
+	\KwIn{Gamma-prior parameters on parents' transition intensity matrices $ \alpha^1, \beta^1, \alpha^2, \beta^2 $\\
+		  Set of agent's transition intensity matrices $ \textbf{\textit{Q}}_3 $\\
+		  $ T_{max} $ to terminate simulation}
+	\KwOut{Sample trajectory of the network}
+	\Init{Sample $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $ from their priors\\ 
+		  Initialize nodes uniformly $ X_{n}(0) = x_{i} \in \rchi_n$ \\
+		  Initialize particles uniformly $ p^i(0) = x_{p} \in \rchi_P$\\
+	  	  $ t=0 $}
+
+	\begin{algorithmic}[1]
+		\WHILE{$ t < T_{max} $}
+		\STATE{Draw next transition for $ X_1 $ and $ X_2 $ ($ \tau_{parent}$, $ x_1 $ and $ x_2 $ using \cref{alg:generative_ctbn})}
+		\STATE{$ t_{parent} \leftarrow t + \tau_{parent} $}	\tcp*[h]{transition time for parents} 
+		\STATE{$ y_{t_{parent}} \sim \psi(x_1, x_2)$} \tcp*[h]{new observation at $ t_{parent} $}
+		\STATE{Update particle filter and obtain $ \textbf{b}^{[t, t_{parent}]} $}
+		\STATE{$ a^{[t, t_{parent}]} \leftarrow \pi(\textbf{b}^{[t, t_{parent}]}) $}
+		\STATE{$ \textbf{Q}_3^{[t, t_{parent}]} \leftarrow \textbf{Q}_{3\mid a^{[t, t_{parent}]}} $}
+		\STATE{$ t_{agent} \leftarrow t$}
+		\WHILE{$ t_{agent} < t_{parent} $}
+		\STATE{\textit{the upper bound for intensity,} $ q_3^{*}$} \footnotemark
+		\STATE{\textit{transition time $ \tau_{agent} $ drawn by }  $ u \sim U(0, 1)$ \textit{ and } $ \tau_{agent} = \frac{-ln(u)}{q_3^{*}} $}
+		\STATE{$ t_{agent} \leftarrow t_{agent} + \tau_{agent} $}
+		\STATE{\textit{draw } $s \sim U(0, 1)$, \textit{accept transition if} $ s \leq \frac{q_3(t_{agent})}{q_3^{*}}$}
+		\ENDWHILE
+		\STATE{$ t \leftarrow t_{parent} $}
+		\ENDWHILE
+	\end{algorithmic}
+	\caption{Sampling trajectories with particle filtering}
+	\label{alg:sampling}
+\end{algorithm}
+\footnotetext{q is the transition intensity associated with the current state of the agent.}
+
+
 \section{Inference of Observation Model}
-Our dataset contains a number of trajectories from all the nodes involved in the communication. $ \textbf{D} = \left\lbrace D_{1},..., D_{N}\right\rbrace $. Every trajectory comprises of state transitions in time interval $  [0, T] $, and the times of these transitions.
+Inference problem is considered for deterministic observation models. Given the number of states of parents and the observations, there are a number of possible observation models. Given the parent trajectories, the belief state and the resulting $ \textbf{Q}_3 $ trajectory is computed for each observation model. Then the likelihood of X3 trajectory given these Q3 trajectories are compared. The prediction is done based on maximum likelihood in this case.
 
+\textbf{QUESTION: Is this okay to put results for 3 observation models or should i run the results for all 81 observation models we have? The problem is there are some observation models that we wouldn't be able to distinguish}
+\subsection{Likelihood Model}
+We can formulate our graphical model as $ S = [X, Y, Z] $, where $ Par(Z) = {X,Y} $ and $ Par(X) = Par(Y) =\emptyset $. We can then write the conditional probability:
+\begin{equation}
+\begin{split}
+P\left(S^{\left(t+h\right)}=s' | S^{\left(t\right)}=s\right) = & P\left(X^{\left( t+h\right) }=x' | X^{\left(t\right)}=x, Par(X)^{\left(t\right)}={y,z}\right) \\&  P\left(Y^{\left( t+h\right) }=y' | Y^{\left(t\right)}=y\right) P\left(Z^{\left( t+h\right) }=z' | ^{\left(t\right)}=z\right)
+\end{split} 
+\end{equation}
+Let \textit{D} be a sample of trajectories in the dataset, such that $ \textit{D} = \left\langle X_{1}^{[0, T]}, X_{2}^{[0, T]}, X_{3}^{[0, T]} \right\rangle  $, and the set of parameters to the system $  \theta = \left\langle Q_{1}, Q_{2}, \pi, \Phi \right\rangle  $, where $ \Phi $ is observation model, $ \pi $ is optimal stochastic policy, $ Q_{1} $ and $ Q_{2} $ are the transition intensity matrices of $ X_{1} $ and $ X_{2}$, respectively. Then likelihood of the sample trajectory \textit{D} can be written as:
+\begin{align}
+P(\textit{D} \mid \theta ) & = P(X_{1}^{[0, T]}, X_{2}^{[0, T]}, X_{3}^{[0, T]} \mid Q_{1}, Q_{2}, \pi, \Phi) \\ & = P(X_{3}^{[0, T]} \mid X_{1}^{[0, T]}, X_{2}^{[0, T]}, Q_{1}, Q_{2}, \pi, \Phi) \ P(X_{1}^{[0, T]}\mid Q_{1}) \ P(X_{2}^{[0, T]}\mid Q_{2}) \\ & = P(X_{3}^{[0, T]} \mid X_{1}^{[0, T]}, X_{2}^{[0, T]}, \pi, \Phi) \ P(X_{1}^{[0, T]}\mid Q_{1}) \ P(X_{2}^{[0, T]}\mid Q_{2}) \\ & = P(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \ P(X_{1}^{[0, T]}\mid Q_{1}) \ P(X_{2}^{[0, T]}\mid Q_{2}) 
+\end{align}
+where $ Q_{3}^{[0, T]} $ is the trajectory of transition intensity matrix of $X_{3}$ and is a deterministic function of $ X_{1}^{[0, T]}, X_{2}^{[0, T]}, \pi $ and $ \Phi $. \\
 
-\section{Parameters}
+Marginalizing the likelihood over $ Q_{1} $ and $ Q_{2} $:
+\begin{align}
+P(\textit{D} \mid \pi, \Phi ) & = 	\int \int P(\textit{D} \mid \theta ) \ P(Q_{1}) \ P(Q_{2}) \ dQ_{1}dQ_{2} \\ & = \int \int P(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \ P(X_{1}^{[0, T]}\mid Q_{1}) \ P(X_{2}^{[0, T]}\mid Q_{2}) \ P(Q_{1}) \ P(Q_{2})\ dQ_{1}dQ_{2} \\ & = P(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \int  P(X_{1}^{[0, T]}\mid Q_{1}) \ P(Q_{1}) \ dQ_{1} \int P(X_{2}^{[0, T]}\mid Q_{2})\ P(Q_{2})\ dQ_{2}
+\label{eq:Marg_llh}
+\end{align}
 
-\paragraph{Marginalized Likelihood Function} 
+$ X_{1} $ and $ X_{2} $ are independent homogenous Markov processes, with state space $ Val(X_{1, 2}) = \left\lbrace 0, 1 \right\rbrace $. The transition intensity matrices $ Q_{1} $ and $ Q_{2} $ can be written in the following form for convenience,
+\begin{center}
+	\begin{math}
+	\begin{pmatrix}
+	-q_{0} & q_{0} \\
+	q_{1} & -q_{1}
+	\end{pmatrix}
+	\end{math}\\
+\end{center}
+where the transition intensities $ q_{0} $ and $ q_{1} $ are gamma-distributed with parameters $ \alpha_{0}$, $ \beta_{0} $ and $ \alpha_{1} $, $ \beta_{1} $, respectively. The marginal likelihood of a sample trajectory from binary-valued homogenous Markov process X with transition intensity matrix Q can be written as follows:
+
+\begin{align}
+P(X^{[0, T]}) & = \int  P(X^{[0, T]}\mid Q)P(Q) dQ \\ & = \int_{0}^{\infty} \left( \prod_{x} \exp(-q_{x}T_{x}) \prod_{x'} q_{xx'}^{M[x, x']}\right) \frac{\beta_{xx'}^{\alpha_{xx'}}{q_{xx'}^{\alpha_{xx'}-1}}\exp(-\beta_{xx'}q_{xx'})}{\Gamma(\alpha_{xx'})} \ dq_{xx'} \\ & = \prod_{x\in{0,1}}\int_{0}^{\infty} q_{x}^{M_{x}} \ \exp(-q_{x}T_{x}) \  \frac{\beta_{x}^{\alpha_{x}} \ q_{x}^{\alpha_{x}-1}\ \exp(-\beta_{x}q_{x})}{\Gamma(\alpha_{x})} \ dq_{x} \\ & = \prod_{x\in{0,1}} \frac{\beta_{x}^{\alpha_{x}}}{\Gamma(\alpha_{x})} \int_{0}^{\infty} q_{x}^{M_{x} + \alpha_{x} -1} \ \exp(-q_{x}(T_{x}+\beta_{x})) \ dq_{x} \\ & = \prod_{x\in{0,1}} \frac{\beta_{x}^{\alpha_{x}}}{\Gamma(\alpha_{x})} \left( -(T_{x}+\beta_{x})^{M_{x} + \alpha_{x}}\ \Gamma(M_{x} + \alpha_{x}, \ q_{x}(T_{x}+\beta_{x})) \right) \Big|_0^\infty  \\ & = \prod_{x\in{0,1}} \frac{\beta_{x}^{\alpha_{x}}}{\Gamma(\alpha_{x})} \left( (T_{x}+\beta_{x})^{M_{x} + \alpha_{x}}\ \Gamma(M_{x} + \alpha_{x}) \right)
+\label{eq:Marg_traj}
+\end{align}
+
+where $ T_{x} $, the amount of time spent in state x, $ M[x,x'] $ the number of transitions from state x to x' and  $ M[x] = \sum_{x\neq x'}M[x,x'] $.\\
+
+From Eq.11, the integral is solved using computer algebra system WolframAlpha as follows:
+\begin{align}
+\int x^{a} \ \exp(-xb) \ dx = -b^{-a-1} \ \Gamma(a+1, \ bx) + C
+\label{eq:integral}
+\end{align}
+
+Plugging Eq.\ref{eq:Marg_traj} in Eq.\ref{eq:Marg_llh} for both $ X_{1} $ and $ X_{2} $:
+\begin{align}
+\begin{split}
+P(\textit{D} \mid \pi, \Phi ) = P(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \prod_{x_{1}\in{0,1}} \frac{\beta_{x_{1}}^{\alpha_{x_{1}}}}{\Gamma(\alpha_{x_{1}})} \ (T_{x_{1}}+\beta_{x_{1}})^{M_{x_{1}} + \alpha_{x_{1}}}\ \Gamma(M_{x_{1}} + \alpha_{x_{1}})  \\  \prod_{x_{2}\in{0,1}} \frac{\beta_{x_{2}}^{\alpha_{x_{2}}}}{\Gamma(\alpha_{x_{2}})} \ (T_{x_{2}}+\beta_{x_{2}})^{M_{x_{2}} + \alpha_{x_{2}}}\ \Gamma(M_{x_{2}} + \alpha_{x_{2}})
+\label{eq:Marg_llh_final}
+\end{split}
+\end{align}
+\subsection{Marginalized Likelihood Function} 
 Let $ X $ be a homogenous CTMP. For convenience, it is assumed to be binary-valued, $ \rchi = \left\lbrace x_{0}, x_{1} \right\rbrace $. The transition intensity matrix can be written in the following form:
 \begin{equation}
 \textbf{Q} = 
@@ -141,7 +254,11 @@ where the transition intensities $ q_{0} $ and $ q_{1} $ are gamma-distributed w
 \begin{align}
 P(X^{[0, T]}) & = \int  P(X^{[0, T]}\mid Q)P(Q) dQ \nonumber\\ & = \int_{0}^{\infty} \left( \prod_{x} \exp(-q_{x}T_{x}) \prod_{x'} q_{xx'}^{M[x, x']}\right) \frac{\beta_{xx'}^{\alpha_{xx'}}{q_{xx'}^{\alpha_{xx'}-1}}\exp(-\beta_{xx'}q_{xx'})}{\Gamma(\alpha_{xx'})} \ dq_{xx'} \nonumber\\ & = \prod_{i\in{0,1}}\int_{0}^{\infty} q_{i}^{M[x_{i}]} \ \exp(-q_{i}T[x_{i}]) \  \frac{\beta_{i}^{\alpha_{i}} \ q_{i}^{\alpha_{i}-1}\ \exp(-\beta_{i}q_{i})}{\Gamma(\alpha_{i})} \ dq_{i} \nonumber\\ & = \prod_{i\in{0,1}} \frac{\beta_{i}^{\alpha_{i}}}{\Gamma(\alpha_{i})} \int_{0}^{\infty} q_{i}^{M[x_{i}] + \alpha_{i} -1} \ \exp(-q_{i}(T[x_{i}]+\beta_{i})) \ dq_{i} \\ & = \prod_{i\in{0,1}} \frac{\beta_{i}^{\alpha_{i}}}{\Gamma(\alpha_{i})} \left( -(T_{i}+\beta_{i})^{M[x_{i}] + \alpha_{i}}\ \Gamma(M[x_{i}] + \alpha_{i}, \ q_{i}(T[x_{i}]+\beta_{i})) \right) \Big|_0^\infty  \\ & = \prod_{i\in{0,1}} \frac{\beta_{i}^{\alpha_{i}}}{\Gamma(\alpha_{i})} \left( (T[x_{i}]+\beta_{i})^{M[x_{i}] + \alpha_{i}}\ \Gamma(M[x_{i}] + \alpha_{i}) \right)
 \label{eq:Marg_traj}
-\end{align}.
+\end{align}
+
+\section{Configurations}
+
+
 %
 %where $ T[x_{i}] $, the amount of time spent in state $ [x_{i}] $, $ M[x_{i},x_{j}] $ the number of transitions from state $ x_{i} $ to $ x_{j} $ and  $ M[x_{i}] = \sum_{i\neq j}M[x_{i},x_{j}] $.\\
 
