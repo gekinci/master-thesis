@@ -1,0 +1,19 @@
+\appendix
+
+\chapter{Amalgamation}
+\label{ap:amalgamation}
+The amalgamation operation for two independent processes are derived as follows:
+\begin{multline}
+	\operatorname{Pr}(X_1(t+h) = x_1', X_2(t+h) = x_2 \mid X_1(t) = x_1, X_2(t) = x_2) \\
+	\begin{split}
+	&= \operatorname{Pr}(X_1(t+h) = x_1' \mid X_1(t) = x_1, X_2(t) = x_2) \operatorname{Pr}( X_2(t+h) = x_2 \mid X_1(t) = x_1, X_2(t+h) = x_2) \\
+	& = (\delta_{x_1', x_1} + hq^1_{x_1, x_1^\prime} + o(h))(1 + hq^2_{x_2, x_2} + o(h))\\
+	& = \delta_{x_1', x_1} + hq^1_{x_1, x_1^\prime} + h\delta_{x_1', x_1}q^2_{x_2, x_2} + o(h)
+	\end{split}
+	\label{eq:amalg}
+\end{multline}
+
+
+
+%\chapter{Marginalized Likelihood Function for Homogenous Continuous Time Markov Processes}
+%\label{ap:marg_llh_ctmp}

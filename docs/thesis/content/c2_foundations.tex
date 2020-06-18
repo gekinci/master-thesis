@@ -12,7 +12,7 @@ This chapter presents the theory applied in this thesis. First, the details of t
 	\end{center}
 	\label{fig:graph_model}
 \end{wrapfigure} 
-The communication model considered in this thesis is given in \autoref{fig:graph_model}. The parent nodes, $X_{1}$ and $ X_{2}$, emit messages which carry information about their states. These messages are translated by an observation model, $\psi$, and agent node, $ X_{3} $ makes a decision based on this translated message, $ y $. The main objective is to infer the observation model given set of trajectories of nodes.
+The communication model considered in this thesis is given in \cref{fig:graph_model}. The parent nodes, $X_{1}$ and $ X_{2}$, emit messages which carry information about their states. These messages are translated by an observation model, $\psi$, and agent node, $ X_{3} $ makes a decision based on this translated message, $ y $. The main objective is to infer the observation model given set of trajectories of nodes.
 
 The transition models of the nodes and the dependencies between them are modelled as continuous-time Bayesian network (CTBN), denoted by \textbf{X}. The network \textbf{X} represents a stohastic process over a structured multivariate state space $ \rchi = [\rchi_1,..., \rchi_n] $. 
 
@@ -24,7 +24,7 @@ The agent node $ X_3 $ does not have a direct access to the messages, but observ
 \end{equation}
 The agent  $ X_{3} $ is modelled as inhomogenouos continuous-time Markov process with state space $ \rchi_{3} = \left\lbrace x_{1}, x_{2}, ..., x_{m} \right\rbrace  $ and set of actions $ a \in \left\lbrace a_{0}, a_{1}, ..., a_{k}\right\rbrace  $ to choose from. 
 
-Given the observation, the agent forms a belief over the parent states, $  b(x_{1}, x_{2}; t) $, that summarizes the past observations.\cite{KAELBLING199899} The policy of the agent, $ \pi(a \mid b) $, is assumed to be shaped by evolution (close) to optimality. Based on the belief state, the agent takes an action, which in the setting described above means to change its internal dynamics. 
+Given the observation, the agent forms a belief over the parent states, $  b(x_{1}, x_{2}; t) $, that summarizes the past observations. The policy of the agent, $ \pi(a \mid b) $, is assumed to be shaped by evolution (close) to optimality. Based on the belief state, the agent takes an action, which in the setting described above means to change its internal dynamics. 
 \section{Continuous Time Bayesian Networks}
 A continuous-time Bayesian network (CTBN) is a graphical model that represents a collection of nodes whose values evolve continuously over time. In CTBN framework, through a directed graph, the dependencies of a set of Markov processes (MPs) can be modelled efficiently relying on two assumptions. First assumption is that only one node can transition at a time. Secondly, the instantenous dynamics of each node depends only on its parent nodes. \cite{Cohn2010a, Nodelman1995} 
 %In the following, every node of a CTBN is considered to be a Markov process.
@@ -119,7 +119,7 @@ Given the instantiation of its parents, the complete information on the dynamics
 \operatorname{Pr}(X^{[0,T]}  \mid \textbf{Q}_{X\given \textbf{U}}) &=  \left(\prod_{ \textbf{u}}\prod_{ i} q_{i\mid \textbf{u}}^{M[x_{i}\mid \textbf{u}]} \exp \left(-q_{i\mid \textbf{u}} T[x_{i}\mid \textbf{u}]\right)\right)\left(\prod_{ \textbf{u}}\prod_{ i} \prod_{ j \neq i} \left(\frac{q_{i,j\mid \textbf{u}}}{q_{i\mid \textbf{u}}}\right)^{M\left[x_{i}, x_{j}\mid \textbf{u}\right]}\right) \nonumber\\ & = \prod_{ \textbf{u}}\prod_{j\neq i}  exp(-q_{i,j\mid \textbf{u}}T[x_{i}\mid \textbf{u}]) \ q_{i,j\mid \textbf{u}}^{M[x_{i},x_{j}\mid \textbf{u}]}
 \label{eq:lh_traj_cond}
 \end{align}
-with the sufficient statistics introduced in \autoref{sec:llh_of_homo} are also conditioned on parent nodes.
+with the sufficient statistics introduced in \cref{sec:llh_of_homo} are also conditioned on parent nodes.
 %Let X be an inhomogeneous Markov process. $  X^{\left[0,T\right] } $ is a trajectory sampled from this process with $ m $ number of transitions, $ 0 = t_{0} < t_{1} < ... < t_{m} $ are the times where transition occurred, and $ x_{t_{0}}, x_{t_{1}},..., x_{t_{m}} $ are the observed states. The likelihood of trajectory  $  X^{\left[0,T\right] } $ can be written as follows: 
 %\begin{equation}
 %\operatorname{Pr}(X^{[0,T]}  \mid \textbf{Q}) = \prod_{k=1}^{m} \left[ q_{x_{k-1}} (t_{k}) \exp \left(-\int_{t_{k-1}}^{t_{k}} q_{x_{k-1}}(u) d u\right) \frac{q_{x_{k-1}, x_{k}} (t_{k})}{q_{x_{k-1}}(t_{k})}\right] 
@@ -151,7 +151,9 @@ where $ T_n[.] $ and $ M_n[.] $ indicates the sufficient statistics for $ X_n $.
 
 \section{Belief State in Partially Observable Markov Decision Processes}
 \label{sec:belief_POMDP}
-Partially observable Markov decision process (POMDP) framework provides a model of an agent which interacts with its environment, but unable to obtain certain information about its state. Instead, the agent gets an observation which is a stochastic function of the true state. The main goal, as similar to Markov decision processes (MDPs), is to learn a policy solving a task by optimizing a reward function. The problem of decision making under uncertainty can be decomposed into two parts for the agent. The first is \textit{state estimator} to keep a belief state which is a sufficient statistic of its past experiences, and the second is the \textit{optimal policy} which will give an action based on the belief state. \cite{Murphy2000,KAELBLING199899}
+Partially observable Markov decision process (POMDP) framework provides a model of an agent which interacts with its environment, but unable to obtain certain information about its state. Instead, the agent gets an observation which is a function of the true state. The main goal, as similar to Markov decision processes (MDPs), is to learn a policy solving a task by optimizing a reward function. The problem of decision making under uncertainty can be decomposed into two parts for the agent. The first is \textit{state estimator} to keep a belief state which summarizes past experiences, and the second is the \textit{optimal policy} which will give an action based on the belief state. \cite{Murphy2000,KAELBLING199899}
+
+The belief state, if represented as a probability distribution over states, provides a sufficient stratistic over the agents past experiences. 
 
 In the problem considered in this thesis, the agent node $ X_{3} $ cannot observe the incoming messages directly, rather a summary of them. This presents a POMDP problem. However, since the optimal policy of the agent is assumed to be given, the theory for policy optimization is skipped. In this section, update methods for belief state is introduced.
 
@@ -202,12 +204,13 @@ b(x_{i}; t_{N}) & = \operatorname{Pr}( X(t_{N}) = x_{i},\mid y_{1}, ..., y_{N}) 
 where $ Z_{N} = \sum_{x_{i}\in \rchi} \operatorname{Pr}(y_{N} \mid X(t_{N})=x_{i})\ b(x_{i}; t_{N}^{-}) $ is the normalization factor \cite{article}.
 
 \subsection{Belief State Update using Particle Filter}
-In a more realistic scenario, the exact update of belief state may not be feasible for several reasons. The computation of Bayes belief update is expensive for large state spaces. Moreover, a problem with continuous state spaces require a belief state represented as probability distributions over infinite state space rather than a collection of probabilities as given in Sec.\ref{sec:exact_update}. \cite{Carlo1904} Another reason could be lack of compact representation of transition and/or observation models. Under such circumstances, the belief state is obtained using sample-based approximation methods. \cite{Carlo1904} 
+\label{sec:particle_filter}
+In a more realistic scenario, the exact update of belief state may not be feasible for several reasons. The computation of Bayes belief update is expensive for large state spaces. Moreover, a problem with continuous state spaces requires a belief state represented as probability distributions over infinite state space rather than a collection of probabilities as given in Sec.\ref{sec:exact_update}. \cite{Carlo1904} Another reason could be lack of compact representation of transition and/or observation models. Under such circumstances, the belief state is obtained using sample-based approximation methods. \cite{Carlo1904} 
 
 It should be noted that, since the belief state is nothing but the contidional probability of true states given the observations, the problem at hand poses a filtering problem as described in Section \ref{sec:filtering_CTMC}.
 
 \subsubsection{Particle Filtering}
-Particle filtering is one of the most commonly used Sequential Monte Carlo (SMC) algorithms. The popularity of this method thrives from the fact that, unlike other approximation methods such as Kalman Filter, it does not assume a linear Gaussion model. This advantage offers a great flexibility and finds application in a wide range of areas.\cite{Doucet2009}
+Particle filtering is one of the most commonly used Sequential Monte Carlo (SMC) algorithms. The popularity of this method thrives from the fact that, unlike other approximation methods such as Kalman Filter, it does not assume a linear Gaussian model. This advantage offers a great flexibility and finds application in a wide range of areas.\cite{Doucet2009}
 
 The key idea in particle filtering is to approximate a target distribution $ p(x) $ by a set of samples (particles) drawn from that distribution. This is achieved sequentially updating the particles through two steps. First step is \textit{importance sampling}. Since the target distribution is not available, the particles are generated from a \textit{proposal distribution} $ q(x) $ and weighted in the account of the difference between target and proposal distributions. The second step is to resample the particles using these weights. \cite{Godsill2019} \\
 \textbf{I WROTE THE FORMULAS AS WELL BUT THOUGHT THEY MAY NOT BE VERY RELEVANT. SHOULD I INCLUDE THEM?}
@@ -248,8 +251,10 @@ where the joint sufficient statistics of $ X_n $ over all K trajectories are den
 Given independent Gamma-priors on transition intensities, the expectation in \autoref{eq:marginal_CTBN} can be evaluated as following:
 \begin{equation}
 	\mathbb{E}\left[q_{i,j\mid \textbf{u}}^{n} | \xi_{t}\right]=\frac{\alpha^n_{i,j\mid \textbf{u}}+M_{n}[x_i, x_j\mid \textbf{u}]}{\beta^n_{i,j\mid \textbf{u}}+T_{n}[x_i \mid \textbf{u}]}
+	\label{eq:estimated_Q}
 \end{equation}
 
+%TODO write about the dependency problem, how is this okay?
 \section{Sampling Algorithms}
 \label{sec:sampling_alg}
 \subsection{Gillespie Algorithm for Generative CTBN}
@@ -263,7 +268,7 @@ This algorithm can also be applied to sample \textit{events} from a CTBN given t
 	\SetKwInOut{KwOut}{Output}
 	\SetKwInOut{Init}{Initialize}
 	
-	\KwIn{Structure of the network with N local variables $ X_{1}, X_{2}, ..., X_{n} $ as a dict in the format of $ \left\lbrace X_{i}: [par(X_{i})]\right\rbrace $ with state-space $ \rchi_n = \left\lbrace x_{1}, ..., x_{m} \right\rbrace $ with entries $ q^n_{i,j} $ \\Transition intensity matrices $ \textbf{Q}_{n} $ \\$ T_{max} $ to terminate simulation}
+	\KwIn{Structure of the network with N local variables $ X_{1}, X_{2}, ..., X_{n} $ as a dict in the format of $ \left\lbrace X_{i}: [par(X_{i})]\right\rbrace $ with state-space $ \rchi_n = \left\lbrace x_{1}, ..., x_{m} \right\rbrace $   \\Transition intensity matrices $ \textbf{Q}_{n} $ with entries $ q^n_{i,j}$\\$ T_{max} $ to terminate simulation}
 	\KwOut{Sample trajectory of the network}
 	\Init{Initialize node values $ X_{n}(0) = x_{i} \in \rchi_n$}
 	
@@ -276,6 +281,7 @@ This algorithm can also be applied to sample \textit{events} from a CTBN given t
 		\ENDWHILE
 	\end{algorithmic}
 	\caption{Generative CTBN}
+	\label{alg:generative_ctbn}
 \end{algorithm}
 
 \subsection{Thinning Algorithm}
