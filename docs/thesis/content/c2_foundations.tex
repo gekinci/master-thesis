@@ -12,24 +12,24 @@ This chapter presents the theory applied in this thesis. First, the details of t
 	\end{center}
 	\label{fig:graph_model}
 \end{wrapfigure} 
-The communication model considered in this thesis is given in \cref{fig:graph_model}. The parent nodes, $X_{1}$ and $ X_{2}$, emit messages which carry information about their states. These messages are translated by an observation model, $\psi$, and agent node, $ X_{3} $ makes a decision based on this translated message, $ y $. The main objective is to infer the observation model given set of trajectories of nodes.
+The communication model considered in this thesis is given in \autoref{fig:graph_model}. The parent nodes, $X_{1}$ and $ X_{2}$, emit messages which carry information about their states. These messages are translated by an observation model, $\psi$, and agent node, $ X_{3} $ makes a decision based on this translated message, $ y $. The main objective is to infer the observation model, given a set of trajectories of nodes.
 
-The transition models of the nodes and the dependencies between them are modelled as continuous-time Bayesian network (CTBN), denoted by \textbf{X}. The network \textbf{X} represents a stohastic process over a structured multivariate state space $ \rchi = [\rchi_1,..., \rchi_n] $. 
+The transition models of the nodes and the dependencies between them are modelled as continuous-time Bayesian network (CTBN), denoted by \textbf{X}. The network \textbf{X} represents a stochastic process over a structured multivariate state space $ \rchi = [\rchi_1,..., \rchi_n] $. 
 
 The messages that are emitted by the parent nodes $X_{1}$ and $ X_{2} $ are modelled as independent homogeneous continuous-time Markov processes $X_{i}(t)$, with state space $ \rchi_{i} = \left\lbrace x_{1}, x_{2}, ..., x_{m} \right\rbrace  $ for $ i \in \left\lbrace 1,2 \right\rbrace $.
 
-The agent node $ X_3 $ does not have a direct access to the messages, but observes a translation of them. The observation model is defined as the likelihood of a translation given the parent messages.
+The agent node $ X_3 $ does not have direct access to the messages but observes a translation of them. The observation model is defined as the likelihood of a translation given the parent messages.
 \begin{equation}
 \psi \coloneqq p(y(t) \mid X_{1}(t), X_{2}(t))
 \end{equation}
-The agent  $ X_{3} $ is modelled as inhomogenouos continuous-time Markov process with state space $ \rchi_{3} = \left\lbrace x_{1}, x_{2}, ..., x_{m} \right\rbrace  $ and set of actions $ a \in \left\lbrace a_{0}, a_{1}, ..., a_{k}\right\rbrace  $ to choose from. 
+The agent  $ X_{3} $ is modelled as inhomogeneous continuous-time Markov process with state space $ \rchi_{3} = \left\lbrace x_{1}, x_{2}, ..., x_{m} \right\rbrace  $ and set of actions $ a \in \left\lbrace a_{0}, a_{1}, ..., a_{k}\right\rbrace  $ to choose from. 
 
 Given the observation, the agent forms a belief over the parent states, $  b(x_{1}, x_{2}; t) $, that summarizes the past observations. The policy of the agent, $ \pi(a \mid b) $, is assumed to be shaped by evolution (close) to optimality. Based on the belief state, the agent takes an action, which in the setting described above means to change its internal dynamics. 
-\section{Continuous Time Bayesian Networks}
-A continuous-time Bayesian network (CTBN) is a graphical model that represents a collection of nodes whose values evolve continuously over time. In CTBN framework, through a directed graph, the dependencies of a set of Markov processes (MPs) can be modelled efficiently relying on two assumptions. First assumption is that only one node can transition at a time. Secondly, the instantenous dynamics of each node depends only on its parent nodes. \cite{Cohn2010a, Nodelman1995} 
+\section{Continuous-Time Bayesian Networks}
+A continuous-time Bayesian network (CTBN) is a graphical model that represents a collection of nodes whose values evolve continuously over time. In the CTBN framework, through a directed graph, the dependencies of a set of Markov processes (MPs) can be modelled efficiently, relying on two assumptions. The first assumption is that only one node can transition at a time. Secondly, the instantaneous dynamics of each node depends only on its parent nodes. \cite{Cohn2010a, Nodelman1995} 
 %In the following, every node of a CTBN is considered to be a Markov process.
-\subsection{Continuous Time Markov Processes}
-A continuous-time Markov process (CTMP) is a continuous-time stochastic process which satisfies Markov property, namely, the probability distribution over the states at a future time is conditionally independent of the past states given the current state.\cite{Cohn2010a} Let X be a CTMP with state space $ \rchi = \left\lbrace x_{1}, x_{2}, ..., x_{n} \right\rbrace  $. Then the Markov property can be written as follows:
+\subsection{Continuous-Time Markov Processes}
+A continuous-time Markov process (CTMP) is a continuous-time stochastic process which satisfies Markov property, namely, the probability distribution over the states at a later time is conditionally independent of the past states given the current state.\cite{Cohn2010a} Let X be a CTMP with state space $ \rchi = \left\lbrace x_{1}, x_{2}, ..., x_{n} \right\rbrace  $. Then the Markov property can be written as follows:
 \begin{equation}
 	\operatorname{Pr}\left(X^{\left(t_{k}\right)}=x_{t_{k}} | X^{\left(t_{k-1}\right)}=x_{t_{k-1}}, \ldots, X^{\left(t_{0}\right)}=x_{t_{0}}\right)=\operatorname{Pr}\left(X^{\left(t_{k}\right)}=x_{t_{k}} | X^{\left(t_{k-1}\right)}=x_{t_{k-1}}\right)
 \end{equation}
@@ -46,7 +46,7 @@ A CTMP is represented by its transition intensity matrix, $ \textbf{Q} $. In thi
 \end{equation}
 where $ q_{i} = \sum_{i \neq j} q_{i,j}$.\cite{Nodelman1995}
 
-\subsubsection{Homogenous Continuous Time Markov Processes}
+\subsubsection{Homogenous Continuous-Time Markov Processes}
 A continuous-time Markov process is time-homogenous when the transition intensities do not depend on time. Let X be a homogenous CTMP, with transition intensity matrix $ \textbf{Q}_X $. Infinitesimal transition probability from state $ x_{i} $ to $ x_{j} $ in terms of the transition intensities $ q_{i,j} $ can be written as \cite{Cohn2010a}:
 \begin{equation}
 p_{i,j}(h)=\delta_{ij}+q_{i,j} h+o(h)
@@ -71,7 +71,8 @@ Equation \ref{eq:master_equation} can be written in matrix form:
 \begin{equation}
 \frac{d}{dt} p(t) = p(t)\textbf{Q}
 \end{equation}
-where the time-dependent probability distribution $ p(t) $ is a row vector with entries $ {p_{i}(t)}_{x_{i}\in \rchi} $. 
+where the time-dependent probability distribution $ p(t) $ is a row vector with entries $ \left\lbrace p_{i}(t)\right\rbrace_{x_{i}\in \rchi} $. 
+\textbf{QUESTION: $ \left\lbrace \right\rbrace  $ notation for row vectors are used in Prof.Koeppl's supporting info paper. I followed it here, but should it be $ \left[  p_{i}(t)\right]_{x_{i}\in \rchi} $?}\\
 The solution of this ODE is, 
 \begin{equation}
 p(t)=p(0) \exp (t\textbf{Q})
@@ -86,11 +87,11 @@ F(t) & = 1 - \exp \left(-q_{i} t\right), t\geq 0
 Given the transitioning from state $ x_{i} $, the probability of landing on state $ x_{j} $ is $ q_{i,j}/q_{i} $.
 \paragraph*{Likelihood Function}
 \label{sec:llh_of_homo}
-Consider a single transition denoted as $ d = <x_{i},x_{j},t> $, where transition occurs from state $ x_{i} $ to $ x_{j} $ after spending t amount of time at state $ x_{i} $. The likelihood of this transition is the product of the probability of having remained at state $ x_{i} $ for that long, and the probability of transitioning to $ x_{j} $.
+Consider a single transition denoted as $ d = <x_{i},x_{j},t> $, where the transition occurs from state $ x_{i} $ to $ x_{j} $ after spending t amount of time at state $ x_{i} $. The likelihood of this transition is the product of the probability of having remained at state $ x_{i} $ for that long, and the probability of transitioning to $ x_{j} $.
 \begin{equation}
-\operatorname{Pr}(d  \mid \textbf{Q}) = \left( q_{i}exp(-q_{i}t) \right) \left( \frac{q_{i,j}}{q_{i}} \right)
+\operatorname{Pr}(d  \mid \textbf{Q}) = \left( q_{i}\exp(-q_{i}t) \right) \left( \frac{q_{i,j}}{q_{i}} \right)
 \end{equation}
-The likelihood of a trajectory sampled from a homogenous CTMC, $ X^{[0,T]} $, can be decomposed as the product of the likelihood of single transitions. The sufficient statistics summarizing this trajectory can be written as $ T[x_{i}] $, total amount of time spent in state $ x_{i} $, $ M[x_{i}, x_{j}] $ total number of transitions from state $ x_{i} $ to $ x_{j} $. Then the likelihood of a trajectory $  X^{\left[0,T\right] } $ can be written as:
+The likelihood of a trajectory sampled from a homogenous CTMC, denoted by $ X^{[0,T]} $, can be decomposed as the product of the likelihood of single transitions. The sufficient statistics summarizing this trajectory can be written as $ T[x_{i}] $, the total amount of time spent in state $ x_{i} $, $ M[x_{i}, x_{j}] $ the total number of transitions from state $ x_{i} $ to $ x_{j} $. Then the likelihood of a trajectory $  X^{\left[0,T\right] } $ can be written as:
 \begin{align}
 \operatorname{Pr}(X^{[0,T]}  \mid \textbf{Q}) &=  \prod_{d \in X^{[0,T]}} \operatorname{Pr}(d \mid \textbf{Q}) \nonumber\\&=\left(\prod_{ i} q_{i}^{M[x_{i}]} \exp \left(-q_{i} T[x_{i}]\right)\right)\left(\prod_{ i} \prod_{ j \neq i} \left(\frac{q_{i,j}}{q_{i}}\right)^{M\left[x_{i}, x_{j}\right]}\right) \nonumber\\ & = \prod_{j \neq i}  exp(-q_{i,j}T[x_{i}])\ q_{i,j}^{M[x_{i},x_{j}]}
 \label{eq:lh_traj_homo}
@@ -99,11 +100,11 @@ where $ M[x_{i}] = \sum_{j \neq i} M[x_{i}, x_{j}] $ is the total number transit
 
 
 \subsubsection{Conditional Markov Processes}
-A continuous-time Markov process is \textit{time-inhomogenous} when the transition intensities changes over time. In a CTBN, while every node is a Markov process, the leaf nodes are characterized as \textit{conditional} Markov processes, a type of inhomogeneous MP, where the intensities change over time, but not as a function of time rather as a function of parent states. \cite{Nodelman1995} 
+A continuous-time Markov process is \textit{time-inhomogenous} when the transition intensities change over time. In a CTBN, while every node is a Markov process, the leaf nodes are characterized as \textit{conditional} Markov processes, a type of inhomogeneous MP, where the intensities change over time, but not as a function of time rather as a function of parent states. \cite{Nodelman1995} 
 
-Let X be a conditional Markov process, with a set of parents $ \textbf{U} = Par(X)$. Its intensity matrix, \textit{conditional intensity matrix}, $ \textbf{Q}_{X\given \textbf{U}} $ can be viewed as a set of homogenous intensity matrices $ \textbf{Q}_{X\given \textbf{u}} $, with entries $ q_{i,j \mid \textbf{u}} $ (similar to \autoref{eq:Q_matrix}), for each instantiation of parent nodes $ \textbf{U}(t) =\textbf{u} $.\cite{Nodelman1995} As a result, given a trajectory of parent nodes, X has a trajectory of intensity matrix as a combination of these homogenous matrices.
+Let X be a conditional Markov process, with a set of parents $ \textbf{U} = Par(X)$. Its intensity matrix, \textit{conditional intensity matrix}, $ \textbf{Q}_{X\given \textbf{U}} $ can be viewed as a set of homogenous intensity matrices $ \textbf{Q}_{X\given \textbf{u}} $, with entries $ q_{i,j \mid \textbf{u}} $ (similar to \autoref{eq:Q_matrix}), for each instantiation of parent nodes $ \textbf{U}(t) =\textbf{u} $.\cite{Nodelman1995} As a result, given a trajectory of parent nodes, X has a trajectory of intensity matrix as
 \begin{equation}
-\textbf{Q}^{[0,T]} = [\textbf{Q}_{X\given \textbf{U}(t_0)}, \textbf{Q}_{X\given \textbf{U}(t_1)}, ..., \textbf{Q}_{X\given \textbf{U}(t_N)}],\ 0<t_0<t_1<...<t_N\leq T
+\textbf{Q}^{[0,T]} = [\textbf{Q}_{X\given \textbf{U}(t_0)}, \textbf{Q}_{X\given \textbf{U}(t_1)}, ..., \textbf{Q}_{X\given \textbf{U}(t_N)}],\ 0<t_0<t_1<...<t_N\leq T\text{.}
 \end{equation}
 
 Markov transition function for a conditional Markov process can be written as follows:
@@ -116,7 +117,7 @@ Markov transition function for a conditional Markov process can be written as fo
 \paragraph*{Likelihood Function}
 Given the instantiation of its parents, the complete information on the dynamics of X is obtained. Then the likelihood of a trajectory drawn from a conditional MP $ X $ can be written similar to \autoref{eq:lh_traj_homo},
 \begin{align}
-\operatorname{Pr}(X^{[0,T]}  \mid \textbf{Q}_{X\given \textbf{U}}) &=  \left(\prod_{ \textbf{u}}\prod_{ i} q_{i\mid \textbf{u}}^{M[x_{i}\mid \textbf{u}]} \exp \left(-q_{i\mid \textbf{u}} T[x_{i}\mid \textbf{u}]\right)\right)\left(\prod_{ \textbf{u}}\prod_{ i} \prod_{ j \neq i} \left(\frac{q_{i,j\mid \textbf{u}}}{q_{i\mid \textbf{u}}}\right)^{M\left[x_{i}, x_{j}\mid \textbf{u}\right]}\right) \nonumber\\ & = \prod_{ \textbf{u}}\prod_{j\neq i}  exp(-q_{i,j\mid \textbf{u}}T[x_{i}\mid \textbf{u}]) \ q_{i,j\mid \textbf{u}}^{M[x_{i},x_{j}\mid \textbf{u}]}
+\operatorname{Pr}(X^{[0,T]}  \mid \textbf{Q}_{X\given \textbf{U}}) &=  \left(\prod_{ \textbf{u}}\prod_{ i} q_{i\mid \textbf{u}}^{M[x_{i}\mid \textbf{u}]} \exp \left(-q_{i\mid \textbf{u}} T[x_{i}\mid \textbf{u}]\right)\right)\left(\prod_{ \textbf{u}}\prod_{ i} \prod_{ j \neq i} \left(\frac{q_{i,j\mid \textbf{u}}}{q_{i\mid \textbf{u}}}\right)^{M\left[x_{i}, x_{j}\mid \textbf{u}\right]}\right) \nonumber\\ & = \prod_{ \textbf{u}}\prod_{j\neq i}  \exp(-q_{i,j\mid \textbf{u}}T[x_{i}\mid \textbf{u}]) \ q_{i,j\mid \textbf{u}}^{M[x_{i},x_{j}\mid \textbf{u}]}
 \label{eq:lh_traj_cond}
 \end{align}
 with the sufficient statistics introduced in \cref{sec:llh_of_homo} are also conditioned on parent nodes.
@@ -139,29 +140,29 @@ with the sufficient statistics introduced in \cref{sec:llh_of_homo} are also con
 \subsection{The CTBN Model}
 Evidently, a homogenouos CTMP can be considered as a conditional MP whose set of parents is empty. Thus, a CTBN can be formed as a set of conditional Markov processes.
 
-Let \textbf{X} be a CTBN with local variables $ X_n $, $ n \in \left\lbrace 1,...N \right\rbrace $, each with a state space $ \rchi_n $. Given the dependencies of each variable as set of its parents $ \textbf{U}_n = Par(X_n) $, the transition model of each local variable $ X_n $ is modelled as conditional Markov processes. \cite{Nodelman1995} In the following the set of all conditional transition intensity matrices are denoted as $ \textbf{\textit{Q}} $.
+Let \textbf{X} be a CTBN with local variables $ X_n $, $ n \in \left\lbrace 1,...N \right\rbrace $, each with a state space $ \rchi_n $. Given the dependencies of each variable as a set of its parents $ \textbf{U}_n = Par(X_n) $, the transition model of each local variable $ X_n $ is modelled as conditional Markov processes. \cite{Nodelman1995} In the following, the set of all conditional transition intensity matrices are denoted as $ \textbf{\textit{Q}} $.
 
-Consider a trajectory drawn from CTBN $ \textbf{X} $, such that $ \textbf{X}^{[0, T]} = \left\lbrace X_1^{[0,T]},  X_2^{[0,T]}, ...,  X_N^{[0,T]}\right\rbrace  $. Following \autoref{eq:lh_traj_cond}, the likelihood of this trajectory can be written as follows.
+Consider a trajectory drawn from $ \textbf{X} $, such that $ \textbf{X}^{[0, T]} = \left\lbrace X_1^{[0,T]},  X_2^{[0,T]}, ...,  X_N^{[0,T]}\right\rbrace  $. Following \autoref{eq:lh_traj_cond}, the likelihood of this trajectory can be written as follows.
 \begin{align}
 \operatorname{Pr}( \textbf{X}  | \textbf{\textit{Q}} ) = \prod_{n=1}^{N} \prod_{\textbf{u} \in \mathcal{\textbf{U}}_{n}} \prod_{x_i \in \mathcal{X}_{n}} \prod_{x_j \in \mathcal{X}_{n} \backslash x_i}
-\exp \left[q_{i,j\mid \textbf{u}}^{n} T_{n}[x_i\mid \textbf{u}]\right] (q_{i,j\mid \textbf{u}}^{n})^{M_{n}[x_i, x_j\mid \textbf{u}]}
+\exp \left(q_{i,j\mid \textbf{u}}^{n} T_{n}[x_i\mid \textbf{u}]\right) (q_{i,j\mid \textbf{u}}^{n})^{M_{n}[x_i, x_j\mid \textbf{u}]}
 \label{eq:lh_CTBN}
 \end{align}
 where $ T_n[.] $ and $ M_n[.] $ indicates the sufficient statistics for $ X_n $.
 
 \section{Belief State in Partially Observable Markov Decision Processes}
 \label{sec:belief_POMDP}
-Partially observable Markov decision process (POMDP) framework provides a model of an agent which interacts with its environment, but unable to obtain certain information about its state. Instead, the agent gets an observation which is a function of the true state. The main goal, as similar to Markov decision processes (MDPs), is to learn a policy solving a task by optimizing a reward function. The problem of decision making under uncertainty can be decomposed into two parts for the agent. The first is \textit{state estimator} to keep a belief state which summarizes past experiences, and the second is the \textit{optimal policy} which will give an action based on the belief state. \cite{Murphy2000,KAELBLING199899}
+Partially observable Markov decision process (POMDP) framework provides a model of an agent which interacts with its environment but is unable to obtain certain information about its state. Instead, the agent gets an observation which is a function of the true state, e.g. noisy observations, translation. The main goal, similar to Markov decision processes (MDPs), is to learn a policy solving a task by optimizing a reward function. The problem of decision making under uncertainty can be decomposed into two parts for the agent. The first is to keep a belief state which summarizes past experiences, and the second is to optimize a policy which will give an action based on the belief state. \cite{KAELBLING199899,Murphy2000}
 
-The belief state, if represented as a probability distribution over states, provides a sufficient stratistic over the agents past experiences. 
+The belief state, if represented as a probability distribution over states, provides a sufficient statistics over the agent's past experiences. 
 
-In the problem considered in this thesis, the agent node $ X_{3} $ cannot observe the incoming messages directly, rather a summary of them. This presents a POMDP problem. However, since the optimal policy of the agent is assumed to be given, the theory for policy optimization is skipped. In this section, update methods for belief state is introduced.
+In the problem considered in this thesis, the agent node $ X_{3} $ cannot observe the incoming messages directly, rather a summary of them. This presents a POMDP problem. However, since the optimal policy of the agent is assumed to be given, the theory for policy optimization is skipped. 
 
-In the following, belief state refers to the posterior probability distribution over the environment states.
+In the following, update methods for belief state are introduced, where belief state refers to the posterior probability distribution over the environment states.
 
 \subsection{Exact/Bayes(?) Belief State Update}
 \label{sec:exact_update}
-Consider a POMDP problem, with discrete state space \textit{S}, action space \textit{A}, observation space $ \Omega $. In a scneario where a compact representation of the \textit{transition model}, $ T(s, a, s^{\prime})$,  and \textit{observation model}, $ O(s^{\prime}, a, o) $, is available, the belief state update can be obtain via Bayes' theorem \cite{KAELBLING199899}:
+Consider a POMDP problem, with discrete state space \textit{S}, action space \textit{A}, observation space $ \Omega $. In a scenario where a compact representation of the \textit{transition model}, $ T(s, a, s^{\prime})$,  and \textit{observation model}, $ O(s^{\prime}, a, o) $, is available, the belief state update can be obtained via Bayes' theorem \cite{KAELBLING199899}:
 \begin{align}
 b^{\prime}\left(s^{\prime}\right) &=\operatorname{Pr}\left(s^{\prime} | o, a, b\right) \nonumber\\
 &=\frac{\operatorname{Pr}\left(o | s^{\prime}, a, b\right) \operatorname{Pr}\left(s^{\prime} | a, b\right)}{\operatorname{Pr}(o | a, b)} \nonumber\\
@@ -172,9 +173,9 @@ b^{\prime}\left(s^{\prime}\right) &=\operatorname{Pr}\left(s^{\prime} | o, a, b\
 
 \subsection{Filtering for CTMP}
 \label{sec:filtering_CTMC}
-Equation \ref{eq:discrete_belief_update} is discrete-time solution of belief state. However, since in the model described in Section 2.1, the parent nodes are modelled as CTMPs, thus the environment state for the agent is the state of a CTMP, the belief state should be solved in continuous-time. This is achieved by the inference of posterior probability of CTMP. \cite{article}
+Equation \ref{eq:discrete_belief_update} is discrete-time solution of belief state. However, since in the model described in Section 2.1, the parent nodes are modelled as CTMPs, thus the environment state for the agent is the state of a CTMP, the belief state should be solved in continuous-time. This is achieved by the inference of the posterior probability of CTMP. \cite{article}
 
-\textit{Filtering problem} in statistical context, as opposed to deterministic digital filtering, refers to inference of the conditional probability of the true state of the system at some point in time, given the history of observations. \cite{Godsill2019}
+\textit{Filtering problem} in statistical context, as opposed to deterministic digital filtering, refers to the inference of the conditional probability of the true state of the system at some point in time, given the history of observations. \cite{Godsill2019}
 
 Let X be a CTMP with transition intensity matrix \textbf{Q}. Assume discrete-time observations denoted by $ y_{1}=y(t_{1}), ..., y_{N}=y(t_{N}) $. The belief state can be written as:
 \begin{equation}
@@ -182,17 +183,17 @@ Let X be a CTMP with transition intensity matrix \textbf{Q}. Assume discrete-tim
 \end{equation}
 From the master equation given in \autoref{eq:master_equation}, it follows that:
 \begin{equation}
- \frac{d}{dt} b(x_{j};t)  = \sum_{\forall i} q_{i,j} b(x_{i};t)
+ \frac{d}{dt} b(x_{j};t)  = \sum_{\forall i} q_{i,j} \cdot b(x_{i};t)
 \end{equation}
-The time-dependent belief state $ b(t) $ is a row vector with $ \left\lbrace b(x_{i};t)_{x_{i} \in \rchi}\right\rbrace  $.
+The time-dependent belief state $ b(t) $ is a row vector with $ \left\lbrace b(x_{i};t)\right\rbrace_{x_{i} \in \rchi}  $.
 This posterior probability can be described by a system of ODEs:
 %TODO ODE or system of ODEs
 \begin{equation}
 \frac{db(t)}{dt} = b(t)\textbf{Q}
 \end{equation}
-where the initial condition $ b(0) $ is row vector with $ \left\lbrace b(x_{i};t)_{x_{i} \in \rchi}\right\rbrace $ \cite{article}. The solution to this ODE is
+where the initial condition $ b(0) $ is row vector with $ \left\lbrace b(x_{i};t)\right\rbrace_{x_{i} \in \rchi} $ \cite{article}. The solution to this ODE is
 \begin{equation}
-b(t) = b(0) exp(t\textbf{Q}).
+b(t) = b(0) \exp(t\textbf{Q}).
 \label{eq:b_cont}
 \end{equation}
 
@@ -205,15 +206,15 @@ where $ Z_{N} = \sum_{x_{i}\in \rchi} \operatorname{Pr}(y_{N} \mid X(t_{N})=x_{i
 
 \subsection{Belief State Update using Particle Filter}
 \label{sec:particle_filter}
-In a more realistic scenario, the exact update of belief state may not be feasible for several reasons. The computation of Bayes belief update is expensive for large state spaces. Moreover, a problem with continuous state spaces requires a belief state represented as probability distributions over infinite state space rather than a collection of probabilities as given in Sec.\ref{sec:exact_update}. \cite{Carlo1904} Another reason could be lack of compact representation of transition and/or observation models. Under such circumstances, the belief state is obtained using sample-based approximation methods. \cite{Carlo1904} 
+In a more realistic scenario, the exact update of belief state may not be feasible for several reasons. The computation of Bayes belief update is expensive for large state spaces. Moreover, a problem with continuous state spaces requires a belief state represented as probability distributions over infinite state space rather than a collection of probabilities as given in Sec.\ref{sec:exact_update}. \cite{Carlo1904} Another reason could be the lack of a compact representation of transition or observation models. Under such circumstances, the belief state is obtained using sample-based approximation methods. \cite{Carlo1904} 
 
-It should be noted that, since the belief state is nothing but the contidional probability of true states given the observations, the problem at hand poses a filtering problem as described in Section \ref{sec:filtering_CTMC}.
+It should be noted that since the belief state is nothing but the conditional probability of true states given the observations, the problem at hand poses a filtering problem as described in Section \ref{sec:filtering_CTMC}.
 
 \subsubsection{Particle Filtering}
-Particle filtering is one of the most commonly used Sequential Monte Carlo (SMC) algorithms. The popularity of this method thrives from the fact that, unlike other approximation methods such as Kalman Filter, it does not assume a linear Gaussian model. This advantage offers a great flexibility and finds application in a wide range of areas.\cite{Doucet2009}
+Particle filtering is one of the most commonly used Sequential Monte Carlo (SMC) algorithms. The popularity of this method thrives from the fact that, unlike other approximation methods such as Kalman Filter, it does not assume a linear Gaussian model. This advantage offers great flexibility and finds application in a wide range of areas.\cite{Doucet2009}
 
-The key idea in particle filtering is to approximate a target distribution $ p(x) $ by a set of samples (particles) drawn from that distribution. This is achieved sequentially updating the particles through two steps. First step is \textit{importance sampling}. Since the target distribution is not available, the particles are generated from a \textit{proposal distribution} $ q(x) $ and weighted in the account of the difference between target and proposal distributions. The second step is to resample the particles using these weights. \cite{Godsill2019} \\
-\textbf{I WROTE THE FORMULAS AS WELL BUT THOUGHT THEY MAY NOT BE VERY RELEVANT. SHOULD I INCLUDE THEM?}
+The key idea in particle filtering is to approximate a target distribution $ p(x) $ by a set of samples (particles) drawn from that distribution. This is achieved by sequentially updating the particles through two steps. The first step is \textit{importance sampling}. Since the target distribution is not available, the particles are generated from a \textit{proposal distribution} $ q(x) $ and weighted according to the difference between target and proposal distributions. The second step is to resample the particles using these weights with replacement. \cite{Godsill2019} \\
+\textbf{QUESTION: I wrote the formulas as well but thought they may not be very relevant. Should i include them?}
 %\begin{align*}
 %	x^{(i)} & \sim q(x) \\
 %	q(x) & \approx \frac{1}{N} \sum_{i=1}^{N} \delta_{x^{(i)}}(x) \\
@@ -221,10 +222,10 @@ The key idea in particle filtering is to approximate a target distribution $ p(x
 %\end{align*}
 
 In this application, the particles to represent the belief state are drawn from marginalized CTBN. The algorithm for belief state update through particle filtering and marginal process is given in the following chapter.
-\subsubsection{Marginalized Continuous Time Markov Process}
+\subsubsection{Marginalized Continuous-Time Markov Processes}
 Let \textbf{X} be a CTBN with local variables $ X_n $, $ n\in \left\lbrace 1,...,N \right\rbrace $, and set of conditional intensity matrices \textbf{\textit{Q}}. In the following, it is assumed that every non-diagonal entry in $ \textbf{Q}_{n}\mid \textbf{u} $ is Gamma distributed with shape and rate parameters, $ \alpha^n_{i,j\mid \textbf{u}} $ and $ \beta^n_{i,j\mid \textbf{u}} $.
 
-The marginal process description of \textbf{X} considering a single trajectory in interval $ [0,t) $ is given as follows:
+The marginal process description of \textbf{X} considering a single trajectory in the interval $ [0,t) $ is given as follows:
 \begin{multline}
 \operatorname{Pr}(X_n(t + h) = x_j \mid X_n(t)=x_i, \textbf{U}_n(t)=\textbf{u}, \textbf{X}^{[0, t)})\\
 \begin{split}
@@ -235,7 +236,7 @@ The marginal process description of \textbf{X} considering a single trajectory i
 \end{multline}
 By integrating out the intensity matrix $ Q_{n\mid \textbf{u}} $, the parameter is replaced by its expected value given the history of the process. It should be noted that by doing so, the process becomes parameter-free, and thus self-exciting. 
 
-The derivation of the conditional expectation for marginal CTBN follows from the Bayes's rule:
+The derivation of the conditional expectation for marginal CTBN follows from the Bayes' rule:
 \begin{equation}
 p\left(\textbf{Q} | \textbf{X}_{[0,t]}\right)=\frac{p\left(\textbf{X}_{[0,t]} | \textbf{Q}\right) p(\textbf{Q})}{p\left(\textbf{X}_{[0,t]}\right)}
 \label{eq:Q_bayes}
@@ -243,18 +244,19 @@ p\left(\textbf{Q} | \textbf{X}_{[0,t]}\right)=\frac{p\left(\textbf{X}_{[0,t]} | 
 \autoref{eq:Q_bayes}, written for single trajectory $ \textbf{X}_{[0,t]} $, can be extended for multiple trajectories. Consider K trajectories drawn from CTBN \textbf{X}, denoted by $ \xi_t = \left\lbrace \textbf{X}^{[0,t], 1}, \textbf{X}^{[0,t], 2}, ..., \textbf{X}^{[0,t], K} \right\rbrace  $. Since the trajectories are conditionally independent, given \textbf{Q}, using \autoref{eq:lh_CTBN} the likelihood of set $ \xi_t $ is written as,
 \begin{align}
 \operatorname{Pr}( \xi_t  | \textbf{\textit{Q}} ) = \prod_{n=1}^{N} \prod_{\textbf{u} \in \mathcal{\textbf{U}}_{n}} \prod_{x_i \in \mathcal{X}_{n}} \prod_{x_j \in \mathcal{X}_{n} \backslash x_i}
-\exp \left[q_{i,j\mid \textbf{u}}^{n} T_{n}[x_i\mid \textbf{u}]\right] (q_{i,j\mid \textbf{u}}^{n})^{M_{n}[x_i, x_j\mid \textbf{u}]}
+\exp \left( q_{i,j\mid \textbf{u}}^{n} T_{n}[x_i\mid \textbf{u}]\right) (q_{i,j\mid \textbf{u}}^{n})^{M_{n}[x_i, x_j\mid \textbf{u}]}
 \label{eq:lh_dataset_CTBN}
 \end{align}
 where the joint sufficient statistics of $ X_n $ over all K trajectories are denoted by  $ T_{n}[x_i\mid \textbf{u}] = \sum_{k=1}^{K} T_{n}^k[x_i\mid \textbf{u}] $ and $ M_{n}[x_i, x_j\mid \textbf{u}] =\sum_{k=1}^{K} M_{n}^k[x_i, x_j\mid \textbf{u}]$.
 
-Given independent Gamma-priors on transition intensities, the expectation in \autoref{eq:marginal_CTBN} can be evaluated as following:
+Given independent Gamma-priors on transition intensities, the expectation in \autoref{eq:marginal_CTBN} can be evaluated as follows:
 \begin{equation}
 	\mathbb{E}\left[q_{i,j\mid \textbf{u}}^{n} | \xi_{t}\right]=\frac{\alpha^n_{i,j\mid \textbf{u}}+M_{n}[x_i, x_j\mid \textbf{u}]}{\beta^n_{i,j\mid \textbf{u}}+T_{n}[x_i \mid \textbf{u}]}
 	\label{eq:estimated_Q}
 \end{equation}
 
-%TODO write about the dependency problem, how is this okay?
+\textbf{TODO: when is this parameter updated? explain. write about the dependency problem, how is this okay?}
+
 \section{Sampling Algorithms}
 \label{sec:sampling_alg}
 \subsection{Gillespie Algorithm for Generative CTBN}
@@ -268,15 +270,15 @@ This algorithm can also be applied to sample \textit{events} from a CTBN given t
 	\SetKwInOut{KwOut}{Output}
 	\SetKwInOut{Init}{Initialize}
 	
-	\KwIn{Structure of the network with N local variables $ X_{1}, X_{2}, ..., X_{n} $ as a dict in the format of $ \left\lbrace X_{i}: [par(X_{i})]\right\rbrace $ with state-space $ \rchi_n = \left\lbrace x_{1}, ..., x_{m} \right\rbrace $   \\Transition intensity matrices $ \textbf{Q}_{n} $ with entries $ q^n_{i,j}$\\$ T_{max} $ to terminate simulation}
+	\KwIn{Structure of the network with N local variables $ X_{1}, X_{2}, ..., X_{n} $ with state-space $ \rchi_n = \left\lbrace x_{1}, ..., x_{m} \right\rbrace $   \\Transition intensity matrices $ \textbf{Q}_{n} $ with entries $ q^n_{i,j}$\\$ T_{max} $ to terminate simulation}
 	\KwOut{Sample trajectory of the network}
 	\Init{Initialize node values $ X_{n}(0) = x_{i} \in \rchi_n$}
 	
 	\begin{algorithmic}[1]
 		\WHILE{$ t < T_{max} $}
 		\STATE{$ \tau \sim \exp(\sum_{\forall n} \sum_{\forall i \neq j} \ q^{n}_{i,j}) $}
-		\STATE{\textit{transitioning node is randomly drawn with probability}  $ P(X_{n}) = \frac{q^{n}_{i}}{\sum_{\forall n} q^{n}_{i}}$}
-		\STATE{\textit{next state is randomly drawn with probability} $ P(x_{j}) = \frac{q^{n}_{i,j}}{q^{n}_{i}} $}
+		\STATE{\text{transitioning node is randomly drawn with probability}  $ P(X_{n}) = \frac{q^{n}_{i}}{\sum_{\forall n} q^{n}_{i}}$}
+		\STATE{\text{next state is randomly drawn with probability} $ P(x_{j}) = \frac{q^{n}_{i,j}}{q^{n}_{i}} $}
 		\STATE{$ t \leftarrow t + \tau $}
 		\ENDWHILE
 	\end{algorithmic}
@@ -285,7 +287,7 @@ This algorithm can also be applied to sample \textit{events} from a CTBN given t
 \end{algorithm}
 
 \subsection{Thinning Algorithm}
-Thinning algorithm is a method introduced to simulate nonhomogenous Poisson processes. \cite{Lewis1979} Later, it is adapted to sample from Hawkes processes, a self-exciting process with time-dependent intensity function. \cite{Ogaata1981, Rizoiu2017} This algorithm is used here to simulate inhomogenouos Markov process.
+Thinning algorithm is a method introduced to simulate nonhomogenous Poisson processes. \cite{Lewis1979} Later, it is adapted to sample from Hawkes processes, a self-exciting process with time-dependent intensity function. \cite{Ogaata1981, Rizoiu2017} This algorithm is used here to simulate inhomogeneous Markov process.
 
 \begin{algorithm}[H]
 	\SetKwInOut{KwIn}{Input}
@@ -298,12 +300,12 @@ Thinning algorithm is a method introduced to simulate nonhomogenous Poisson proc
 	
 	\begin{algorithmic}[1]
 		\WHILE{$ i < N $}
-		\STATE{\textit{the upper bound for intensity,} $ \lambda^{*}$}
-		\STATE{\textit{transition time $ \tau $ drawn by }  $ u \sim U(0, 1)$ \textit{ and } $ \tau = \frac{-ln(u)}{\lambda^{*}} $}
+		\STATE{\text{the upper bound for intensity,} $ \lambda^{*}$}
+		\STATE{\text{transition time $ \tau $ drawn by }  $ u \sim U(0, 1)$ \textit{ and } $ \tau = \frac{-ln(u)}{\lambda^{*}} $}
 		\STATE{$ t \leftarrow t + \tau $}
-		\STATE{\textit{draw } $s \sim U(0, 1)$}
+		\STATE{\text{draw } $s \sim U(0, 1)$}
 		\IF{ $ s \leq \frac{\lambda(t)}{\lambda^{*}}$}
-		\STATE{\textit{sample accepted and } $ t_i = t$, $ i=i+1 $}
+		\STATE{\text{sample accepted and } $ t_i = t$, $ i=i+1 $}
 		\ENDIF
 		\ENDWHILE
 	\end{algorithmic}

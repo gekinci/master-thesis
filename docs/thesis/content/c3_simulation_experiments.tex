@@ -1,7 +1,7 @@
 \externaldocument[-f]{c2_foundations}
 \chapter{Experimental Setup}
 
-This chapter presents the methodology used in this thesis. First, it is explained how different frameworks introduced in \cref{chap:2} are put into use. Then, the algorithms used in data generation and inference is given in detail. The results from these experiments are presented in the succeeding chapter.
+This chapter presents the methodology used in this thesis. First, it is explained how different frameworks introduced in \cref{chap:2} are put into use. Then, the algorithms used in data generation and inference are given in detail. The results from these experiments are presented in the succeeding chapter.
 
 \section{The Model}
 \begin{wrapfigure}{r}{3cm}
@@ -21,7 +21,7 @@ A detailed graphical model explored in this thesis is given in the \cref{fig:h_m
 
 The transition models of the nodes and the dependencies between them are modelled as continuous-time Bayesian network (CTBN), denoted by \textbf{X}. The network \textbf{X} represents a stohastic process over a structured multivariate state space $ \rchi = [\rchi_1, \rchi_2, \rchi_3] $. 
 
-The parent nodes $X_{1}$ and $ X_{2} $ emits their states as messages. The dynamics  of these nodes are modelled as independent homogeneous continuous-time Markov processes $X_{i}(t)$, with binary-valued states $ \rchi_{i} = \left\lbrace 0, 1 \right\rbrace  $ for $ i \in \left\lbrace 1,2 \right\rbrace $. These processes are defined by transition intensity matrices $ \textbf{Q}_{i} $, which are in the following forms and assumed to be gamma distributed with shape and rate parameters $ \boldsymbol{\alpha} = [\alpha_0, \alpha_1] $ and $ \boldsymbol{\beta} = [\beta_0, \beta_1] $, respectively.
+The parent nodes $X_{1}$ and $ X_{2} $ emit their states as messages. The dynamics  of these nodes are modelled as independent homogeneous continuous-time Markov processes $X_{i}(t)$, with binary-valued states $ \rchi_{i} = \left\lbrace 0, 1 \right\rbrace  $ for $ i \in \left\lbrace 1,2 \right\rbrace $. These processes are defined by transition intensity matrices $ \textbf{Q}_{i} $, which are assumed to be Gamma distributed with shape and rate parameters $ \boldsymbol{\alpha} = [\alpha_0, \alpha_1] $ and $ \boldsymbol{\beta} = [\beta_0, \beta_1] $, respectively, and are in the following forms.
 \begin{align}
 \textbf{Q}_i &= 
 \begin{bmatrix}
@@ -61,11 +61,12 @@ The messages sent by the parent nodes are translated by the observation model. T
 \end{equation}
 
 \subsubsection{Belief State}
-The state estimator (labelled as SE in \cref{fig:POMDP_pers}) forms a belief over the parent states, denoted by $  b(x_{1}, x_{2}; t) $. 
+The \textit{state estimator} (labelled as SE in \cref{fig:POMDP_pers}) forms a belief over the parent states, denoted by $  b(x_{1}, x_{2}; t) $. 
 \begin{equation}
 b(x_{1}, x_{2}; t) = \operatorname{Pr}( X_{1}(t) = x_{1},  X_{2}(t) = x_{2}\mid y_{1}, ..., y_{t})
 \end{equation}
 \paragraph*{Exact Belief State Update}
+\label{par:bs_exact}
 Given the transition intensity matrices of parent nodes, $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, the continuous-time belief state update poses a filtering problem for CTMPs (\cref{sec:filtering_CTMC}). 
 
 Consider a subsystem of CTBN model, consisting of only the parent nodes, $ X_1 $ and $ X_2 $. These two processes can be represented as one single \textit{joint} process, $ X_P $, with multivariate state space $ \rchi_{P} = \left\lbrace (x_1, x_2)\right\rbrace_{x_1\in \rchi_1, x_2 \in \rchi_2}  = \left\lbrace (0,0), (0,1), (1,0), (1,1)\right\rbrace  $. The transition intensity matrix of the new joint system, $ \textbf{Q}_P $ is obtained by amalgamation operation between $ \textbf{Q}_{1} $ and  $ \textbf{Q}_{2} $ (see \cref{ap:amalgamation}) \cite{Nodelman1995}.
@@ -88,7 +89,7 @@ b(x_p; t_{N}) &= Z_{N}^{-1}\ {\operatorname{Pr}(y_{N} \mid X_P(t_{N})=x_p)}\ {b(
 where $ Z_{N} = \sum_{x_p\in \rchi_P} \psi(x_p)\ b(x_p; t_{N}^{-}) $ is the normalization factor.
 
 \paragraph*{Belief State Update Using Particle Filter}
-
+\label{par:bs_partFilt}
 The assumption that full information of parent dynamics being available is unrealistic. In an environment as described above, the agent most probably doesn't have access to the parameters $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, rather may have some prior beliefs over them. Thus, in order to simulate a more realistic model and be able to marginalize out these parameters from inference problem, the joint process (introduced in previous section) is replaced with its marginalized counterpart. Using the Gamma-priors over $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $ (\autoref{eq:gamma_priors}) and sufficient statistics over the particle history, the particles are drawn from this marginalized process. With every new observation, the particles are propogated through the process, while the sufficient statistics are updated and the parameters are re-estimated after each particle using the \autoref{eq:estimated_Q}. The belief state then obtained as the distribution of states over the particles,
 \begin{equation}
 b(x_p; t) = \frac{1}{N} \sum_{i=1}^{N} \delta_{p_i(t), x_p}
@@ -158,7 +159,7 @@ P(\textbf{X}^{[0,T]} \mid \theta ) & = P(X_{1}^{[0, T]}, X_{2}^{[0, T]}, X_{3}^{
 & = P(X_{3}^{[0, T]} \mid X_{1}^{[0, T]}, X_{2}^{[0, T]}, \textbf{Q}_{1}, \textbf{Q}_{2}, \pi, \psi) \ P(X_{1}^{[0, T]}\mid \textbf{Q}_{1}) \ P(X_{2}^{[0, T]}\mid \textbf{Q}_{2}) \nonumber\\ & = P(X_{3}^{[0, T]} \mid X_{1}^{[0, T]}, X_{2}^{[0, T]}, \pi, \psi) \ P(X_{1}^{[0, T]}\mid \textbf{Q}_{1}) \ P(X_{2}^{[0, T]}\mid \textbf{Q}_{2}) \nonumber\\ & = P(X_{3}^{[0, T]}\mid \textbf{Q}_{3}^{[0, T]}) \ P(X_{1}^{[0, T]}\mid \textbf{Q}_{1}) \ P(X_{2}^{[0, T]}\mid \textbf{Q}_{2}) 
 \label{eq:system_llh}
 \end{align}
-As mentioned before, it is plausible to marginalize out the parameters $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, for a more realistic model and inference. Noting that in case the belief state is updated using filtering of CTMPs, $ \textbf{Q}_{3}^{[0, T]} $ becomes a deterministic function of all the parameters including $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, the marginalization cannot be carried out analytically on \autoref{eq:system_llh}. On the other hand, particle filtering removes this dependency on $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, leaving 
+As mentioned before, it is plausible to marginalize out the parameters $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, for a more realistic model and inference. Noting that in case the belief state is updated using filtering of CTMPs (See \cref{par:bs_exact}), $ \textbf{Q}_{3}^{[0, T]} $ becomes a deterministic function of all the parameters including $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, the marginalization cannot be carried out analytically on \autoref{eq:system_llh}. On the other hand, particle filtering removes this dependency on $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $ by using marginalized counterpart of CTMPs (See \cref{par:bs_partFilt}), leaving it straightforward to marginalize out the parameters on \autoref{eq:system_llh}.
 
 Marginalizing the likelihood over $ Q_{1} $ and $ Q_{2} $:
 \begin{align}
@@ -181,7 +182,7 @@ P(\textbf{X}^{[0,T]} \mid \pi, \Phi ) = P(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \pr
 The dataset contains a number of trajectories drawn from CTBN \textbf{X}. Following the notation in \cref{chap:2}, K trajectories in time interval $ [0, T] $ are denoted by $ \xi_T = \left\lbrace \textbf{X}^{[0,T], 1}, \textbf{X}^{[0,T], 2}, ..., \textbf{X}^{[0,T], K} \right\rbrace  $, where $ \textbf{X}^{[0,T],k} = \left\lbrace X_1^{[0,T],k} , X_2^{[0,T],k}, X_3^{[0,T],k}\right\rbrace $ denotes a single trajectory for all nodes. Every trajectory comprises of state transitions in the interval, and the times of these transitions. 
 
 \subsection{Sampling Algorithm}
-In order to sample trajectories from CTBN, two sampling algortihms introduced in \cref{sec:sampling_alg} are combined. Gillespie algorithm is used to sample from the parent nodes, $ X_1 $ and $ X_2 $, while thinning algorithm is applied to overcome the challenges that come with conditional intensity matrix of the agent, $ X_3 $. It should be noted that, \cref{alg:generative_ctbn} is applicable to any nodes in a CTBN, both homogenous and conditional MPs. However, since in this setting, the intensity matrix is conditioned on the belief state and the policy, instead of directly on the parent states, a more general algorithm suitable for inhomogenous MPs, thinning algorithm, is preferred. \cref{alg:sampling} describes the procedure followed to draw samples using particle filtering. 
+In order to sample trajectories from CTBN, two sampling algortihms introduced in \cref{sec:sampling_alg} are combined. Gillespie algorithm is used to sample from the parent nodes, $ X_1 $ and $ X_2 $, while thinning algorithm is applied to overcome the challenges that come with conditional intensity matrix of the agent, $ X_3 $. It should be noted that, \cref{alg:generative_ctbn} is applicable to any nodes in a CTBN, both homogenous and conditional MPs. However, since in this setting, the intensity matrix is conditioned on the belief state and the policy, instead of directly on the parent states, a more general algorithm suitable for inhomogenous MPs, thinning algorithm, is preferred. \cref{alg:sampling} describes the procedure to draw samples using particle filtering. 
 
 \begin{algorithm}[H]
 	\SetKwInOut{KwIn}{Input}
@@ -207,10 +208,10 @@ In order to sample trajectories from CTBN, two sampling algortihms introduced in
 		\STATE{$ \textbf{Q}_3^{[t, t_{parent}]} \leftarrow \textbf{Q}_{3\mid a^{[t, t_{parent}]}} $}
 		\STATE{$ t_{agent} \leftarrow t$}
 		\WHILE{$ t_{agent} < t_{parent} $}
-		\STATE{\textit{the upper bound for intensity,} $ q_3^{*}$} \footnotemark
-		\STATE{\textit{transition time $ \tau_{agent} $ drawn by }  $ u \sim U(0, 1)$ \textit{ and } $ \tau_{agent} = \frac{-ln(u)}{q_3^{*}} $}
+		\STATE{\text{the upper bound for intensity,} $ q_3^{*}$} \footnotemark
+		\STATE{\text{transition time $ \tau_{agent} $ drawn by }  $ u \sim U(0, 1)$ \text{ and } $ \tau_{agent} = \frac{-ln(u)}{q_3^{*}} $}
 		\STATE{$ t_{agent} \leftarrow t_{agent} + \tau_{agent} $}
-		\STATE{\textit{draw } $s \sim U(0, 1)$, \textit{accept transition if} $ s \leq \frac{q_3(t_{agent})}{q_3^{*}}$}
+		\STATE{\text{draw } $s \sim U(0, 1)$, \text{accept transition if} $ s \leq \frac{q_3(t_{agent})}{q_3^{*}}$}
 		\ENDWHILE
 		\STATE{$ t \leftarrow t_{parent} $}
 		\ENDWHILE
@@ -221,4 +222,67 @@ In order to sample trajectories from CTBN, two sampling algortihms introduced in
 \footnotetext{q is the transition intensity associated with the current state of the agent.}
 
 \section{Configurations}
+The configurations given below are used for the results presented in the following chapter, if not specified otherwise.
+\begin{itemize}
+	\item Gamma priors for parent dynamics such that $ \textbf{Q}_{i} \sim Gam(\boldsymbol{\alpha}^i, \boldsymbol{\beta}^i)$ for $i \in \left\lbrace 1,2\right\rbrace $, and $ \boldsymbol{\alpha} = [\alpha_0, \alpha_1] $ and $ \boldsymbol{\beta} = [\beta_0, \beta_1] $
+	\begin{align}
+		\boldsymbol{\alpha}^1 = [5,10] &, \boldsymbol{\beta}^1 = [5,20] \\
+		\boldsymbol{\alpha}^2 = [20,20] &, \boldsymbol{\beta}^2 = [20,10]
+		\label{eq:gamma_params}
+	\end{align}
+	\item Transition intensity matrices of $ X_1 $ and $ X_2 $ sampled from priors given above
+	\begin{align}
+		\textbf{Q}_1 &= 
+		\begin{bmatrix}
+		-1.117 & 1.117 \\
+		0.836 &  -0.836
+		\end{bmatrix} \\
+		\textbf{Q}_2 &= 
+		\begin{bmatrix}
+		-1.077 & 1.077 \\
+		2.324 &  -2.324
+		\end{bmatrix}
+	\end{align}
+	\item State space, $ \textit{S} = \rchi_{P} = \left\lbrace (0, 0), (0, 1), (1, 0),(1, 1)\right\rbrace $
+	\item Observation space, $ \textit{O} = \left\lbrace 0, 1, 2 \right\rbrace $
+	\item Action space, $ \textit{A} = \left\lbrace a_{0}, a_{1} \right\rbrace = \left\lbrace 0, 1\right\rbrace $
+	\item The set of transition intensity matrices of $ X_3 $
+	\begin{align}
+		\textbf{\textit{Q}}_3 = \left\lbrace \textbf{Q}_{3\mid a_{0}}, \textbf{Q}_{3\mid a_{1}} \right\rbrace = \left\lbrace 
+			\begin{bmatrix}
+			-0.5 & 0.5 \\
+			2 &  -2
+			\end{bmatrix}, 
+			\begin{bmatrix}
+			-3 & 3 \\
+			0.02 &  -0.02
+			\end{bmatrix} 
+			\right\rbrace 
+	\end{align}
+	\item Number of particles, $ N = 200 $
+\end{itemize}
 
+%\begin{table}[!htb]
+%	\begin{minipage}{.5\linewidth}
+%		%		\centering
+%		\begin{tabular}{c c}
+%			\hline 
+%			\textbf{Parameter} & \textbf{Value} \\ 
+%			\hline 
+
+%			\hline 
+%		\end{tabular}
+%		\caption{configuration}
+%	\end{minipage}%
+%	\begin{minipage}{.5\linewidth}
+%		%		\centering
+%		\begin{tabular}{c c c}
+%			\hline 
+%			\textbf{Parameter} & \textbf{Value} 
+%			\hline 
+
+%			\hline 
+%		\end{tabular}
+%		\caption{configurations}
+%	\end{minipage} 
+%\end{table}
