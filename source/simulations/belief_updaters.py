@@ -114,9 +114,11 @@ class ParticleFilterUpdate:
             new_particles = self.propagate_particles(t)
             new_weights = self.update_weights(obs, new_particles) if obs is not None else np.zeros(self.n_particle)
             if np.isnan(np.sum(new_weights)):
-                counter += 1
-                print('ALL REJECTED!! NO PARTICLE LEFT!! ', counter)
-                UPDATE = True
+                # counter += 1
+                # print('ALL REJECTED!! NO PARTICLE LEFT!! ', counter)
+                # UPDATE = True
+                UPDATE = False
+                new_weights = np.tile(1 / self.n_particle, self.n_particle)
             else:
                 UPDATE = False
 
