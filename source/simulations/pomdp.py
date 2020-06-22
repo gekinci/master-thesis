@@ -152,7 +152,7 @@ class POMDPSimulation:
         change_list = []
         T = t_start
         # The sampling of agent trajectory always done according to particle filter!!!
-        df_b = self.belief_updater_dict[PART_FILT].df_belief.copy()
+        df_b = self.belief_updater_dict[self.BELIEF_UPDATE_METHOD[0]].df_belief.copy()
         while T < t_end:
             upper_bound = np.max([self.Qset[k][int(state)][int(1 - state)] for k in self.Qset.keys()])
             u = np.random.uniform()

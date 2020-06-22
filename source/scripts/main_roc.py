@@ -46,7 +46,11 @@ def main(ind):
     with open(os.path.join(psi_folder, 'config.yaml'), 'w') as f:
         yaml.dump(cfg, f)
 
-    df_L = run(pomdp, psi_set, n_sample_per_class, psi_folder, IMPORT_DATA=IMPORT_DATA)
+    df_L = run(pomdp, psi_set, n_sample_per_class, psi_folder)
 
     visualize_llh(df_L, config[N_TRAIN], path_to_save=psi_folder)
     run_test(df_L, psi_subset, config[N_TRAIN], config[N_TEST], psi_folder)
+
+
+if __name__ == '__main__':
+    main(0)

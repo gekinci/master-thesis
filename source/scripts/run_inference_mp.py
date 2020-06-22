@@ -63,7 +63,7 @@ def generate_dataset(pomdp_, n_samples, path_to_save):
         df_traj.loc[:, TRAJ_ID] = k
 
         dict_b = pomdp_.belief_dict
-        dict_Q = {PART_FILT: pomdp_.Q_agent_dict[PART_FILT]}
+        dict_Q = {pomdp_.BELIEF_UPDATE_METHOD[0]: pomdp_.Q_agent_dict[pomdp_.BELIEF_UPDATE_METHOD[0]]}
         # Plotting only particle filter Q, as that is the one used for data generation
 
         save_csvs(dict_b, dict_Q, path_to_csv, k, df_traj=df_traj)
