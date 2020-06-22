@@ -14,8 +14,8 @@ Q_gamma_params: # default alpha:2, beta:2
     alpha: [5,10]
     beta: [5,20]
   $X_{2}$:
-    alpha: [20,20]
-    beta: [20,10]
+    alpha: [10, 10]
+    beta: [10, 5]
 
 states: [0, 1]  # default [0, 1]
 initial_prob:  # default equiprobable

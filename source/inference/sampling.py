@@ -70,7 +70,7 @@ def marginalized_llh_homogenous_mp(df_traj, params, node):
     T = get_time_of_stay_in_state(df_traj, node=node)
     M = get_number_of_transitions(df_traj, node=node)
     for i in range(n_states):
-        p = beta_list[i] * (T[i] + beta_list[i]) ** (M[i] + alpha_list[i]) * gamma(M[i] + alpha_list[i]) / gamma(
+        p = beta_list[i] * ((T[i] + beta_list[i]) ** (-M[i] - alpha_list[i])) * gamma(M[i] + alpha_list[i]) / gamma(
             alpha_list[i])
         marg_llh += np.log(p)
     return marg_llh

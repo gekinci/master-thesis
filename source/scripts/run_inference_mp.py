@@ -101,7 +101,7 @@ def inference_per_obs_model(pomdp_, df_all_, obs_id, path_to_save):
                                                      node=parent_list_[0])
         marg_llh_X2 = marginalized_llh_homogenous_mp(df_traj, params=pomdp_.config[GAMMA_PARAMS],
                                                      node=parent_list_[1])
-        llh_data = {k: v for k, v in llh_X3.items()} # + marg_llh_X1 + marg_llh_X2
+        llh_data = {k: v + marg_llh_X1 + marg_llh_X2 for k, v in llh_X3.items()}
         # else:
         #     llh_X1 = llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[0]], node=parent_list_[0])
         #     llh_X2 = llh_homogenous_mp(df_traj, pomdp_.parent_ctbn.Q[parent_list_[1]], node=parent_list_[1])
