@@ -17,7 +17,7 @@ def main(ind):
     main_folder = '../_data/roc_analysis'
     config_file = '../configs/roc_analysis.yaml'
 
-    psi_set = np.load('../configs/psi_set_3.npy')
+    psi_set = np.load('../configs/psi_set_81.npy')
     obs_model = psi_set[ind]
 
     with open(config_file, 'r') as f:
