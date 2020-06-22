@@ -18,7 +18,8 @@ def obs_model_set(n_states, n_obs):
 
 def get_downsampled_obs_set(n_sample, orig_phi, n_states=2, n_obs=3):
     phi_set = obs_model_set(n_states ** 2, n_obs)
-    phi_subset = phi_set[np.random.choice(range(len(phi_set)), size=n_sample, replace=False)]
+    phi_subset = phi_set
+    # phi_subset = phi_set[np.random.choice(range(len(phi_set)), size=n_sample, replace=False)]
     if not (np.all(orig_phi == phi_subset, axis=(1, 2))).any():
         phi_subset = np.append(phi_subset[:-1], [orig_phi], axis=0)
         phi_subset = phi_subset[::-1, :, :]
@@ -73,3 +74,12 @@ def marginalized_llh_homogenous_mp(df_traj, params, node):
             alpha_list[i])
         marg_llh += np.log(p)
     return marg_llh
+
+
+if __name__ == '__main__':
+    obs_model = [[1., 0., 0.],
+                 [0., 1., 0.],
+                 [0., 1., 0.],
+                 [0., 0., 1.]]
+    psi_set = get_downsampled_obs_set(81, obs_model)
+    print(psi_set)

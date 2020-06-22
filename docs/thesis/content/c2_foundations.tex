@@ -24,14 +24,14 @@ The agent node $ X_3 $ does not have direct access to the messages but observes 
 \end{equation}
 The agent  $ X_{3} $ is modelled as inhomogeneous continuous-time Markov process with state space $ \rchi_{3} = \left\lbrace x_{1}, x_{2}, ..., x_{m} \right\rbrace  $ and set of actions $ a \in \left\lbrace a_{0}, a_{1}, ..., a_{k}\right\rbrace  $ to choose from. 
 
-Given the observation, the agent forms a belief over the parent states, $  b(x_{1}, x_{2}; t) $, that summarizes the past observations. The policy of the agent, $ \pi(a \mid b) $, is assumed to be shaped by evolution (close) to optimality. Based on the belief state, the agent takes an action, which in the setting described above means to change its internal dynamics. 
+Given the observation, the agent forms a belief over the parent states, $  b(x_{1}, x_{2}; t) $, that summarizes the past observations. The policy of the agent, $ \pi(a \mid b) $, is assumed to be shaped by evolution (close) to optimality. Based on the belief state, the agent takes an action, which in the setting described above corresponds to change its internal dynamics. 
 \section{Continuous-Time Bayesian Networks}
 A continuous-time Bayesian network (CTBN) is a graphical model that represents a collection of nodes whose values evolve continuously over time. In the CTBN framework, through a directed graph, the dependencies of a set of Markov processes (MPs) can be modelled efficiently, relying on two assumptions. The first assumption is that only one node can transition at a time. Secondly, the instantaneous dynamics of each node depends only on its parent nodes. \cite{Cohn2010a, Nodelman1995} 
 %In the following, every node of a CTBN is considered to be a Markov process.
 \subsection{Continuous-Time Markov Processes}
 A continuous-time Markov process (CTMP) is a continuous-time stochastic process which satisfies Markov property, namely, the probability distribution over the states at a later time is conditionally independent of the past states given the current state.\cite{Cohn2010a} Let X be a CTMP with state space $ \rchi = \left\lbrace x_{1}, x_{2}, ..., x_{n} \right\rbrace  $. Then the Markov property can be written as follows:
 \begin{equation}
-	\operatorname{Pr}\left(X^{\left(t_{k}\right)}=x_{t_{k}} | X^{\left(t_{k-1}\right)}=x_{t_{k-1}}, \ldots, X^{\left(t_{0}\right)}=x_{t_{0}}\right)=\operatorname{Pr}\left(X^{\left(t_{k}\right)}=x_{t_{k}} | X^{\left(t_{k-1}\right)}=x_{t_{k-1}}\right)
+	\operatorname{Pr}\left(X^{\left(t_{k}\right)}=x_{t_{k}} \mid X^{\left(t_{k-1}\right)}=x_{t_{k-1}}, \ldots, X^{\left(t_{0}\right)}=x_{t_{0}}\right)=\operatorname{Pr}\left(X^{\left(t_{k}\right)}=x_{t_{k}} \mid X^{\left(t_{k-1}\right)}=x_{t_{k-1}}\right)
 \end{equation}
 A CTMP is represented by its transition intensity matrix, $ \textbf{Q} $. In this matrix, the intensity $ q_{i} $ represents the instantaneous probability of leaving state $ x_{i} $ and $ q_{i,j} $ represents the instantaneous probability of switching from state $ x_{i} $ to $ x_{j} $. 
 \begin{equation}
@@ -52,7 +52,7 @@ A continuous-time Markov process is time-homogenous when the transition intensit
 p_{i,j}(h)=\delta_{ij}+q_{i,j} h+o(h)
 \label{eq:Markov_trans_func}
 \end{equation}
-where $ p_{i, j}(h) \equiv Pr(X(t+h)=x_j\mid X(t)=x_i) $ are Markov transition functions, $ \delta_{i,j} = \delta(x_i,x_j)$ is Kronecker delta and o(.) is a function decaying to zero faster than its argument.
+where $ p_{i, j}(h) \equiv Pr(X(t+h)=x_j\mid X(t)=x_i) $ are Markov transition functions, $ \delta_{i,j} = \delta(x_i,x_j)$ is Kronecker delta and $ o(\cdot) $ is a function decaying to zero faster than its argument.
 
 The \textit{master equation} is then derived as follows:
 \begin{align}
@@ -71,9 +71,7 @@ Equation \ref{eq:master_equation} can be written in matrix form:
 \begin{equation}
 \frac{d}{dt} p(t) = p(t)\textbf{Q}
 \end{equation}
-where the time-dependent probability distribution $ p(t) $ is a row vector with entries $ \left\lbrace p_{i}(t)\right\rbrace_{x_{i}\in \rchi} $. 
-\textbf{QUESTION: $ \left\lbrace \right\rbrace  $ notation for row vectors are used in Prof.Koeppl's supporting info paper. I followed it here, but should it be $ \left[  p_{i}(t)\right]_{x_{i}\in \rchi} $?}\\
-The solution of this ODE is, 
+where the time-dependent probability distribution $ p(t) $ is a row vector with entries $ \left\lbrace p_{i}(t)\right\rbrace_{x_{i}\in \rchi} $. The solution of this ODE is, 
 \begin{equation}
 p(t)=p(0) \exp (t\textbf{Q})
 \end{equation}
@@ -144,7 +142,7 @@ Let \textbf{X} be a CTBN with local variables $ X_n $, $ n \in \left\lbrace 1,..
 
 Consider a trajectory drawn from $ \textbf{X} $, such that $ \textbf{X}^{[0, T]} = \left\lbrace X_1^{[0,T]},  X_2^{[0,T]}, ...,  X_N^{[0,T]}\right\rbrace  $. Following \autoref{eq:lh_traj_cond}, the likelihood of this trajectory can be written as follows.
 \begin{align}
-\operatorname{Pr}( \textbf{X}  | \textbf{\textit{Q}} ) = \prod_{n=1}^{N} \prod_{\textbf{u} \in \mathcal{\textbf{U}}_{n}} \prod_{x_i \in \mathcal{X}_{n}} \prod_{x_j \in \mathcal{X}_{n} \backslash x_i}
+\operatorname{Pr}( \textbf{X}  \mid \textbf{\textit{Q}} ) = \prod_{n=1}^{N} \prod_{\textbf{u} \in \mathcal{\textbf{U}}_{n}} \prod_{x_i \in \mathcal{X}_{n}} \prod_{x_j \in \mathcal{X}_{n} \backslash x_i}
 \exp \left(q_{i,j\mid \textbf{u}}^{n} T_{n}[x_i\mid \textbf{u}]\right) (q_{i,j\mid \textbf{u}}^{n})^{M_{n}[x_i, x_j\mid \textbf{u}]}
 \label{eq:lh_CTBN}
 \end{align}
@@ -164,10 +162,10 @@ In the following, update methods for belief state are introduced, where belief s
 \label{sec:exact_update}
 Consider a POMDP problem, with discrete state space \textit{S}, action space \textit{A}, observation space $ \Omega $. In a scenario where a compact representation of the \textit{transition model}, $ T(s, a, s^{\prime})$,  and \textit{observation model}, $ O(s^{\prime}, a, o) $, is available, the belief state update can be obtained via Bayes' theorem \cite{KAELBLING199899}:
 \begin{align}
-b^{\prime}\left(s^{\prime}\right) &=\operatorname{Pr}\left(s^{\prime} | o, a, b\right) \nonumber\\
-&=\frac{\operatorname{Pr}\left(o | s^{\prime}, a, b\right) \operatorname{Pr}\left(s^{\prime} | a, b\right)}{\operatorname{Pr}(o | a, b)} \nonumber\\
-&=\frac{\operatorname{Pr}\left(o | s^{\prime}, a\right) \sum_{s \in \mathcal{S}} \operatorname{Pr}\left(s^{\prime} | a, b, s\right) \operatorname{Pr}(s | a, b)}{\operatorname{Pr}(o | a, b)} \nonumber\\
-&=\frac{O\left(s^{\prime}, a, o\right) \sum_{s \in \mathcal{S}} T\left(s,a, s^{\prime}\right) b(s)}{\operatorname{Pr}(o | a, b)}
+b^{\prime}\left(s^{\prime}\right) &=\operatorname{Pr}\left(s^{\prime} \mid o, a, b\right) \nonumber\\
+&=\frac{\operatorname{Pr}\left(o \mid s^{\prime}, a, b\right) \operatorname{Pr}\left(s^{\prime} \mid a, b\right)}{\operatorname{Pr}(o \mid a, b)} \nonumber\\
+&=\frac{\operatorname{Pr}\left(o \mid s^{\prime}, a\right) \sum_{s \in \mathcal{S}} \operatorname{Pr}\left(s^{\prime} \mid a, b, s\right) \operatorname{Pr}(s \mid a, b)}{\operatorname{Pr}(o \mid a, b)} \nonumber\\
+&=\frac{O\left(s^{\prime}, a, o\right) \sum_{s \in \mathcal{S}} T\left(s,a, s^{\prime}\right) b(s)}{\operatorname{Pr}(o \mid a, b)}
 \label{eq:discrete_belief_update}
 \end{align}
 
@@ -238,12 +236,12 @@ By integrating out the intensity matrix $ Q_{n\mid \textbf{u}} $, the parameter 
 
 The derivation of the conditional expectation for marginal CTBN follows from the Bayes' rule:
 \begin{equation}
-p\left(\textbf{Q} | \textbf{X}_{[0,t]}\right)=\frac{p\left(\textbf{X}_{[0,t]} | \textbf{Q}\right) p(\textbf{Q})}{p\left(\textbf{X}_{[0,t]}\right)}
+p\left(\textbf{Q} \mid \textbf{X}_{[0,t]}\right)=\frac{p\left(\textbf{X}_{[0,t]} \mid \textbf{Q}\right) p(\textbf{Q})}{p\left(\textbf{X}_{[0,t]}\right)}
 \label{eq:Q_bayes}
 \end{equation}
 \autoref{eq:Q_bayes}, written for single trajectory $ \textbf{X}_{[0,t]} $, can be extended for multiple trajectories. Consider K trajectories drawn from CTBN \textbf{X}, denoted by $ \xi_t = \left\lbrace \textbf{X}^{[0,t], 1}, \textbf{X}^{[0,t], 2}, ..., \textbf{X}^{[0,t], K} \right\rbrace  $. Since the trajectories are conditionally independent, given \textbf{Q}, using \autoref{eq:lh_CTBN} the likelihood of set $ \xi_t $ is written as,
 \begin{align}
-\operatorname{Pr}( \xi_t  | \textbf{\textit{Q}} ) = \prod_{n=1}^{N} \prod_{\textbf{u} \in \mathcal{\textbf{U}}_{n}} \prod_{x_i \in \mathcal{X}_{n}} \prod_{x_j \in \mathcal{X}_{n} \backslash x_i}
+\operatorname{Pr}( \xi_t  \mid \textbf{\textit{Q}} ) = \prod_{n=1}^{N} \prod_{\textbf{u} \in \mathcal{\textbf{U}}_{n}} \prod_{x_i \in \mathcal{X}_{n}} \prod_{x_j \in \mathcal{X}_{n} \backslash x_i}
 \exp \left( q_{i,j\mid \textbf{u}}^{n} T_{n}[x_i\mid \textbf{u}]\right) (q_{i,j\mid \textbf{u}}^{n})^{M_{n}[x_i, x_j\mid \textbf{u}]}
 \label{eq:lh_dataset_CTBN}
 \end{align}
@@ -251,7 +249,7 @@ where the joint sufficient statistics of $ X_n $ over all K trajectories are den
 
 Given independent Gamma-priors on transition intensities, the expectation in \autoref{eq:marginal_CTBN} can be evaluated as follows:
 \begin{equation}
-	\mathbb{E}\left[q_{i,j\mid \textbf{u}}^{n} | \xi_{t}\right]=\frac{\alpha^n_{i,j\mid \textbf{u}}+M_{n}[x_i, x_j\mid \textbf{u}]}{\beta^n_{i,j\mid \textbf{u}}+T_{n}[x_i \mid \textbf{u}]}
+	\mathbb{E}\left[q_{i,j\mid \textbf{u}}^{n} \mid \xi_{t}\right]=\frac{\alpha^n_{i,j\mid \textbf{u}}+M_{n}[x_i, x_j\mid \textbf{u}]}{\beta^n_{i,j\mid \textbf{u}}+T_{n}[x_i \mid \textbf{u}]}
 	\label{eq:estimated_Q}
 \end{equation}
 
