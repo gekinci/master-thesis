@@ -25,7 +25,7 @@ if __name__ == "__main__":
     main_folder = '../_data/roc_analysis'
     config_file = '../configs/roc_analysis.yaml'
 
-    psi_set = np.load('../configs/psi_set_3.npy')
+    psi_set = np.load('../configs/psi_set_10.npy')
     n_classes = len(psi_set)
 
     with open(config_file, 'r') as f:
@@ -70,6 +70,7 @@ if __name__ == "__main__":
         for i, df_loglh in enumerate(L_list):
             # Concatenate likelihoods from different datasets
             df_lh = np.exp(df_loglh)
+            df_lh = df_lh.divide(df_lh.values.sum(axis=1), axis=0)  # Normalizing likelihoods
             for k in range(n):
                 df_shuffled_ = df_lh.sample(frac=1).reset_index(drop=True)
                 df_scores = df_scores.append(df_shuffled_.groupby(df_shuffled_.index // n).mean())
@@ -86,7 +87,7 @@ if __name__ == "__main__":
         df_scores.reset_index(drop=True, inplace=True)
 
         n_all_samples = len(df_scores)
-        y_scores = df_scores.divide(df_scores.values.sum(axis=1), axis=0).values  # Normalizing likelihoods
+        y_scores = df_scores.values
 
         fpr = dict()
         tpr = dict()
