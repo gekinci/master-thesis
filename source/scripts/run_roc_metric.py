@@ -25,7 +25,7 @@ if __name__ == "__main__":
     main_folder = '../_data/roc_analysis'
     config_file = '../configs/roc_analysis.yaml'
 
-    psi_set = np.load('../configs/psi_set_10.npy')
+    psi_set = np.load('../configs/psi_set_same_class.npy')
     n_classes = len(psi_set)
 
     with open(config_file, 'r') as f:

@@ -22,7 +22,7 @@ def visualize_optimal_policy_map(df, path_to_save='../_data/'):
             ax.set_ylabel('b2')
             ax.set_zlabel('b3')
             ax.legend()
-        fig.savefig(path_to_save + f'OPM_{s.split("_")[-1]}.png')
+        fig.savefig(path_to_save + f'OPM_{s.split("_")[-1]}.pdf')
         plt.show()
     return
 
@@ -43,7 +43,7 @@ def plot_trajectories(df, node_list=None, path_to_save=None, tag=''):
     ax[len(node_list) - 1].set_xlabel('t')
 
     if path_to_save:
-        fig.savefig(os.path.join(path_to_save, 'trajectory_plot_' + tag + '.png'))
+        fig.savefig(os.path.join(path_to_save, 'trajectory_plot_' + tag + '.pdf'))
     plt.close('all')
 
 
@@ -102,7 +102,7 @@ def visualize_pomdp_simulation(df_traj, dict_b, dict_Q, node_list=None, path_to_
         ax[count - 2].legend(list(dict_b.keys()), bbox_to_anchor=(1.02, 1.0), loc='upper left')
 
     plt.tight_layout()
-    fig.savefig(os.path.join(path_to_save, 'b_Q_plot_' + tag + '.png'))
+    fig.savefig(os.path.join(path_to_save, 'b_Q_plot_' + tag + '.pdf'))
     plt.close('all')
 
 
@@ -110,8 +110,8 @@ def visualize_llh(dict_L, n_train, path_to_save):
     for m, df_L in dict_L.items():
         df_L_norm = df_L.cumsum().div((df_L.index + 1), axis=0)
         plt.figure()
-        df_L_norm.head(n_train).plot()
+        df_L_norm.head(n_train).plot(legend=False)
         plt.xlabel('Number of trajectories')
-        plt.ylabel('Train log-likelihood')
-        plt.savefig(os.path.join(path_to_save, f'llh_{m}.png'))
+        plt.ylabel('Average log-likelihood')
+        plt.savefig(os.path.join(path_to_save, f'llh_{m}.pdf'))
         plt.close()
