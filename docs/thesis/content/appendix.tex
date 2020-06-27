@@ -75,3 +75,110 @@ In \autoref{eq:wolfram_line}, the integral is solved using computer algebra syst
 \label{eq:integral}
 \end{align}
 
+\chapter{Equivalence Classes of Observation Models}
+\label{ap:eq_classes}
+The equivalence classes are inherent to the problem setting and caused by two reasons. In this chapter, these reasons are explained and illustrated.
+\section*{Identical Effect on Belief State}
+Some observation models fall into the same class due to their exact same effect on the belief state. An example of this situation is illustrated in ..... In order to show the exact equivalence, the simulations are performed belief state update using exact update method as described in \cref{par:bs_exact}. Consider the problem of calculating the likelihood of one sample $ S^{[0,T]} $ given two observation models, $ \psi_1 $ and $ \psi_2 $ given below. Given a sample of parent trajectories shown in ....., it is obvious that these two observation models lead to different observation trajectories as shown in ... and ..... Nonetheless, using \autoref{eq:bs_exact}, the resulting belief state is exactly the same. This leads to the exact same trajectories for $ Q_3 $ and the likelohood of the sample given these two observation models, $ p(S^{[0,T]} \mid \psi_1 ) $ and $ p(S^{[0,T]} \mid \psi_2 ) $ end up exactly same. %TODO
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=.60\textwidth]{figures/b_q_traj}
+		\caption{Belief state and $ Q_3 $ trajectories}
+		\label{fig:b_q_traj}
+	\end{center}
+\end{figure}
+\begin{align}
+p(S^{[0,T]} \mid \psi_2 ) &= \\
+p(S^{[0,T]} \mid \psi_2 ) &=
+\label{eq:integral}
+\end{align}
+\section*{Combination of Belief State and Policy}
+For some observation model, the reason of equivalence is that even though the belief state are different, the policy $ \pi(b) $ leads to same trajectory for $ Q_3 $. This case is exemplified in ..... where the simulations are performed belief state update using exact update method as described in \cref{par:bs_exact}. Consider the problem of calculating the likelihood of one sample $ S^{[0,T]} $ given two observation models, $ \psi_1 $ and $ \psi_2 $ given below. Given a sample of parent trajectories shown in .....,  these observation models lead to different observation trajectories as shown in ... and ....., which results in different belief state trajectories given in ..... However, the behaviour of the agent is dominated by ...., and the policy leads to the exact same trajectories for $ Q_3 $ and the likelohood of the sample given these two observation models, $ p(S^{[0,T]} \mid \psi_1 ) $ and $ p(S^{[0,T]} \mid \psi_2 ) $ end up exactly same. %TODO
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=.60\textwidth]{figures/b_q_traj}
+		\caption{Belief state and $ Q_3 $ trajectories}
+		\label{fig:b_q_traj}
+	\end{center}
+\end{figure}
+\begin{align}
+p(S^{[0,T]} \mid \psi_2 ) &= \\
+p(S^{[0,T]} \mid \psi_2 ) &=
+\label{eq:integral}
+\end{align}
+\section{Observation Models in Experiments}
+As mentioned in \cref{sec:eq_classes}, the inference problem is reduced to maximum likelihood estimation between 10 classes. One observation model is picked as as representative of each classes and considered for the inference problem. These observation models are given below.
+\begin{align}
+\psi_{\text{true}} = \psi_{0} &=
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+\psi_{1} =
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+\psi_{2} =
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+\psi_{3} =
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+\psi_{4} =
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix} \\
+\psi_{5} &=
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+\psi_{6} =
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+\psi_{7} =
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+\psi_{8} =
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+\psi_{9} =
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+\end{align}
+
+\chapter{Additional Results}

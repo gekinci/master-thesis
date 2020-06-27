@@ -19,8 +19,8 @@ A detailed graphical model explored in this thesis is given in the \cref{fig:h_m
 
 \subsection{CTBN Model}
 \label{sec:exp_ctbn_model}
-The transition models of the nodes and the dependencies between them are modelled as continuous-time Bayesian network (CTBN), denoted by S with graph $ \mathcal{G} = \left( \mathcal{V}, \mathcal{E}\right) $, where $ \mathcal{V} = \left\lbrace X_1, X_2, X_3 \right\rbrace $ and $ \mathcal{E} = \left\lbrace (X_1, X_3), (X_2, X_3)\right\rbrace  $. The network S represents a stohastic process over a structured factorising state space $ \rchi = \rchi_1 \times \rchi_2 \times \rchi_3 $.\\
-The parent nodes $X_{1}$ and $ X_{2} $ emit their states as messages. The dynamics  of these nodes are modelled as independent homogeneous continuous-time Markov processes $X_{i}(t)$, with binary-valued states $ \rchi_{i} = \left\lbrace 0, 1 \right\rbrace  $ for $ i \in \left\lbrace 1,2 \right\rbrace $. These processes are defined by transition intensity matrices $ \textbf{Q}_{i} $, which are assumed to be Gamma distributed with shape and rate parameters $ \boldsymbol{\alpha} = [\alpha_0, \alpha_1] $ and $ \boldsymbol{\beta} = [\beta_0, \beta_1] $, respectively, and are in the following forms.
+The transition models of the nodes and the dependencies between them are modelled as continuous-time Bayesian network (CTBN), denoted by S with graph $ \mathcal{G} = \left( \mathcal{V}, \mathcal{E}\right) $, where $ \mathcal{V} = \left\lbrace X_1, X_2, X_3 \right\rbrace $ and $ \mathcal{E} = \left\lbrace (X_1, X_3), (X_2, X_3)\right\rbrace  $. The network S represents a stohastic process over a structured factorising state space $ \mathcal{S} = \rchi_1 \times \rchi_2 \times \rchi_3 $.\\
+The parent nodes $X_{1}$ and $ X_{2} $ emit their states as messages. The dynamics  of these nodes are modelled as independent homogeneous continuous-time Markov processes $X_{i}(t)$, with binary-valued states $ \rchi_{i} = \left\lbrace 0, 1 \right\rbrace  $ for $ i \in \left\lbrace 1,2 \right\rbrace $. These processes are defined by transition intensity matrices $ \textbf{Q}_{i} $, which are assumed to be Gamma distributed with shape and rate parameters $ \symbf{\alpha} = [\alpha_0, \alpha_1] $ and $ \symbf{\beta} = [\beta_0, \beta_1] $, respectively, and are in the following forms.
 \begin{align}
 \textbf{Q}_i &= 
 \begin{bmatrix}
@@ -28,12 +28,12 @@ The parent nodes $X_{1}$ and $ X_{2} $ emit their states as messages. The dynami
 q^i_{1} &  -q^i_{1}
 \end{bmatrix}
 \label{eq:Q_parents}\\
-\textbf{Q}_{i} &\sim Gam(\boldsymbol{\alpha}^i, \boldsymbol{\beta}^i)\ \ for\ i \in \left\lbrace 1,2\right\rbrace \label{eq:gamma_priors}
+\textbf{Q}_{i} &\sim \mathrm{Gam}(\symbf{\alpha}^i, \symbf{\beta}^i)\ \ for\ i \in \left\lbrace 1,2\right\rbrace \label{eq:gamma_priors}
 \end{align}
 It should be noted that in \autoref{eq:Q_parents}, the suffixes are simplified using the fact that $ q_{i} = \sum_{i \neq j} q_{i,j}$.\\
 The agent  $ X_{3} $ is modelled as inhomogenouos continuous-time Markov process with binary states $ \rchi_{3} = \left\lbrace 0, 1 \right\rbrace  $ and set of actions $ a \in \left\lbrace a_0, a_1\right\rbrace  $, and set of transition intensity matrices which contains one matrix corresponding to each action, $ \textbf{\textit{Q}}_{3 \mid a} = \left\lbrace \textbf{Q}_{3\mid a_{0}}, \textbf{Q}_{3\mid a_{1}} \right\rbrace $.\\
 %\begin{equation}
-%\textbf{Q}_{a_k} \sim Gam(\alpha_{a_k}, \beta_{a_k})
+%\textbf{Q}_{a_k} \sim \mathrm{Gam}(\alpha_{a_k}, \beta_{a_k})
 %\end{equation}
 The dependencies are represented by set of parents for each node $ U_{n} = Par_{\mathcal{G}}(X_n) $ and for the model shown in \cref{fig:h_model} can be written as follows:
 \begin{align*}
@@ -67,7 +67,11 @@ where $ x_1 \in \rchi_1 $ and $ x_2 \in \rchi_2 $. As explained in \cref{sec:exp
 \label{eq:obs_model_p}
 \end{equation}
 where $ x_p \in \rchi_P $. \\
-$ \psi(x_p) $ is defined as categorical distribution over the observation space $ \mathcal{Y} $. $ \psi $ denotes the matrix with rows $ \left\lbrace \psi(x_p)\right\rbrace_{x_p \in \rchi_P} $.
+$ \psi(x_p) $ is defined as deterministic categorical distribution over the observation space $ \mathcal{Y} $. For each state $ x_p $, there is one possible observation $ y_i \in \mathcal{Y} $, such that \begin{equation}
+p(y_i \mid x_p) = 1 \;\wedge \;p(y_j \mid x_p) = 0 \quad \forall j \neq i 
+\label{eq:det_cat_dist}
+\end{equation} 
+$ \psi $ denotes the matrix with rows $ \left\lbrace \psi(x_p)\right\rbrace_{x_p \in \rchi_P} $.
 \subsubsection{Belief State}
 The belief state provides a summary over agents past experiences and allows the agent to take its own uncertainty into account. The belief state is formed by \textit{state estimator} (labelled as \textit{SE} in \cref{fig:POMDP_pers}) over the parent states, denoted by $  b(x_{1}, x_{2}; t) $. 
 \begin{equation}
@@ -87,6 +91,7 @@ with the initial condition $ b(0) $.
 The update at discrete times of observation $ y_{t} $ is
 \begin{align}
 b(x_p; t_{N}) &= Z_{N}^{-1}\ {\operatorname{Pr}(y_{N} \mid X_P(t_{N})=x_p)}\ {b(x_p; t_{N}^{-})} \\ & = Z_{N}^{-1}\ \psi(x_p) \ {b(x_p; t_{N}^{-})}
+\label{eq:bs_exact}
 \end{align}
 where $ Z_{N} = \sum_{x_p\in \rchi_P} \psi(x_p)\ b(x_p; t_{N}^{-}) $ is the normalization factor.
 \paragraph*{Belief State Update Using Particle Filter}
@@ -96,6 +101,7 @@ The assumption that full information of parent dynamics being available is unrea
 b(x_p; t) = \frac{1}{N} \sum_{i=1}^{N} \delta_{p_i(t), x_p}
 \end{equation}
 where $ N $ is the number of particles, $ p_i \in \textbf{p} $ is the set of particles, and $\delta$ is the Kronecker delta.
+
 \begin{algorithm}[H]
 	\SetKwInOut{KwIn}{Input}
 	\SetKwInOut{KwOut}{Output}
@@ -109,7 +115,7 @@ where $ N $ is the number of particles, $ p_i \in \textbf{p} $ is the set of par
 		
 		\STATE {$\hat{Q} \leftarrow sufficient\ statistics\ added\ from\  p_{m}[t_{k-1}, t_{k}]$} \\
 		\tcp*[h] {observation likelihood assigned as particle weight}
-		\STATE{$w_{m} \leftarrow p(y_{k} \mid X_P(t_{k})=x_{m}) $} 
+		\STATE{$w_{m} \leftarrow p(y_{k} \mid X_P(t_{k})=x_{m}) $} \label{lst:weight_update}
 		\ENDFOR \\
 		\tcp*[h]{belief state from $ t_{k-1} $ to $ t_{k} $}
 		\STATE{$ \textbf{b}^{[t_{k-1}, t_{k}]} \leftarrow \left\lbrace \frac{1}{N} \sum_{i=1}^{N} \delta_{p_i^{[t_{k-1}, t_{k}]} , x_p}\right\rbrace_{x_p \in \rchi_P} $}\\
@@ -121,7 +127,9 @@ where $ N $ is the number of particles, $ p_i \in \textbf{p} $ is the set of par
 		\ENDFOR 
 	\end{algorithmic}
 	\caption{Marginal particle filter for belief state update}
+	\label{alg:part_filter}
 \end{algorithm}
+In \cref{alg:part_filter}, the weight update for the particles performed on line \autoref{lst:weight_update}, based on the observation model. Given the deterministic nature of the observation model as described in \autoref{eq:det_cat_dist}, in rare cases where the observation $ y_k $ stems from an unlikely transition of parent nodes, the particles fail to simulate this transition and all of them get rejected. One possible solution to this problem would be increasing the number of particle to increase the probability of sampling unlikely transitions. However, in practice, this solution is not feasible due to computational cost. Instead, this problem is overcome by assigning uniform probabilities to the particles, effectively skipping this transition. The situation is illustrated by examples from simulation in ...... %TODO
 
 \subsubsection{Optimal Policy}
 The optimal policy is defined using a polynomial function of belief state.
@@ -144,24 +152,25 @@ a(t) &= \pi(b(t))\\
 \end{align}
 
 \section{Inference of Observation Model}
-Inference problem is considered for deterministic observation models. Considering the number of states of parents and the observations, there are a number of possible observation models. Given the parent trajectories, the belief state and the resulting $ \textbf{Q}_3 $ trajectory is computed for each observation model. Then the likelihood of $ X_3 $ trajectory given these  $ \textbf{Q}_3 $  trajectories are compared for maximum likelihood estimation.
-%TODO correct this
+\label{sec:inf_setup}
+Inference problem is considered for deterministic observation models, such that each state $ x_p \in \rchi_P $ can only be translated to one observation. Considering the number of states of parents and the observations, this results in a number of possible observation models. \\
+Consider a trajectory in the dataset, denoted by $ S^{[0,T]} = \left\lbrace X_1^{[0,T]} , X_2^{[0,T]}, X_3^{[0,T]}\right\rbrace $. The set of parameters to the system, as introduced before, is written as $  \theta = \left\lbrace  \textbf{Q}_{1}, \textbf{Q}_{2}, \textit{\textbf{Q}}_3, \pi, \psi \right\rbrace $. Given the parent trajectories, $ X_1^{[0,T]} $ and $ X_2^{[0,T]} $, the belief state and the resulting $ \textbf{Q}_3 $ trajectory is computed for each observation model. Then the likelihood of $ S^{[0,T]} $ trajectory given the parameters $ \theta $ are compared for maximum likelihood estimation.
 \begin{equation}
-\hat{\psi} = argmax \operatorname{Pr}(X_3^{[0,T]} \mid Q_3^{[0,T]})
+\hat{\psi} = \argmax_\psi p(S^{[0,T]} \mid \theta )
 \end{equation}
 
 \subsection{Likelihood Model}
-Consider a trajectory in the dataset, denoted by $ \textbf{X}^{[0,T]} = \left\lbrace X_1^{[0,T]} , X_2^{[0,T]}, X_3^{[0,T]}\right\rbrace $. The set of parameters to the system, as introduced before, is written as $  \theta = \left\lbrace  \textbf{Q}_{1}, \textbf{Q}_{2}, \pi, \psi \right\rbrace $. Then likelihood of the sample trajectory $ \textbf{X}^{[0,T]} $ can be written as:
+ The likelihood of a sample trajectory $ S^{[0,T]} $ can be written as:
 \begin{align}
-p(\textbf{X}^{[0,T]} \mid \theta ) & = p(X_{1}^{[0, T]}, X_{2}^{[0, T]}, X_{3}^{[0, T]} \mid \textbf{Q}_{1}, \textbf{Q}_{2}, \pi, \psi) \nonumber\\
-& = p(X_{3}^{[0, T]} \mid X_{1}^{[0, T]}, X_{2}^{[0, T]}, \textbf{Q}_{1}, \textbf{Q}_{2}, \pi, \psi) \ p(X_{1}^{[0, T]}\mid \textbf{Q}_{1}) \ p(X_{2}^{[0, T]}\mid \textbf{Q}_{2}) \nonumber\\ & = p(X_{3}^{[0, T]} \mid X_{1}^{[0, T]}, X_{2}^{[0, T]}, \pi, \psi) \ p(X_{1}^{[0, T]}\mid \textbf{Q}_{1}) \ p(X_{2}^{[0, T]}\mid \textbf{Q}_{2}) \nonumber\\ & = p(X_{3}^{[0, T]}\mid \textbf{Q}_{3}^{[0, T]}) \ p(X_{1}^{[0, T]}\mid \textbf{Q}_{1}) \ p(X_{2}^{[0, T]}\mid \textbf{Q}_{2}) 
+p(S^{[0,T]} \mid \theta ) & = p(X_{1}^{[0, T]}, X_{2}^{[0, T]}, X_{3}^{[0, T]} \mid \textbf{Q}_{1}, \textbf{Q}_{2}, \textit{\textbf{Q}}_3, \pi, \psi) \nonumber\\
+& = p(X_{3}^{[0, T]} \mid X_{1}^{[0, T]}, X_{2}^{[0, T]}, \textbf{Q}_{1}, \textbf{Q}_{2}, \textit{\textbf{Q}}_3, \pi, \psi) \ p(X_{1}^{[0, T]}\mid \textbf{Q}_{1}) \ p(X_{2}^{[0, T]}\mid \textbf{Q}_{2}) \nonumber\\ & = p(X_{3}^{[0, T]} \mid X_{1}^{[0, T]}, X_{2}^{[0, T]}, \textit{\textbf{Q}}_3, \pi, \psi) \ p(X_{1}^{[0, T]}\mid \textbf{Q}_{1}) \ p(X_{2}^{[0, T]}\mid \textbf{Q}_{2}) \nonumber\\ & = p(X_{3}^{[0, T]}\mid \textbf{Q}_{3}^{[0, T]}) \ p(X_{1}^{[0, T]}\mid \textbf{Q}_{1}) \ p(X_{2}^{[0, T]}\mid \textbf{Q}_{2}) 
 \label{eq:system_llh}
 \end{align}
 As mentioned before, it is plausible to marginalize out the parameters $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, for a more realistic model and inference. Noting that in case the belief state is updated using filtering of CTMPs (See \cref{par:bs_exact}), $ \textbf{Q}_{3}^{[0, T]} $ becomes a deterministic function of all the parameters including $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, the marginalization cannot be carried out analytically on \autoref{eq:system_llh}. On the other hand, particle filtering removes this dependency on $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $ by using marginalized counterpart of CTMPs (See \cref{par:bs_partFilt}), leaving it straightforward to marginalize out the parameters on \autoref{eq:system_llh}.
 
 Marginalizing the likelihood over $ Q_{1} $ and $ Q_{2} $:
 \begin{align}
-p(\textbf{X}^{[0,T]} \mid \pi, \psi ) & = 	\int \int p(\textbf{X}^{[0,T]} \mid \theta ) \ p(\textbf{Q}_{1}) \ p(\textbf{Q}_{2}) \ d\textbf{Q}_{1}d\textbf{Q}_{2} \nonumber\\ 
+p(S^{[0,T]} \mid \pi, \psi ) & = 	\int \int p(S^{[0,T]} \mid \theta ) \ p(\textbf{Q}_{1}) \ p(\textbf{Q}_{2}) \ d\textbf{Q}_{1}d\textbf{Q}_{2} \nonumber\\ 
 & = \int \int p(X_{3}^{[0, T]}\mid \textbf{Q}_{3}^{[0, T]}) \ p(X_{1}^{[0, T]}\mid \textbf{Q}_{1}) \ p(X_{2}^{[0, T]}\mid \textbf{Q}_{2}) \ p(\textbf{Q}_{1}) \ p(\textbf{Q}_{2})\ d\textbf{Q}_{1}d\textbf{Q}_{2} \nonumber\\ 
 & = p(X_{3}^{[0, T]}\mid \textbf{Q}_{3}^{[0, T]}) \int  p(X_{1}^{[0, T]}\mid \textbf{Q}_{1}) \ p(\textbf{Q}_{1}) \ d\textbf{Q}_{1} \int p(X_{2}^{[0, T]}\mid \textbf{Q}_{2})\ p(\textbf{Q}_{2})\ d\textbf{Q}_{2}
 \label{eq:Marg_llh}
@@ -171,13 +180,13 @@ Marginalized likelihood function for binary-valued homogenous CTMP is derived in
 Plugging \autoref{eq:Marg_traj} in \autoref{eq:Marg_llh} for both $ X_{1} $ and $ X_{2} $:
 \begin{align}
 \begin{split}
-p(\textbf{X}^{[0,T]} \mid \pi, \Phi ) = p(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \prod_{x_{1}\in{0,1}} \frac{\beta_{x_{1}}^{\alpha_{x_{1}}}}{\Gamma(\alpha_{x_{1}})} \ (T_{x_{1}}+\beta_{x_{1}})^{M_{x_{1}} + \alpha_{x_{1}}}\ \Gamma(M_{x_{1}} + \alpha_{x_{1}})  \\  \prod_{x_{2}\in{0,1}} \frac{\beta_{x_{2}}^{\alpha_{x_{2}}}}{\Gamma(\alpha_{x_{2}})} \ (T_{x_{2}}+\beta_{x_{2}})^{M_{x_{2}} + \alpha_{x_{2}}}\ \Gamma(M_{x_{2}} + \alpha_{x_{2}})
+p(S^{[0,T]} \mid \pi, \Phi ) = p(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \prod_{x_{1}\in{0,1}} \frac{\beta_{x_{1}}^{\alpha_{x_{1}}}}{\Gamma(\alpha_{x_{1}})} \ (T_{x_{1}}+\beta_{x_{1}})^{M_{x_{1}} + \alpha_{x_{1}}}\ \Gamma(M_{x_{1}} + \alpha_{x_{1}})  \\  \prod_{x_{2}\in{0,1}} \frac{\beta_{x_{2}}^{\alpha_{x_{2}}}}{\Gamma(\alpha_{x_{2}})} \ (T_{x_{2}}+\beta_{x_{2}})^{M_{x_{2}} + \alpha_{x_{2}}}\ \Gamma(M_{x_{2}} + \alpha_{x_{2}})
 \label{eq:Marg_llh_final}
 \end{split}
 \end{align}
 
 \section{Data Generation}
-The dataset contains a number of trajectories drawn from CTBN \textbf{X}. Following the notation in \cref{chap:2}, K trajectories in time interval $ [0, T] $ are denoted by $ \xi_T = \left\lbrace \textbf{X}^{[0,T], 1}, \textbf{X}^{[0,T], 2}, ..., \textbf{X}^{[0,T], K} \right\rbrace  $, where $ \textbf{X}^{[0,T],k} = \left\lbrace X_1^{[0,T],k} , X_2^{[0,T],k}, X_3^{[0,T],k}\right\rbrace $ denotes a single trajectory for all nodes. Every trajectory comprises of state transitions in the interval, and the times of these transitions. 
+The dataset contains a number of trajectories drawn from CTBN \textbf{X}. Following the notation in \cref{chap:2}, K trajectories in time interval $ [0, T] $ are denoted by $ \xi_T = \left\lbrace S^{[0,T], 1}, S^{[0,T], 2}, ..., S^{[0,T], K} \right\rbrace  $, where $ S^{[0,T],k} = \left\lbrace X_1^{[0,T],k} , X_2^{[0,T],k}, X_3^{[0,T],k}\right\rbrace $ denotes a single trajectory for all nodes. Every trajectory comprises of state transitions in the interval, and the times of these transitions. 
 
 \subsection{Sampling Algorithm}
 In order to sample trajectories from CTBN, two sampling algortihms introduced in \cref{sec:sampling_alg} are combined. Gillespie algorithm is used to sample from the parent nodes, $ X_1 $ and $ X_2 $, while thinning algorithm is applied to overcome the challenges that come with conditional intensity matrix of the agent, $ X_3 $. It should be noted that \cref{alg:generative_ctbn} is applicable to any nodes in a CTBN, both homogenous and conditional MPs. However, since in this setting, the intensity matrix is conditioned on the belief state and the policy, instead of directly on the parent states, a more general algorithm suitable for inhomogenous MPs, thinning algorithm, is preferred. \cref{alg:sampling} describes the procedure to draw samples using particle filtering. 
