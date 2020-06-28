@@ -17,7 +17,7 @@ from inference.sampling import *
 from joblib import Parallel, delayed
 from simulations.pomdp import POMDPSimulation
 
-N_TREADS = 1
+N_TREADS = 25
 
 
 def divisors(n):
