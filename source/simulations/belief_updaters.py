@@ -82,7 +82,7 @@ class ParticleFilterUpdate:
         state_ind = [self.S.index(p.iloc[-1]['state']) for p in new_p]
         new_w = np.array([self.obs_llh[ind][obs_ind] for ind in state_ind])
         if new_w.sum() == 0:
-            np.tile(1 / self.n_particle, self.n_particle)
+            new_w = np.tile(1 / self.n_particle, self.n_particle)
         else:
             new_w /= new_w.sum()
         return new_w
