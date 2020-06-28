@@ -23,7 +23,7 @@ if __name__ == "__main__":
     path_to_data = '/home/gizem/DATA'
     folder_name = "sim_example"
     path_to_data = os.path.join(path_to_data, folder_name)
-    path_to_thesis = '/home/gizem/master_thesis/docs/thesis/figures/sim_example'
+    path_to_thesis = '../../docs/thesis/figures/sim_example'
 
     tick_font = 14
     label_font = 18
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     dict_b = {'exactUpdate': df_belief_exact.truncate(before=to_decimal(0), after=to_decimal(t_max)),
               'particleFilter': df_belief_part.truncate(before=to_decimal(0), after=to_decimal(t_max))}
 
-    fig, ax = plt.subplots(b_axis, 1, sharex=True, figsize=(12, 7))
+    fig, ax = plt.subplots(b_axis, 1, sharex=True, figsize=(12, 8))
 
     count = 0
     for col in df_b_cols:
@@ -120,18 +120,20 @@ if __name__ == "__main__":
     tick_font = 14
     label_font = 16
     df_q_cols = ['01', '10']
-    q_axis = 2
+    q_axis = 3
     t_max = 5
     df_q = pd.read_csv(path_to_data + '/Q_agent_particleFilter_.csv', index_col=0).truncate(before=to_decimal(0),
                                                                                             after=to_decimal(t_max))
 
-    fig, ax = plt.subplots(q_axis, 1, sharex=True, figsize=(12, 4))
+    fig, ax = plt.subplots(q_axis, 1, sharex=True, figsize=(12, 6))
 
-    ax[0].step(df_traj[TIME], df_traj[r'$X_{3}$'], where='post')
-    ax[0].set_ylim([-.5, 1.5])
-    ax[0].set_yticks([0, 1])
-    ax[0].set_yticklabels([0, 1], fontsize=tick_font)
-    ax[0].set_ylabel(r'$X_{3}$(t)', fontsize=label_font)
+    for col in df_b_cols:
+        ax[0].step(df_belief_part.index, df_belief_part[col], where='post')
+    ax[0].set_ylim([-0.1, 1.1])
+    ax[0].set_yticks([0, 0.5, 1])
+    ax[0].set_yticklabels([0, 0.5, 1], fontsize=tick_font)
+    ax[0].set_ylabel(r'$b(x_{p}$' + f';t)', fontsize=label_font)
+    ax[0].legend([r'$x_{p}$=00', r'$x_{p}$=01',r'$x_{p}$=10',r'$x_{p}$=11'], fontsize=12)
     sec = ax[0].secondary_yaxis(location='right')
     sec.set_ylabel('  (a)', fontsize=label_font, rotation='horizontal', ha='left')
     sec.set_yticks([])
@@ -146,8 +148,18 @@ if __name__ == "__main__":
     sec = ax[1].secondary_yaxis(location='right')
     sec.set_ylabel('  (b)', fontsize=label_font, rotation='horizontal', ha='left')
     sec.set_yticks([])
-    ax[1].set_xlabel('t / s', fontsize=label_font)
-    ax[1].set_xticks([0, 1, 2, 3, 4, 5])
-    ax[1].set_xticklabels([0, 1, 2, 3, 4, 5], fontsize=tick_font)
+
+    ax[2].step(df_traj[TIME], df_traj[r'$X_{3}$'], where='post')
+    ax[2].set_ylim([-.5, 1.5])
+    ax[2].set_yticks([0, 1])
+    ax[2].set_yticklabels([0, 1], fontsize=tick_font)
+    ax[2].set_ylabel(r'$X_{3}$(t)', fontsize=label_font)
+    sec = ax[2].secondary_yaxis(location='right')
+    sec.set_ylabel('  (c)', fontsize=label_font, rotation='horizontal', ha='left')
+    sec.set_yticks([])
+    ax[2].set_xlabel('t / s', fontsize=label_font)
+    ax[2].set_xticks([0, 1, 2, 3, 4, 5])
+    ax[2].set_xticklabels([0, 1, 2, 3, 4, 5], fontsize=tick_font)
+
     plt.tight_layout()
     fig.savefig(os.path.join(path_to_thesis, 'q_traj.pdf'))

@@ -8,8 +8,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
-# from scripts.run_inference_mp import *
 import math
+
 from utils.constants import *
 from utils.helpers import *
 from utils.visualization import *
@@ -67,7 +67,7 @@ def save_policy(pomdp_, path_to_save):
 def generate_dataset(pomdp_, n_samples, path_to_save, rnd_seed=0):
     def generate_trajectory(pomdp_, k, path_to_csv, path_to_plot):
         np.random.seed(int(rnd_seed) + k)
-        print('seed ', rnd_seed + k)
+        # print('seed ', rnd_seed + k)
         df_traj = pomdp_.sample_trajectory()
         df_traj.loc[:, TRAJ_ID] = k
 
@@ -92,7 +92,7 @@ def inference_per_obs_model(pomdp_, df_all_, obs_id, path_to_save, rnd_seed=0):
     def infer_trajectory(pomdp_, df_traj, path_to_save):
         traj_id = df_traj.loc[0, TRAJ_ID]
         np.random.seed(rnd_seed + int(1e3 * obs_id) + traj_id)
-        print('seed ', rnd_seed + int(1e3 * obs_id) + traj_id)
+        # print('seed ', rnd_seed + int(1e3 * obs_id) + traj_id)
 
         df_Q = get_complete_df_Q(pomdp_, df_traj, traj_id, path_to_save=path_to_save)
 
