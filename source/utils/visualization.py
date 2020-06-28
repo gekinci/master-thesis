@@ -113,5 +113,6 @@ def visualize_llh(dict_L, n_train, path_to_save):
         df_L_norm.head(n_train).plot(legend=False)
         plt.xlabel('Number of trajectories')
         plt.ylabel('Average log-likelihood')
+        plt.tight_layout()
         plt.savefig(os.path.join(path_to_save, f'llh_{m}.pdf'))
         plt.close()
