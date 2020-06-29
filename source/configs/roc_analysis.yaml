@@ -30,7 +30,7 @@ action_space: [0, 1]
 obs_model:
 
 # "particleFilter", "exactUpdate", "particleFilter_van" in a list
-belief_update_method: ["exactUpdate"]
+belief_update_method: ["particleFilter"]
 n_particle: 200
 
 policy_type: detFunction  # deterministic_df, stochastic_df or detFunction (deterministic function)
