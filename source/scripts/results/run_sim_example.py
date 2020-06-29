@@ -27,6 +27,7 @@ if __name__ == "__main__":
 
     tick_font = 14
     label_font = 18
+    legend_font = 14
     df_traj = pd.read_csv(path_to_data + '/df_traj.csv', index_col=0)
     df_traj[r'$X_{P}$'] = ''
     df_traj.loc[:, r'$X_{P}$'] = df_traj.apply(get_state, axis=1)
@@ -72,8 +73,8 @@ if __name__ == "__main__":
     fig.savefig(os.path.join(path_to_thesis, 'parent_traj.pdf'))
 
     ##############################################################################################
-    tick_font = 14
-    label_font = 16
+    # tick_font = 14
+    # label_font = 16
     df_b_cols = ['00', '01', '10', '11']
     b_axis = 4
     t_max = 5
@@ -92,24 +93,18 @@ if __name__ == "__main__":
         ax[count].set_ylim([-0.1, 1.1])
         ax[count].set_yticks([0, 0.5, 1])
         ax[count].set_yticklabels([0, 0.5, 1], fontsize=tick_font)
+        sec = ax[count].secondary_yaxis(location='right')
         if count == 0:
-            sec = ax[count].secondary_yaxis(location='right')
             sec.set_ylabel('  (a)', fontsize=label_font, rotation='horizontal', ha='left')
-            sec.set_yticks([])
         elif count == 1:
-            sec = ax[count].secondary_yaxis(location='right')
             sec.set_ylabel('  (b)', fontsize=label_font, rotation='horizontal', ha='left')
-            sec.set_yticks([])
         elif count == 2:
-            sec = ax[count].secondary_yaxis(location='right')
             sec.set_ylabel('  (c)', fontsize=label_font, rotation='horizontal', ha='left')
-            sec.set_yticks([])
         else:
-            sec = ax[count].secondary_yaxis(location='right')
             sec.set_ylabel('  (d)', fontsize=label_font, rotation='horizontal', ha='left')
-            sec.set_yticks([])
+        sec.set_yticks([])
         count += 1
-    ax[count - 4].legend(list(dict_b.keys()), fontsize=12)
+    ax[0].legend(['exact update', 'particle filter'], loc='best', fontsize=legend_font)
     ax[count - 1].set_xlabel('t / s', fontsize=label_font)
     ax[count - 1].set_xticks([0, 1, 2, 3, 4, 5])
     ax[count - 1].set_xticklabels([0, 1, 2, 3, 4, 5], fontsize=tick_font)
@@ -117,8 +112,8 @@ if __name__ == "__main__":
     fig.savefig(os.path.join(path_to_thesis, 'belief_traj.pdf'))
 
     ################################################################################
-    tick_font = 14
-    label_font = 16
+    # tick_font = 14
+    # label_font = 16
     df_q_cols = ['01', '10']
     q_axis = 3
     t_max = 5
@@ -133,7 +128,7 @@ if __name__ == "__main__":
     ax[0].set_yticks([0, 0.5, 1])
     ax[0].set_yticklabels([0, 0.5, 1], fontsize=tick_font)
     ax[0].set_ylabel(r'$b(x_{p}$' + f';t)', fontsize=label_font)
-    ax[0].legend([r'$x_{p}$=00', r'$x_{p}$=01',r'$x_{p}$=10',r'$x_{p}$=11'], fontsize=12)
+    ax[0].legend([r'$x_{p}$=00', r'$x_{p}$=01', r'$x_{p}$=10', r'$x_{p}$=11'], fontsize=legend_font)
     sec = ax[0].secondary_yaxis(location='right')
     sec.set_ylabel('  (a)', fontsize=label_font, rotation='horizontal', ha='left')
     sec.set_yticks([])
@@ -144,7 +139,7 @@ if __name__ == "__main__":
     ax[1].set_yticks([0, 1, 2, 3])
     ax[1].set_yticklabels([0, 1, 2, 3], fontsize=tick_font)
     ax[1].set_ylabel(r'$Q_{3}(t)$', fontsize=label_font)
-    ax[1].legend([r'$q_{0}$', r'$q_{1}$'], fontsize=12)
+    ax[1].legend([r'$q_{0}$', r'$q_{1}$'], fontsize=legend_font)
     sec = ax[1].secondary_yaxis(location='right')
     sec.set_ylabel('  (b)', fontsize=label_font, rotation='horizontal', ha='left')
     sec.set_yticks([])

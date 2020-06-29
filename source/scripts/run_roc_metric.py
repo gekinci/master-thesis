@@ -161,7 +161,7 @@ if __name__ == "__main__":
     main_folder = '../_data/roc_analysis'
     config_file = '../configs/roc_analysis.yaml'
 
-    psi_set = np.load('../configs/psi_set_same_class.npy')
+    psi_set = np.load('../configs/psi_set_10.npy')
     n_classes = len(psi_set)
 
     with open(config_file, 'r') as f:
@@ -234,15 +234,16 @@ if __name__ == "__main__":
         plt.figure()
         c = 0
         plt.plot(fpr[c], tpr[c], color='darkorange',
-                 lw=2, label='ROC curve (area = %0.2f)' % roc_auc[c])
+                 lw=2, label='AUROC = %0.2f' % roc_auc[c])
         plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
-        plt.title(r'ROC curve $\psi_{0}$ vs. ' + f'all (n={n})')
+        plt.title(r'n={n}')
         plt.legend(loc="lower right")
-        plt.savefig(run_folder + f'/AUROC_{n_sample_per_class * n_classes}samples_class{c}_llh_n{n}.png')
+        plt.tight_layout()
+        plt.savefig(run_folder + f'/AUROC_{n_sample_per_class * n_classes}samples_class{c}_llh_n{n}.pdf')
         # plt.show()
 
     t1 = time.time()

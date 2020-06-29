@@ -110,7 +110,7 @@ def visualize_llh(dict_L, n_train, path_to_save):
     for m, df_L in dict_L.items():
         df_L_norm = df_L.cumsum().div((df_L.index + 1), axis=0)
         plt.figure()
-        df_L_norm.head(n_train).plot(legend=False)
+        df_L_norm.head(n_train).plot()
         plt.xlabel('Number of trajectories')
         plt.ylabel('Average log-likelihood')
         plt.tight_layout()
