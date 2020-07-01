@@ -35,7 +35,7 @@ The agent  $ X_{3} $ is modelled as inhomogenouos continuous-time Markov process
 %\begin{equation}
 %\textbf{Q}_{a_k} \sim \mathrm{Gam}(\alpha_{a_k}, \beta_{a_k})
 %\end{equation}
-The dependencies are represented by set of parents for each node $ U_{n} = Par_{\mathcal{G}}(X_n) $ and for the model shown in \cref{fig:h_model} can be written as follows:
+The dependencies are represented by set of parents for each node $ U_{n} = \mathrm{Par}_{\mathcal{G}}(X_n) $ and for the model shown in \cref{fig:h_model} can be written as follows:
 \begin{align*}
 U_{1}, U_{2} & = \emptyset \\
 U_{3} & = \left\lbrace X_1, X_2 \right\rbrace 
@@ -46,6 +46,7 @@ In order to have a compact representation of parent messages, a subsystem of S c
 \end{equation}
 
 \subsection{POMDP Model}
+\label{sec:exp_pomdp_model}
 In a conventional POMDP scenario, there are two problems to be addressed, one is belief state update and the other is policy optimization. As mentioned in \cref{sec:belief_POMDP}, in the problem at hand, the policy of agent $ X_3 $ is assumed to be optimal and given. Thus, the POMDP model of the agent only consists of belief state update. A detailed view of the agents interaction with its environment from POMDP framework perspective is given in the \cref{fig:POMDP_pers}. \\
 \begin{figure}[H]
 	\begin{center}
@@ -129,7 +130,7 @@ where $ N $ is the number of particles, $ p_i \in \textbf{p} $ is the set of par
 	\caption{Marginal particle filter for belief state update}
 	\label{alg:part_filter}
 \end{algorithm}
-In \cref{alg:part_filter}, the weight update for the particles performed on line \autoref{lst:weight_update}, based on the observation model. Given the deterministic nature of the observation model as described in \autoref{eq:det_cat_dist}, in rare cases where the observation $ y_k $ stems from an unlikely transition of parent nodes, the particles fail to simulate this transition and all of them get rejected. One possible solution to this problem would be increasing the number of particle to increase the probability of sampling unlikely transitions. However, in practice, this solution is not feasible due to computational cost. Instead, this problem is overcome by assigning uniform probabilities to the particles, effectively skipping this transition. The situation is illustrated by examples from simulation in ...... %TODO
+In \cref{alg:part_filter}, the weight update for the particles is performed on line \autoref{lst:weight_update}, based on the observation model. Given the deterministic nature of the observation model as described in \autoref{eq:det_cat_dist}, in rare cases where the observation $ y_k $ stems from an unlikely transition of parent nodes, the particles fail to simulate this transition and all of them get rejected. One possible solution to this problem would be increasing the number of particle to increase the probability of sampling unlikely transitions. However, in practice, this solution is not feasible due to computational cost. Instead, the degeneration of the particle filter is dealt with by assigning uniform probabilities to the particles, effectively ignoring the unlikely transitions. The situation is illustrated by examples from simulation in \cref{sec:simulation}.
 
 \subsubsection{Optimal Policy}
 The optimal policy is defined using a polynomial function of belief state.
@@ -149,6 +150,7 @@ a(t) &= \pi(b(t))\\
 \textbf{Q}_{3\mid a_{0}} & \quad \text{if } a(t) = a_0 \\
 \textbf{Q}_{3\mid a_{1}} & \quad \text{otherwise}
 \end{cases}
+\label{eq:Q_3_traj}
 \end{align}
 
 \section{Inference of Observation Model}
@@ -157,6 +159,7 @@ Inference problem is considered for deterministic observation models, such that 
 Consider a trajectory in the dataset, denoted by $ S^{[0,T]} = \left\lbrace X_1^{[0,T]} , X_2^{[0,T]}, X_3^{[0,T]}\right\rbrace $. The set of parameters to the system, as introduced before, is written as $  \theta = \left\lbrace  \textbf{Q}_{1}, \textbf{Q}_{2}, \textit{\textbf{Q}}_3, \pi, \psi \right\rbrace $. Given the parent trajectories, $ X_1^{[0,T]} $ and $ X_2^{[0,T]} $, the belief state and the resulting $ \textbf{Q}_3 $ trajectory is computed for each observation model. Then the likelihood of $ S^{[0,T]} $ trajectory given the parameters $ \theta $ are compared for maximum likelihood estimation.
 \begin{equation}
 \hat{\psi} = \argmax_\psi p(S^{[0,T]} \mid \theta )
+\label{eq:max_llh_est}
 \end{equation}
 
 \subsection{Likelihood Model}
@@ -184,7 +187,7 @@ p(S^{[0,T]} \mid \pi, \Phi ) = p(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \prod_{x_{1}
 \label{eq:Marg_llh_final}
 \end{split}
 \end{align}
-
+In order to avoid numerical unstability, the log-likelihood is preferred for the calculations instead of likelihood.
 \section{Data Generation}
 The dataset contains a number of trajectories drawn from CTBN \textbf{X}. Following the notation in \cref{chap:2}, K trajectories in time interval $ [0, T] $ are denoted by $ \xi_T = \left\lbrace S^{[0,T], 1}, S^{[0,T], 2}, ..., S^{[0,T], K} \right\rbrace  $, where $ S^{[0,T],k} = \left\lbrace X_1^{[0,T],k} , X_2^{[0,T],k}, X_3^{[0,T],k}\right\rbrace $ denotes a single trajectory for all nodes. Every trajectory comprises of state transitions in the interval, and the times of these transitions. 
 
