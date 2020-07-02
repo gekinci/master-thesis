@@ -1,246 +1,154 @@
+%\externaldocument[-f]{c2_foundations}
+%\externaldocument[-f]{c3_simulation_experiments}
 \chapter{Results}
+\label{chap:4}
+The experimental results are presented in this chapter. First, the parameters for the variables introduced in \cref{chap:3} are given. Then a sample of simulated trajectories are shown as an example. Finally, the inference results are presented.
 
+\section{Configurations}
+\label{sec:config}
+The configurations given below are used for the results presented in the following sections, if not specified otherwise.
+\begin{itemize}
+	\item Gamma priors for parent dynamics such that $ \textbf{Q}_{i} \sim \mathrm{Gam}(\symbf{\alpha}^i, \symbf{\beta}^i)$ for $i \in \left\lbrace 1,2\right\rbrace $, and $ \symbf{\alpha} = [\alpha_0, \alpha_1] $ and $ \symbf{\beta} = [\beta_0, \beta_1] $
+	\begin{align}
+	\symbf{\alpha}^1 = [5,10] &\quad \symbf{\beta}^1 = [5,20] \\
+	\symbf{\alpha}^2 = [10,10] &\quad \symbf{\beta}^2 = [10,5]
+	\label{eq:gamma_params}
+	\end{align}
+	\item Transition intensity matrices of $ X_1 $ and $ X_2 $ sampled from priors given above
+	\begin{align}
+	\textbf{Q}_1 &= 
+	\begin{bmatrix}
+	-1.117 & 1.117 \\
+	0.836 &  -0.836
+	\end{bmatrix} \\
+	\textbf{Q}_2 &= 
+	\begin{bmatrix}
+	-1.1 & 1.1 \\
+	2.445 &  -2.445
+	\end{bmatrix}
+	\end{align}
+	\item Length of trajectory $ T = 5sec $
+	\item State space, $ \rchi_{P} = \rchi_1 \times \rchi_2 = \left\lbrace (x_1, x_2)\right\rbrace_{x_1\in \rchi_1, x_2\in \rchi_2} = \left\lbrace (0, 0), (0, 1), (1, 0),(1, 1)\right\rbrace $
+	\item Observation space, $ \mathcal{Y} = \left\lbrace 0, 1, 2 \right\rbrace $
+	\item Action space, $ \textit{A} = \left\lbrace a_{0}, a_{1} \right\rbrace = \left\lbrace 0, 1\right\rbrace $
+	\item The set of transition intensity matrices of $ X_3 $
+	\begin{align}
+	\textbf{\textit{Q}}_3 = \left\lbrace \textbf{Q}_{3\mid a_{0}}, \textbf{Q}_{3\mid a_{1}} \right\rbrace = \left\lbrace 
+	\begin{bmatrix}
+	-0.5 & 0.5 \\
+	2 &  -2
+	\end{bmatrix}, 
+	\begin{bmatrix}
+	-3 & 3 \\
+	0.02 &  -0.02
+	\end{bmatrix} 
+	\right\rbrace 
+	\end{align}
+	\item Number of particles, $ N = 200 $
+	\item Weights of the policy introduced in \autoref{eq:policy}, $ \textbf{w} = [0.02, 0.833, 0.778, 0.87] $
+	\item Observation model
+	$\psi_{\text{true}} =
+	\begin{bmatrix}
+		1 & 0 & 0 \\
+		0 & 1 & 0 \\
+		0 & 1 & 0 \\
+		0 & 0 & 1
+	\end{bmatrix}$
+%	\item Simulation parameters $  \theta_sim = \left\lbrace  \textbf{Q}_{1}, \textbf{Q}_{2}, \textit{\textbf{Q}}_3, \textbf{w}, \psi_{\text{true}} \right\rbrace $
+\end{itemize}
+%In the following, $ \psi_{\text{true}} $ denotes the observation model which is used for data generation in the given results.
 
 \section{Simulation}
-\begin{figure}[htb]
+\label{sec:simulation}
+The synthetic dataset is generated utilising \cref{alg:sampling}. K trajectories in time interval $ [0, T] $ are denoted by $ \xi_T = \left\lbrace S^{[0,T], 1}, S^{[0,T], 2}, ..., S^{[0,T], K} \right\rbrace  $, where $ S^{[0,T],k} = \left\lbrace X_1^{[0,T],k} , X_2^{[0,T],k}, X_3^{[0,T],k}\right\rbrace $ denotes a single trajectory for all nodes. It is noteworthy that the initial states are drawn from disrete uniform distribution.
+\begin{equation}
+X_i(0) \sim \mathcal{U} \left\lbrace 0, 1\right\rbrace  \text{ for } i \in \left\lbrace 1,2,3\right\rbrace 
+\end{equation}
+\autoref{fig:parent_traj}(a)-(b) shows an example of parent trajectories. In \autoref{fig:parent_traj}(c), the resulting trajectory of the joint parent process $ X_P $ is illustrated. As mentioned in \cref{sec:exp_ctbn_model}, this joint process over the parent nodes provides a compact representation. 
+\begin{figure}[H]
 	\begin{center}
-		\includegraphics[width=.50\textwidth]{figures/traj}
-		\caption{Sampled trajectories}
-		\label{fig:traj}
+		\includegraphics[width=.90\textwidth]{figures/sim_example/parent_traj}
+		\caption{A sample of parent trajectories and observation}
+		\label{fig:parent_traj}
 	\end{center}
 \end{figure}
-\begin{figure}[htb]
+In \autoref{fig:parent_traj}(c), the states of $ X_P $ taking values in $ \rchi_P = \rchi_1 \times \rchi_2 $ is preferred to be represented as a combination of the parent states for readibility, so that $ \rchi_P = \left\lbrace 00, 01, 10, 11\right\rbrace  $, where $ x_p \in \rchi_P $ simply corresponds to $ x_1x_2,\ x_1\in \rchi_1,\  x_2\in \rchi_2 $. \autoref{fig:parent_traj}(d) shows the observation trajectory resulting from $ X_P(t) $ and the observation model $ \psi_{true} $ given in \cref{sec:config}. \\
+\autoref{fig:belief_traj} illustrates the belief state trajectory given the observations in \autoref{fig:parent_traj}(d). For the reference, the belief state update using particle filter and exact update is given together. As can be seen from the figures, the exact update is well approximated by the particle filter.
+\begin{figure}[H]
 	\begin{center}
-		\includegraphics[width=.50\textwidth]{figures/b_q_traj}
-		\caption{Belief state and $ Q_3 $ trajectories}
-		\label{fig:b_q_traj}
+		\includegraphics[width=.90\textwidth]{figures/sim_example/belief_traj}
+		\caption{Belief state trajectories corresponding to the observations given in \autoref{fig:parent_traj}(d), comparing exact update method and particle filtering}
+		\label{fig:belief_traj}
+	\end{center}
+\end{figure}
+Finally, the resulting $ Q_3 $ and the trajectory of agent are given in \autoref{fig:q_traj}. The $ Q_3 $ trajectory shown in \autoref{fig:q_traj}(b), are derived from the belief state update by particle filter which is given in \autoref{fig:q_traj}(a) using \autoref{eq:policy} and \autoref{eq:Q_3_traj}.
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=.90\textwidth]{figures/sim_example/q_traj}
+		\caption{Belief state updated by particle filter and the resulting $ Q_3 $ and $ X_3 $ trajectories}
+		\label{fig:q_traj}
+	\end{center}
+\end{figure}
+As mentioned in \cref{par:bs_partFilt}, the degeneration of the particle filter in case of an unlikely changes in observation, i.e. unanticipated transitions of parent nodes, is handled by by assigning uniform probabilities to the particles. It effectively corresponds to ignoring the rapid changes of the observation, which may cause diverging from the exact update, however, it is recovered with the next observation. \autoref{fig:deg_partFilter} provides an example of the sitution. The rapid change in question that caused particle filter method to diverge from exact update method is highlighted in \autoref{fig:deg_partFilter}(a). The particles fail to simulate this observation, and due to uniformization, the transition from 2 to 1 is ignored by the particle filter method. The divergence can be observed in \autoref{fig:deg_partFilter}(d)-(e) clearly.
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=.90\textwidth]{figures/degenerate_pf/belief_traj}
+		\caption{A sample with degenerate particle filter}
+		\label{fig:deg_partFilter}
 	\end{center}
 \end{figure}
 
-\section{Results}
-\subsection{Maximum Likelihood Estimation}
-$\psi_{true} =
-\begin{bmatrix} \vspace{-2pt}
-	1 & 0 & 0 \\  \vspace{-2pt}
-	0 & 1 & 0 \\  \vspace{-2pt}
-	0 & 1 & 0 \\  \vspace{-1pt}
-	0 & 0 & 1
-\end{bmatrix}$
-$\psi_{0} =
-\begin{bmatrix} \vspace{-2pt}
-1 & 0 & 0 \\  \vspace{-2pt}
-0 & 1 & 0 \\  \vspace{-2pt}
-0 & 1 & 0 \\  \vspace{-1pt}
-0 & 0 & 1
-\end{bmatrix}, 
-\psi_{1} =
-\begin{bmatrix} \vspace{-2pt}
-0 & 0 & 1 \\  \vspace{-2pt}
-0 & 1 & 0 \\  \vspace{-2pt}
-1 & 0 & 0 \\  \vspace{-1pt}
-0 & 0 & 1 
-\end{bmatrix},
-\psi_{2} =
-\begin{bmatrix} \vspace{-2pt}
-0 & 0 & 1 \\  \vspace{-2pt}
-1 & 0 & 0 \\  \vspace{-2pt}
-0 & 0 & 1 \\  \vspace{-1pt}
-0 & 1 & 0  
-\end{bmatrix}$
-\begin{figure}[htb]
-	\begin{subfigure}{.5\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{figures/llh_[1.0, 0.0, 0.0]}
-		\caption{}
-		\label{fig:sfig1}
-	\end{subfigure}%
-	\begin{subfigure}{.5\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{figures/test_likelihood_particleFilter_[1.0, 0.0, 0.0]}
-		\caption{}
-		\label{fig:sfig2}
-	\end{subfigure}
-	\caption{plots of....}
-	\label{fig:fig}
-\end{figure}\\
-$\psi_{true} =
-\begin{bmatrix} \vspace{-2pt}
-0.98 & 0.01 & 0.01 \\  \vspace{-2pt}
-0.01 & 0.98 & 0.01 \\  \vspace{-2pt}
-0.01 & 0.98 & 0.01 \\  \vspace{-1pt}
-0.01 & 0.01 & 0.98
-\end{bmatrix}$
-$\psi_{0} =
-\begin{bmatrix} \vspace{-2pt}
-1 & 0 & 0 \\  \vspace{-2pt}
-0 & 1 & 0 \\  \vspace{-2pt}
-0 & 1 & 0 \\  \vspace{-1pt}
-0 & 0 & 1
-\end{bmatrix}, 
-\psi_{1} =
-\begin{bmatrix} \vspace{-2pt}
-0 & 0 & 1 \\  \vspace{-2pt}
-0 & 1 & 0 \\  \vspace{-2pt}
-1 & 0 & 0 \\  \vspace{-1pt}
-0 & 0 & 1 
-\end{bmatrix},
-\psi_{2} =
-\begin{bmatrix} \vspace{-2pt}
-0 & 0 & 1 \\  \vspace{-2pt}
-1 & 0 & 0 \\  \vspace{-2pt}
-0 & 0 & 1 \\  \vspace{-1pt}
-0 & 1 & 0  
-\end{bmatrix}$
-\begin{figure}[htb]
-	\begin{subfigure}{.5\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{figures/llh_[0.98, 0.01, 0.01]}
-		\caption{}
-		\label{fig:sfig1}
-	\end{subfigure}%
-	\begin{subfigure}{.5\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{figures/test_likelihood_particleFilter_[0.98, 0.01, 0.01]}
-		\caption{}
-		\label{fig:sfig2}
-	\end{subfigure}
-	\caption{plots of....}
-	\label{fig:fig}
-\end{figure}\\
-$\psi_{true} =
-\begin{bmatrix} \vspace{-2pt}
-0.95 & 0.025 & 0.025 \\  \vspace{-2pt}
-0.025 & 0.95 & 0.025 \\  \vspace{-2pt}
-0.025 & 0.95 & 0.025 \\  \vspace{-1pt}
-0.025 & 0.025 & 0.95
-\end{bmatrix}$
-$\psi_{0} =
-\begin{bmatrix} \vspace{-2pt}
-1 & 0 & 0 \\  \vspace{-2pt}
-0 & 1 & 0 \\  \vspace{-2pt}
-0 & 1 & 0 \\  \vspace{-1pt}
-0 & 0 & 1
-\end{bmatrix}, 
-\psi_{1} =
-\begin{bmatrix} \vspace{-2pt}
-0 & 0 & 1 \\  \vspace{-2pt}
-0 & 1 & 0 \\  \vspace{-2pt}
-1 & 0 & 0 \\  \vspace{-1pt}
-0 & 0 & 1 
-\end{bmatrix},
-\psi_{2} =
-\begin{bmatrix} \vspace{-2pt}
-0 & 0 & 1 \\  \vspace{-2pt}
-1 & 0 & 0 \\  \vspace{-2pt}
-0 & 0 & 1 \\  \vspace{-1pt}
-0 & 1 & 0  
-\end{bmatrix}$
-\begin{figure}[htb]
-	\begin{subfigure}{.5\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{figures/llh_particleFilter_[0.95, 0.025, 0.025]}
-		\caption{}
-		\label{fig:sfig1}
-	\end{subfigure}%
-	\begin{subfigure}{.5\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{figures/test_likelihood_particleFilter_[0.95, 0.025, 0.025]}
-		\caption{}
-		\label{fig:sfig2}
-	\end{subfigure}
-	\caption{plots of....}
-	\label{fig:fig}
-\end{figure}\\
-$\psi_{true} =
-\begin{bmatrix} \vspace{-2pt}
-0.9 & 0.05 & 0.05 \\  \vspace{-2pt}
-0.05 & 0.9 & 0.05 \\  \vspace{-2pt}
-0.05 & 0.9 & 0.05 \\  \vspace{-1pt}
-0.05 & 0.05 & 0.9
-\end{bmatrix}$
-$\psi_{0} =
-\begin{bmatrix} \vspace{-2pt}
-1 & 0 & 0 \\  \vspace{-2pt}
-0 & 1 & 0 \\  \vspace{-2pt}
-0 & 1 & 0 \\  \vspace{-1pt}
-0 & 0 & 1
-\end{bmatrix}, 
-\psi_{1} =
-\begin{bmatrix} \vspace{-2pt}
-0 & 0 & 1 \\  \vspace{-2pt}
-0 & 1 & 0 \\  \vspace{-2pt}
-1 & 0 & 0 \\  \vspace{-1pt}
-0 & 0 & 1 
-\end{bmatrix},
-\psi_{2} =
-\begin{bmatrix} \vspace{-2pt}
-0 & 0 & 1 \\  \vspace{-2pt}
-1 & 0 & 0 \\  \vspace{-2pt}
-0 & 0 & 1 \\  \vspace{-1pt}
-0 & 1 & 0  
-\end{bmatrix}$
-\begin{figure}[htb]
-	\begin{subfigure}{.5\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{figures/llh_particleFilter_van}
-		\caption{}
-		\label{fig:sfig1}
-	\end{subfigure}%
-	\begin{subfigure}{.5\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{figures/test_likelihood_particleFilter_van}
-		\caption{}
-		\label{fig:sfig2}
-	\end{subfigure}
-	\caption{plots of....}
-	\label{fig:fig}
-\end{figure}
-
-\subsection{Maximum Likelihood Classification}
-\begin{figure}[htb]
-	\begin{subfigure}{.33\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{figures/AUROC_600samples_class0_llh_n1}
-		\caption{}
-		\label{fig:sfig1}
-	\end{subfigure}%
-	\begin{subfigure}{.33\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{figures/AUROC_600samples_class0_llh_n2}
-		\caption{}
-		\label{fig:sfig2}
-	\end{subfigure}
-	\begin{subfigure}{.33\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{figures/AUROC_600samples_class0_llh_n5}
-		\caption{}
-		\label{fig:sfig2}
-	\end{subfigure}\\
-	\begin{subfigure}{.33\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{figures/AUROC_600samples_class0_llh_n10}
-		\caption{}
-		\label{fig:sfig1}
-	\end{subfigure}%
-	\begin{subfigure}{.33\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{figures/AUROC_600samples_class0_llh_n25}
-		\caption{}
-		\label{fig:sfig2}
-	\end{subfigure}
-	\begin{subfigure}{.33\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{figures/AUROC_600samples_class0_llh_n100}
-		\caption{}
-		\label{fig:sfig2}
-	\end{subfigure}\\
-	\caption{plots of....}
-	\label{fig:fig}
-\end{figure}
-\begin{figure}[htb]
+\section{Inference of Observation Model}
+The problem of inferring the observation model is considered as a classification problem. As a measure of the performance of the classifier, Area under the Reciever-Operator-Characteristic curve (AUROC) is utilised. 
+\subsection{Equivalence Classes}
+\label{sec:eq_classes}
+As mentioned in \cref{sec:inf_setup}, the deterministic nature of the observation model results in a number of possible observation models. The setting described in \cref{chap:3} with configurations given in \cref{sec:config} leads to 81 obsevation models. However, with this experimental setup and the methods, it is only possible to distinguish these observation models into 10 different classes. Due to this equivalence, the inference problem is considered only for 10 observation models, each one representing one class. The reasons of this phenomena are discussed in detail in \cref{ap:eq_classes}, together with the observation models considered in the inference problem. The set of observation model that can be classified is denoted as $ \symbf{\psi} $ in the following. \\
+\autoref{fig:llh_exactUpdate_81model} illustrates the equivalence of observation models clearly. The plot depicts the results of an experiment with 200 samples, $ |\xi_T| = 200 $, and the average log-likelihood of samples computed for all possible observation models. Here, the belief state is updated using exact method as described in \cref{par:bs_exact}, in order to depict the exact equivalence within one class. As can be seen, the results show the separation of the set of observation models into 10 distinct classes. The legend is removed to avoid clutter.\\
+In order to show the validity of the equivalence in the case of particle filter, the average log-likelihoods of 200 samples given two observation models in the same class are illustrated in \autoref{fig:llh_particleFIilter_same_class}. The samples are generated with $ \psi_1 $. As can be seen from the graph, the observation models lead to so similar results to each other that they are assumed to be identical. 
+\begin{figure}[H]
 	\begin{center}
-		\includegraphics[width=.9\textwidth]{figures/all_particlefilter}
-		\caption{plot of...}
-		\label{fig:traj}
+		\includegraphics[width=.65\textwidth]{figures/equivalence_classes/llh_exactUpdate_81model}
+		\caption{Average log-likelihood $ \log p(S^{[0,T]} \mid \theta) $ over samples generated using exact belief state update, depicting the equivalence classes in the set of observation models}
+		\label{fig:llh_exactUpdate_81model}
 	\end{center}
 \end{figure}
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=.65\textwidth]{figures/equivalence_classes/llh_particleFilter_same_class}
+		\caption{Average log-likelihood $ \log p(S^{[0,T]} \mid \theta) $ over samples generated using particle filtering, where $ \psi_1 $ and $ \psi_2 $ belongs in the same class}
+		\label{fig:llh_particleFIilter_same_class}
+	\end{center}
+\end{figure} 
+\subsection{Learning Observation Model}
+\autoref{fig:llh_exact} illustrates the average log-likelihood over 200 samples given the observation models. The samples are generated with $ \psi_{true} = \psi_0 $ given in \cref{sec:config}, and exact update method is utilised for belief state update. As can be seen, the curves converge quicly and the true model is well separated from others. Consequently, the maximum likelihood estimation by \autoref{eq:max_llh_est} leads to the correct result.
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=.65\textwidth]{figures/roc_exactUpdate/llh_exactUpdate_psi_0}
+		\caption{Average log-likelihood $ \log p(S^{[0,T]} \mid \theta) $ with $ \psi_i \in \symbf{\psi} $ over samples generated using exact belief state update}
+		\label{fig:llh_exact}
+	\end{center}
+\end{figure} %TODO over runs with deviation and mean
+A similar experiment is documented in \autoref{fig:llh_particle}, where exact update method is replaced by particle filtering. $ \psi_0 $ denotes the observation model that has generated the dataset, and it is correctly estimated as the true model. The jump around 50 trajectories can be explained by an encounter with a highly likely parent trajectories.
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=.65\textwidth]{figures/roc_particleFilter/llh_particleFilter_psi_0}
+		\caption{Average log-likelihood $ \log p(S^{[0,T]} \mid \theta) $ with $ \psi_i \in \symbf{\psi} $ over samples generated using particle filtering}
+		\label{fig:llh_particle}
+	\end{center}
+\end{figure} %TODO over runs with deviation and mean
+The classifier is provided with increasing number of samples for inference, and AUROC plots are given in ........ for the simulations with exact update and in ...... for the simulations employing particle filter. As expected given the unbiased classifier, the metric approaches to 1 as the number of samples increases. %TODO
+%\begin{figure}[htb]
+%	\begin{center}
+%		\includegraphics[width=.9\textwidth]{figures/all_particlefilter}
+%		\caption{plot of...}
+%		\label{fig:traj_}
+%	\end{center}
+%\end{figure}
+%
+%\begin{figure}[htb]
+%	\begin{center}
+%		\includegraphics[width=.9\textwidth]{figures/all_particlefilter}
+%		\caption{plot of...}
+%		\label{fig:traj_}
+%	\end{center}
+%\end{figure}

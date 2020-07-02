@@ -16,6 +16,7 @@ class ParticleFilterUpdate:
         self.obs_llh = obs_llh
         self.S = S
         self.O = O
+        self.prev_obs = None
 
         self.Q_gamma_params = Q_params
         self.sampling_ctbn = CTBNSimulation(cfg)
@@ -80,7 +81,10 @@ class ParticleFilterUpdate:
         obs_ind = self.O.index(obs)
         state_ind = [self.S.index(p.iloc[-1]['state']) for p in new_p]
         new_w = np.array([self.obs_llh[ind][obs_ind] for ind in state_ind])
-        new_w /= new_w.sum()
+        if new_w.sum() == 0:
+            new_w = np.tile(1 / self.n_particle, self.n_particle)
+        else:
+            new_w /= new_w.sum()
         return new_w
 
     def resample_particles(self):
@@ -108,19 +112,8 @@ class ParticleFilterUpdate:
         self.df_belief.sort_index(inplace=True)
 
     def update(self, obs, t):
-        UPDATE = True
-        counter = 0
-        while UPDATE:
-            new_particles = self.propagate_particles(t)
-            new_weights = self.update_weights(obs, new_particles) if obs is not None else np.zeros(self.n_particle)
-            if np.isnan(np.sum(new_weights)):
-                # counter += 1
-                # print('ALL REJECTED!! NO PARTICLE LEFT!! ', counter)
-                # UPDATE = True
-                UPDATE = False
-                new_weights = np.tile(1 / self.n_particle, self.n_particle)
-            else:
-                UPDATE = False
+        new_particles = self.propagate_particles(t)
+        new_weights = self.update_weights(obs, new_particles) if obs is not None else np.zeros(self.n_particle)
 
         self.particles = new_particles
         self.weights = new_weights
@@ -131,6 +124,7 @@ class ParticleFilterUpdate:
         if obs is not None:
             self.resample_particles()
             self.particles = [p.tail(1).reset_index(drop=True) for p in self.particles]
+            self.prev_obs = obs
 
 
 class ExactUpdate:

@@ -9,9 +9,9 @@ from utils.constants import *
 from utils.helpers import *
 from inference.sampling import *
 
-import seaborn as sns
-
-sns.set()
+# import seaborn as sns
+#
+# sns.set()
 from joblib import Parallel, delayed
 import matplotlib.pyplot as plt
 import logging

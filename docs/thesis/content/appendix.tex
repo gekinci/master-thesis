@@ -1,20 +1,51 @@
+%\externaldocument[-f]{c2_foundations}
 \appendix
 
-\chapter{Amalgamation}
+\chapter{Amalgamation Operation}
 \label{ap:amalgamation}
-The amalgamation operation for two independent processes are derived as follows:
-\begin{multline}
-	\operatorname{Pr}(X_1(t+h) = x_1', X_2(t+h) = x_2 \mid X_1(t) = x_1, X_2(t) = x_2) \\
-	\begin{split}
-	&= \operatorname{Pr}(X_1(t+h) = x_1' \mid X_1(t) = x_1, X_2(t) = x_2) \operatorname{Pr}( X_2(t+h) = x_2 \mid X_1(t) = x_1, X_2(t+h) = x_2) \\
-	& = (\delta_{x_1', x_1} + hq^1_{x_1, x_1^\prime} + o(h))(1 + hq^2_{x_2, x_2} + o(h))\\
-	& = \delta_{x_1', x_1} + hq^1_{x_1, x_1^\prime} + h\delta_{x_1', x_1}q^2_{x_2, x_2} + o(h)
-	\end{split}
+A CTBN with multiple variables can be represented with a single CIM. This is done by amalgamation operation. Amalgamation defines a combining operation over multiple CIMs and produces a single CIM for the entire system. \cite{Nodelman1995}
+
+\section{Amalgamation of Independent Processes}
+Consider a CTBN with graph $ \mathcal{G} = \left\lbrace \mathcal{V}, \mathcal{E} \right\rbrace $ over two variables such that $ \mathcal{V} = \left\lbrace X_1, X_2\right\rbrace $. Assume variables $ X_1 $ and $ X_2 $ with intensity matrices $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, are both parent nodes, i.e. $ \mathcal{E} = \emptyset $ and $ Par_{\mathcal{G}}(X_1) = Par_{\mathcal{G}}(X_1) = \emptyset $. This CTBN can be identified as a subsytem of the CTBN model described in \cref{sec:exp_ctbn_model}. \\
+Analogous to \autoref{eq:Markov_trans_func}, Markov transition function for the joint process can be derived as
+\begin{align}
+	\operatorname{Pr}(X_P(t+h) = x_p^\prime\mid X_P(t) = x_p)
+	&=  \operatorname{Pr}(X_1(t+h) = x_1^\prime, X_2(t+h) = x_2 \mid X_1(t) = x_1, X_2(t) = x_2)\nonumber \\
+	&= \operatorname{Pr}(X_1(t+h) = x_1^\prime \mid X_1(t) = x_1, X_2(t) = x_2) \nonumber\\
+	& \quad \quad \quad \operatorname{Pr}( X_2(t+h) = x_2 \mid X_1(t) = x_1, X_2(t+h) = x_2) \nonumber\\
+	& = (\delta_{x_1^\prime, x_1} + hq^1_{x_1, x_1^\prime} + o(h))(1 + hq^2_{x_2, x_2} + o(h))\nonumber\\
+	& = \delta_{x_1^\prime, x_1} + hq^1_{x_1, x_1^\prime} + h\delta_{x_1^\prime, x_1}q^2_{x_2, x_2} + o(h)
 	\label{eq:amalg}
-\end{multline}
-
-
-
+\end{align}
+where $ x_1, x_1^\prime \in \rchi_1 $, $ x_2, x_2^\prime \in \rchi_2 $, $ x_p = (x_1, x_2), x_p^\prime = (x_1^\prime, x_2) \in \rchi_P $.\\
+Suppose the intensity matrices of $ X_1 $ and $ X_2 $ are in the form
+\begin{equation}
+\textbf{Q}_i = 
+\begin{bmatrix}
+-q^{i}_{0} & q^{i}_{0} \\
+q^{i}_{1} & -q^{i}_{1}
+\end{bmatrix} \quad \text{for } i \in \left\lbrace 1,2\right\rbrace 
+\end{equation}
+Then the intensity matrix for the joint process $ X_P $ with factorising state space $ \rchi_P = \rchi_1 \times \rchi_2 $ can be written as
+\begin{equation}
+\textbf{Q}_P = 
+\begin{bmatrix}
+-q^{2}_{0}-q^{1}_{0} & q^{2}_{0} & q^{1}_{0} & 0 \\
+q^{2}_{1} & -q^{2}_{1}-q^{1}_{0} & 0 & q^{1}_{0} \\
+q^{1}_{1} & 0 & -q^{1}_{1}-q^{2}_{0} & q^{2}_{0} \\
+0 & q^{1}_{1} & q^{2}_{1} & -q^{1}_{1}-q^{2}_{1}
+\end{bmatrix} \quad \text{for } i \in \left\lbrace 1,2\right\rbrace 
+\label{eq:amalgamated_q}
+\end{equation}
+As it can be observed from \autoref{eq:amalgamated_q}, the transition intensities which corresponds to state transition in both variables, i.e. anti-diagonal entries, are zero, due to the one of the assumptions in CTBN framework that only one variable can transition at a time, as given in \cref{sec:ctbn_intro}.
+%x1 = Q1[0][1]
+%x2 = Q1[1][0]
+%y1 = Q2[0][1]
+%y2 = Q2[1][0]
+%[[0, y1, x1, .0],
+%[y2, 0, .0, x1],
+%[x2, .0, 0, y1],
+%[.0, x2, y2, 0]])
 \chapter{Marginalized Likelihood Function for Homogenous Continuous Time Markov Processes}
 \label{ap:marg_llh_ctmp}
 
@@ -44,3 +75,299 @@ In \autoref{eq:wolfram_line}, the integral is solved using computer algebra syst
 \label{eq:integral}
 \end{align}
 
+\chapter{Equivalence Classes of Observation Models}
+\label{ap:eq_classes}
+The equivalence classes are inherent to the problem setting and caused by two reasons. In this chapter, these reasons are explained and illustrated.
+\section*{Identical Effect on Belief State}
+\label{ap:eq_classes_same_belief}
+Some observation models fall into the same class due to their exact same effect on the belief state. An example of this situation is illustrated below. In order to show the exact equivalence, the simulations are performed belief state update using exact update method as described in \cref{par:bs_exact}. Consider the problem of calculating the likelihood of one sample $ S^{[0,T]} $ given two observation models, $ \psi_1 $ and $ \psi_2 $ given below. Given a sample of parent trajectories shown in \autoref{fig:same_belief_parents}, it is obvious that these two observation models lead to different observation trajectories as shown in \autoref{fig:same_belief_psi_0}(a) and \autoref{fig:same_belief_psi_29}(a). Nonetheless, using \autoref{eq:bs_exact}, the resulting belief state is exactly the same. This leads to the exact same trajectories for $ Q_3 $ and the likelohood of the sample given these two observation models, $ p(S^{[0,T]} \mid \psi_1 ) $ and $ p(S^{[0,T]} \mid \psi_2 ) $ end up exactly same. %TODO
+
+\begin{align}
+\psi_{1} =
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix} &\quad
+p(S^{[0,T]} \mid \psi_1 ) = -83.334 \label{eq:psi_1_0}\\
+\psi_{2} =
+\begin{bmatrix}
+0 & 1 & 0 \\
+1 & 0 & 0 \\
+1 & 0 & 0 \\
+0 & 0 & 1
+\end{bmatrix} &\quad
+p(S^{[0,T]} \mid \psi_2 ) = -83.334
+\label{eq:psi_29}
+\end{align}
+%array([[0., 1., 0.],
+%[1., 0., 0.],
+%[1., 0., 0.],
+%[0., 0., 1.]])
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=.90\textwidth]{figures/equivalence_classes/same_belief/parent_traj}
+		\caption{A sample of parent trajectories}
+		\label{fig:same_belief_parents}
+	\end{center}
+\end{figure}
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=.90\textwidth]{figures/equivalence_classes/same_belief/psi_0}
+		\caption{Observation, belief state and $ \textbf{Q}_3 $ trajectories derived by $ \psi_1 $ in \autoref{eq:psi_1_0} corresponding to parent trajectories in \autoref{fig:same_belief_parents}}
+		\label{fig:same_belief_psi_0}
+	\end{center}
+\end{figure}
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=.90\textwidth]{figures/equivalence_classes/same_belief/psi_29}
+		\caption{Observation, belief state and $ \textbf{Q}_3 $ trajectories derived by $ \psi_2 $ in \autoref{eq:psi_29} corresponding to parent trajectories in \autoref{fig:same_belief_parents}}
+		\label{fig:same_belief_psi_29}
+	\end{center}
+\end{figure}
+
+
+\section*{Combination of Belief State and Policy}
+\label{ap:eq_classes_same_behaviour}
+For some observation model, the reason of equivalence is that even though the belief state are different, the policy $ \pi(b) $ leads to same trajectory for $ Q_3 $. This case is exemplified below where the simulations are performed belief state update using exact update method as described in \cref{par:bs_exact}. Consider the problem of calculating the likelihood of one sample $ S^{[0,T]} $ given two observation models, $ \psi_1 $ and $ \psi_2 $ given below. Given a sample of parent trajectories shown in \autoref{fig:same_behaviour_parents}, these observation models lead to different observation trajectories as shown in \autoref{fig:same_behaviour_psi_0}(a) and \autoref{fig:same_behaviour_psi_16}(a), which results in different belief state trajectories given in \autoref{fig:same_behaviour_psi_0}(b) and \autoref{fig:same_behaviour_psi_16}(b). However, the policy leads to the exact same trajectories for $ Q_3 $ and the likelihood of the sample given these two observation models, $ p(S^{[0,T]} \mid \psi_1 ) $ and $ p(S^{[0,T]} \mid \psi_2 ) $ end up exactly same.
+\begin{align}
+\psi_{1} =
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix} &\quad
+p(S^{[0,T]} \mid \psi_1 ) = -80.648 \label{eq:psi_1_1}\\
+\psi_{2} =
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1 \\
+0 & 1 & 0
+\end{bmatrix} &\quad
+p(S^{[0,T]} \mid \psi_2 ) = -80.648
+\label{eq:psi_16}
+\end{align}
+%array([[1., 0., 0.],
+%[0., 1., 0.],
+%[0., 0., 1.],
+%[0., 1., 0.]])
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=.90\textwidth]{figures/equivalence_classes/same_behaviour/parent_traj}
+		\caption{A sample of parent trajectories}
+		\label{fig:same_behaviour_parents}
+	\end{center}
+\end{figure}
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=.90\textwidth]{figures/equivalence_classes/same_behaviour/psi_0}
+		\caption{Observation, belief state and $ \textbf{Q}_3 $ trajectories derived by $ \psi_1 $ in \autoref{eq:psi_1_1} corresponding to parent trajectories in \autoref{fig:same_behaviour_parents}}
+		\label{fig:same_behaviour_psi_0}
+	\end{center}
+\end{figure}
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=.90\textwidth]{figures/equivalence_classes/same_behaviour/psi_16}
+		\caption{Observation, belief state and $ \textbf{Q}_3 $ trajectories derived by $ \psi_2 $ in \autoref{eq:psi_16} corresponding to parent trajectories in \autoref{fig:same_behaviour_parents}}
+		\label{fig:same_behaviour_psi_16}
+	\end{center}
+\end{figure}
+
+\section{Observation Models in Experiments}
+\label{ap:obs_set_exp}
+As mentioned in \cref{sec:eq_classes}, the inference problem is reduced to maximum likelihood estimation between 10 classes. One observation model is picked as as representative of each classes and considered for the inference problem. These observation models are given below. This set of observation models are referred to as $ \symbf{\psi} $.
+\begin{align}
+\psi_{\text{true}} = \psi_{0} &=
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+%[[1., 0., 0.],
+%[1., 0., 0.],
+%[1., 0., 0.],
+%[0., 0., 1.]],
+\psi_{1} =
+\begin{bmatrix}
+1 & 0 & 0 \\
+1 & 0 & 0 \\
+1 & 0 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+%[[0., 1., 0.],
+%[0., 1., 0.],
+%[1., 0., 0.],
+%[0., 1., 0.]],
+\psi_{2} =
+\begin{bmatrix}
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+1 & 0 & 0 \\
+0 & 1 & 0
+\end{bmatrix}
+%[[0., 1., 0.],
+%[0., 1., 0.],
+%[1., 0., 0.],
+%[1., 0., 0.]],
+\psi_{3} =
+\begin{bmatrix}
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+1 & 0 & 0 \\
+1 & 0 & 0
+\end{bmatrix}
+%[[0., 1., 0.],
+%[0., 1., 0.],
+%[1., 0., 0.],
+%[0., 0., 1.]],
+\psi_{4} =
+\begin{bmatrix}
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+1 & 0 & 0 \\
+0 & 0 & 1
+\end{bmatrix} \nonumber\\
+%[[0., 1., 0.],
+%[1., 0., 0.],
+%[0., 1., 0.],
+%[0., 1., 0.]],
+\psi_{5} &=
+\begin{bmatrix}
+0 & 1 & 0 \\
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 1 & 0
+\end{bmatrix}
+%[[0., 1., 0.],
+%[1., 0., 0.],
+%[0., 1., 0.],
+%[1., 0., 0.]],
+\psi_{6} =
+\begin{bmatrix}
+0 & 1 & 0 \\
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+1 & 0 & 0
+\end{bmatrix}
+%[[0., 1., 0.],
+%[1., 0., 0.],
+%[0., 1., 0.],
+%[0., 0., 1.]],
+\psi_{7} =
+\begin{bmatrix}
+0 & 1 & 0 \\
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+%[[0., 1., 0.],
+%[1., 0., 0.],
+%[1., 0., 0.],
+%[0., 1., 0.]],
+\psi_{8} =
+\begin{bmatrix}
+0 & 1 & 0 \\
+1 & 0 & 0 \\
+1 & 0 & 0 \\
+0 & 1 & 0
+\end{bmatrix}
+%[[0., 1., 0.],
+%[1., 0., 0.],
+%[0., 0., 1.],
+%[0., 1., 0.]]]
+\psi_{9} =
+\begin{bmatrix}
+0 & 1 & 0 \\
+1 & 0 & 0 \\
+0 & 0 & 1 \\
+0 & 1 & 0
+\end{bmatrix}
+\end{align}
+
+
+\chapter{Additional Results}
+\begin{figure}[htb]
+	\begin{subfigure}{.33\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{figures/roc_exactUpdate/AUROC_2000samples_class0_llh_n1}
+		\caption{}
+		\label{fig:roc_exact_n1}
+	\end{subfigure}%
+	\begin{subfigure}{.33\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{figures/roc_exactUpdate/AUROC_2000samples_class0_llh_n2}
+		\caption{}
+		\label{fig:roc_exact_n2}
+	\end{subfigure}
+	\begin{subfigure}{.33\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{figures/roc_exactUpdate/AUROC_2000samples_class0_llh_n5}
+		\caption{}
+		\label{fig:roc_exact_n5}
+	\end{subfigure}\\
+	\begin{subfigure}{.33\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{figures/roc_exactUpdate/AUROC_2000samples_class0_llh_n10}
+		\caption{}
+		\label{fig:roc_exact_n10}
+	\end{subfigure}%
+	\begin{subfigure}{.33\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{figures/roc_exactUpdate/AUROC_2000samples_class0_llh_n25}
+		\caption{}
+		\label{fig:roc_exact_n25}
+	\end{subfigure}
+	\begin{subfigure}{.33\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{figures/roc_exactUpdate/AUROC_2000samples_class0_llh_n100}
+		\caption{}
+		\label{fig:roc_exact_n100}
+	\end{subfigure}
+	\caption{ROC curves with n number of trajectories for dataset generated using exact belief state update}
+	\label{fig:roc_exact}
+\end{figure}
+
+\begin{figure}[htb]
+	\begin{subfigure}{.33\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{figures/roc_particleFilter/AUROC_2000samples_class0_llh_n1}
+		\caption{}
+		\label{fig:roc_part_n1}
+	\end{subfigure}%
+	\begin{subfigure}{.33\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{figures/roc_particleFilter/AUROC_2000samples_class0_llh_n2}
+		\caption{}
+		\label{fig:roc_part_n2}
+	\end{subfigure}
+	\begin{subfigure}{.33\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{figures/roc_particleFilter/AUROC_2000samples_class0_llh_n5}
+		\caption{}
+		\label{fig:roc_part_n5}
+	\end{subfigure}\\
+	\begin{subfigure}{.33\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{figures/roc_particleFilter/AUROC_2000samples_class0_llh_n10}
+		\caption{}
+		\label{fig:roc_part_n10}
+	\end{subfigure}%
+	\begin{subfigure}{.33\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{figures/roc_particleFilter/AUROC_2000samples_class0_llh_n25}
+		\caption{}
+		\label{fig:roc_part_n25}
+	\end{subfigure}
+	\begin{subfigure}{.33\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{figures/roc_particleFilter/AUROC_2000samples_class0_llh_n100}
+		\caption{}
+		\label{fig:roc_part_n100}
+	\end{subfigure}
+	\caption{ROC curves with n number of trajectories for dataset generated using particle filtering}
+	\label{fig:roc_part}
+\end{figure}

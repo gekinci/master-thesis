@@ -39,10 +39,10 @@ marginalize: True
 
 time_increment: 0.01
 t_max: 5 # default  20
-n_train: 200
+n_train: 500
 n_test: 0
 
-n_obs_model: 3
+n_obs_model: 10
 
 seed: 0
 import_data: False

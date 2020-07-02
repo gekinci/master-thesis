@@ -36,7 +36,7 @@ def get_env_trajectory(env, max_time=10):
 def train_given_trajectory(init_b, b_jump=0.01, max_time=5, import_env=None, folder='../_data/'):
     env = CellEnvironment(folder=folder)
 
-    df_b_grid = generate_belief_grid(b_jump, path_to_save='./')
+    df_b_grid = generate_belief_grid(b_jump, cols=['b1', 'b2', 'b3', 'b4'], path_to_save='./')
 
     if import_env is None:
         env_traj = get_env_trajectory(env, max_time=max_time)
@@ -96,5 +96,5 @@ if __name__ == "__main__":
     max_time = 5
     b_jump = 0.03
 
-    train_given_trajectory(initial_b, b_jump=b_jump, import_env='1581945386',
+    train_given_trajectory(initial_b, b_jump=b_jump,
                            max_time=max_time, folder=folder)
