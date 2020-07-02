@@ -228,13 +228,19 @@ V_{p}(s) &=R(s, a(p))+\gamma \cdot(\text { Expected value of the future }) \labe
 &=R(s, a(p))+\gamma \sum_{s^{\prime} \in \mathcal{S}} T\left(s, a(p), s^{\prime}\right) \sum_{o_{i} \in \Omega} O\left(s^{\prime}, a(p), o_{i}\right) V_{o_{i}(p)}\left(s^{\prime}\right) 
 \label{eq:value_of_tree}
 \end{align}
-As mentioned before, the agent is never certain about the state of the world. Therefore, the value of a policy must be calculated with respect to the agent's belief state rather than the state´, taking its uncertainty into account.
+As mentioned before, the agent is never certain about the state of the world. Therefore, the value of a policy tree starting from a belief state $ b $ is calculated as the expected value over the states.
 \begin{equation}
 V_{p}(b)=\sum_{s \in \mathcal{S}} b(s) V_{p}(s)
+\label{eq:value_p_b}
 \end{equation}
+\autoref{eq:value_p_b} gives the value of a policy tree starting from belief state $ b $. The optimal policy, then, is chosen as the one which has the maximum value and the optimal t-step value starting from belief state $ b $ is executing the best policy tree for that belief state.
 \begin{equation}
 V_{t}(b)=\max _{p \in \mathcal{P}} V_p(b)
 \end{equation}
+where $ \mathcal{P} $ denotes a finite set of policy trees.
+It should be noted that e policy tree p induces a value function VP that is linear in b, and V, is the upper surface of this collection of functions.
+So, Vt is piecewise-linear and
+convex. Fig.
 Infinite-horizon discounted model consider the value function over infinitely long trajectory of the agent. In POMDP problem, the infinite horizon discounted value function is still convex. \cite{White1980}, but it may not always be piecewise linear. However, it can be approximated by finite horizon value function for sufficiently many steps. \cite{Sawaki1978, Edward2019}\\
 %This model is more realistic and convenient than finite horizon as usually the number of steps to take is not defined. This models convergence is ensured by discount factor $ \gamma $ \\
 In the problem considered in this thesis, the agent node $ X_{3} $ cannot observe the incoming messages directly, rather a summary of them. This presents a POMDP problem. However, since the optimal policy of the agent is assumed to be given, in the following, the main focus in the POMDP framework is belief state estimation. \\
