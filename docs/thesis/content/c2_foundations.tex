@@ -6,7 +6,7 @@ This chapter presents the theory applied in this thesis. First, the details of t
 \section{Problem Formulation}
 \label{sec:prob_formulation}
 
-\begin{wrapfigure}{r}{3.5cm}
+\begin{wrapfigure}{r}{5cm}
 	\begin{center}
 		\includegraphics[width=3.5cm]{figures/simple_graph}
 		\caption{Communication model.}
@@ -206,15 +206,43 @@ It should be noted that a CTBN can also be represented by a single conditional i
 \section{Partially Observable Markov Decision Processes}
 \label{sec:belief_POMDP}
 Partially observable Markov decision process (POMDP) framework provides a model of an agent which interacts with its environment but is unable to obtain certain information about its state. Instead, the agent gets an observation which is a function of the true state, e.g. noisy observations, translation. The main goal, similar to Markov decision processes (MDPs), is to learn a policy solving a task by optimizing a reward function. \\
-The problem of decision making under uncertainty can be considered in two parts for the agent. The first is to keep a belief state which summarizes past experiences, and the second is to optimize a policy which will give an action based on the belief state. \cite{KAELBLING199899,Murphy2000}\\
-The belief state, if represented as a probability distribution over states, provides a summary over the agent's past experiences, and allows the agent to account for its uncertainty for its decisions. \\
-The policy of a POMDP agent lead to optimal behavior as a function of the agent's belief state. Since the belief state is a probability distribution with continous values, POMDP can be considered as continuous space belief MDP. \cite{KAELBLING199899}\\
-In the problem considered in this thesis, the agent node $ X_{3} $ cannot observe the incoming messages directly, rather a summary of them. This presents a POMDP problem. However, since the optimal policy of the agent is assumed to be given, the main focus in the POMDP framework is belief state update. \\
+The problem of decision making under uncertainty can be considered in two parts for the agent. The first is to keep a belief state which summarizes past experiences, and the second is to optimize a policy $ \pi $ which will give an action based on the belief state. \cite{KAELBLING199899,Murphy2000}\\
+Consider a POMDP represented as a tuple $ (S, A, T, R, \Omega, O) $, where $ S $ is a countable set of states of the world, $ A $ is a set of actions, $ T: S \times A \rightarrow \varPi(S) $ is the state-transition function, $ R: S\times A \rightarrow \mathbb{R} $ is reward function, $ \Omega $ is set of observations and $ O:S\times A \rightarrow \varPi(\Omega)$ is the observation function. Transition function $ T $ gives probability distribution over states, given a state and action, such that $ T(s, a, s^\prime) = \operatorname{Pr}(s^\prime \mid s, a) $. Observation function $ O $ gives probability distribution over observations given a state and action, such that $ O(s^\prime, a, o) = \operatorname{Pr}(o \mid s^\prime, a) $. Reward function $ R $ gives the expected immediate reward for each action and state $ R(s,a) $.\\
+The belief state, if represented as a probability distribution over states, provides a summary over the agent's past experiences, and allows the agent to account for its uncertainty for its decisions. The policy of a POMDP agent lead to optimal behavior as a function of the agent's belief state. %Since the belief state is a probability distribution with continuous values, POMDP can be considered as continuous space belief MDP. \\
+The expected amount of future rewards upon executing a policy is defined as \textit{value function}, and used to evaluate a given policy. $ V_\pi(s) $ denotes the expected sum of reward obtained by following policy $ \pi $, starting from state $ s $.\\
+Finite-horizon model represents a problem where the agent has \textit{t} steps to take, that is given the current state of the world, the agent will make an observation and make a decision \textit{t} times. In this model, it is more likely that agent has a nonstationary policy, a policy which is a sequence of policies indexed by time. That corresponds to a behaviour at the last step to be different than the behaviour when the agent has many steps ahead. Consider the famous and well-studied tiger problem as an example. In this problem, the agent is in front of two doors, one of which has a tiger behind, the other has a reward. The agent has three actions to choose from, it can open the left door or the right door, or it can listen to obtain information. If the agent has only one step to take, then even though it is not completely certain about
+\begin{wrapfigure}{r}{0.5\textwidth}
+	\begin{center}
+		\includegraphics[width=1\linewidth]{figures/policy_tree}
+		\caption{A policy tree of depth t representing t-step nontationary policy. Source: \cite{KAELBLING199899}}
+		\label{fig:policy_tree}
+	\end{center}
+	\vspace{-55pt}
+\end{wrapfigure} 
+the location of the tiger, it might go for opening the door. However, when it has two steps left, it might be wiser to listen and obtain more information about the state of the world.\\
+A nonstationary t-step policy can be represented as a \textit{policy tree} shown in \autoref{fig:policy_tree}. The policy tree describes the optimal behaviour for t steps conditioned on the observation. The top node shows the first action to be taken, then depending on the observation, a different branch followed until the end of the steps. \\
+The value of a nonstationary t-step tree is given in \autoref{eq:value_func_1}-\autoref{eq:value_of_tree}, where $ s $ is starting state, $ a(p) $ is the first action at the top of the tree, $ s^\prime $ is the next state, and $ o_{i}(p) $ is the (t-1)-step policy that has been choosen after taking the action $ a(p) $ and getting observation $ o_i $. $ \gamma $ is the \textit{discount factor}, such that $ 0\leq \gamma \leq 1 $, used to regulate the contribution of the future rewards to value function. \cite{Sutton2018}
+\begin{align} 
+V_{p}(s) &=R(s, a(p))+\gamma \cdot(\text { Expected value of the future }) \label{eq:value_func_1}\\
+&=R(s, a(p))+\gamma \sum_{s^{\prime} \in \mathcal{S}} \operatorname{Pr}\left(s^{\prime} \mid s, a(p)\right) \sum_{o_{i} \in \Omega} \operatorname{Pr}\left(o_{i} \mid s^{\prime}, a(p)\right) V_{o_{i}(p)}\left(s^{\prime}\right) \label{eq:value_func_2}\\
+&=R(s, a(p))+\gamma \sum_{s^{\prime} \in \mathcal{S}} T\left(s, a(p), s^{\prime}\right) \sum_{o_{i} \in \Omega} O\left(s^{\prime}, a(p), o_{i}\right) V_{o_{i}(p)}\left(s^{\prime}\right) 
+\label{eq:value_of_tree}
+\end{align}
+As mentioned before, the agent is never certain about the state of the world. Therefore, the value of a policy must be calculated with respect to the agent's belief state rather than the state´, taking its uncertainty into account.
+\begin{equation}
+V_{p}(b)=\sum_{s \in \mathcal{S}} b(s) V_{p}(s)
+\end{equation}
+\begin{equation}
+V_{t}(b)=\max _{p \in \mathcal{P}} V_p(b)
+\end{equation}
+Infinite-horizon discounted model consider the value function over infinitely long trajectory of the agent. In POMDP problem, the infinite horizon discounted value function is still convex. \cite{White1980}, but it may not always be piecewise linear. However, it can be approximated by finite horizon value function for sufficiently many steps. \cite{Sawaki1978, Edward2019}\\
+%This model is more realistic and convenient than finite horizon as usually the number of steps to take is not defined. This models convergence is ensured by discount factor $ \gamma $ \\
+In the problem considered in this thesis, the agent node $ X_{3} $ cannot observe the incoming messages directly, rather a summary of them. This presents a POMDP problem. However, since the optimal policy of the agent is assumed to be given, in the following, the main focus in the POMDP framework is belief state estimation. \\
 In the following, update methods for belief state are introduced, where belief state refers to the posterior probability distribution over the environment states.
 
 \subsection{Exact Belief State Update}
 \label{sec:exact_update}
-Consider a POMDP problem, with discrete state space \textit{S}, action space \textit{A}, observation space $ \Omega $. In a scenario where a compact representation of the \textit{transition model}, $ T(s, a, s^{\prime})$,  and \textit{observation model}, $ O(s^{\prime}, a, o) $, is available, the belief state update can be obtained as \cite{KAELBLING199899}:
+In a scenario where a compact representation of the \textit{transition model}, $ T(s, a, s^{\prime})$,  and \textit{observation model}, $ O(s^{\prime}, a, o) $, are available, the belief state update can be obtained as \cite{KAELBLING199899}:
 \begin{align}
 b^{\prime}\left(s^{\prime}\right) &=\operatorname{Pr}\left(s^{\prime} \mid o, a, b\right) \label{eq:bu1}\\
 &=\frac{\operatorname{Pr}\left(o \mid s^{\prime}, a, b\right) \operatorname{Pr}\left(s^{\prime} \mid a, b\right)}{\operatorname{Pr}(o \mid a, b)} \label{eq:bu2}\\
