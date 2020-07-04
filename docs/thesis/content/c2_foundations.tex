@@ -1,7 +1,7 @@
 \chapter{Foundations}
 \label{chap:2}
 
-This chapter presents the theory applied in this thesis. First, the details of the communication problem is described briefly to put the theory into perspective, and then the mathematical theory of the frameworks used to model this problem is introduced. 
+This chapter presents the theory applied in this thesis. First, the details of the communication problem are described briefly to put the theory into perspective, and then the mathematical theory of the frameworks used to model this problem is introduced. 
 
 \section{Problem Formulation}
 \label{sec:prob_formulation}
@@ -33,66 +33,66 @@ A continuous-time Bayesian network (CTBN) is a graphical model with graph $\math
 \begin{figure}[H] 
 	\centering
 	\resizebox{.8\textwidth}{!}{
-	\begin{subfigure}{.33\textwidth}
-		\centering
-		\resizebox{.25\textwidth}{!}{
-			\begin{tikzpicture}
-			\tikzstyle{var} = [draw, circle, minimum size=.5cm]
-			\tikzstyle{arrow} = [-latex, line width=0.5pt]
-
-			\node [var] (x1) {$X_1$};
-			\node [var, below=0.7cm of x1] (x2) {$X_2$};
-			\node [below=0.1cm of x2] (t) {};
-			
-			\draw [arrow] (x1) to (x2);
-			\end{tikzpicture}
-		}
-		\caption{}
-	\end{subfigure}
-	\begin{subfigure}{.66\textwidth}
-		\centering
-		\resizebox{.90\textwidth}{!}{
-			\begin{tikzpicture}
-			\tikzstyle{var} = [draw, circle, minimum size=.5cm]
-			\tikzstyle{arrow} = [-latex, line width=0.5pt]
-			
-			\node [var] (x1) {};
-			\node [left=0.3cm of x1] (x1_l) {$ X_1 $};
-			\node [var, right=1cm of x1] (x1_h) {};
-			\node [var, right=1cm of x1_h] (x1_2h) {};
-			\node [var, right=1cm of x1_2h] (x1_3h) {};
-			\node [right=1cm of x1_3h] (x1_4h) {...};
-			
-			\node [var, below=1cm of x1] (x2) {};
-			\node [left=0.3cm of x2] (x2_l) {$ X_2 $};
-			\node [below=0.1cm of x2] (t) {$ t $};
-			\node [var, right=1cm of x2] (x2_h) {};
-			\node [below=0.1cm of x2_h] (t+h) {$ t+h $};
-			\node [var, right=1cm of x2_h] (x2_2h) {};
-			\node [below=0.1cm of x2_2h] (t+2h) {$ t+2h $};
-			\node [var, right=1cm of x2_2h] (x2_3h) {};
-			\node [below=0.1cm of x2_3h] (t+3h) {$ t+3h $};
-			\node [right=1cm of x2_3h] (x2_4h) {...};
-
-			\draw [arrow] (x1) to (x2_h);
-			\draw [arrow] (x1_h) to (x2_2h);
-			\draw [arrow] (x1_2h) to (x2_3h);
-			\draw [arrow] (x1_3h) to (x2_4h);
-
-			\draw [arrow] (x1) to (x1_h);
-			\draw [arrow] (x1_h) to (x1_2h);
-			\draw [arrow] (x1_2h) to (x1_3h);
-			\draw [arrow] (x1_3h) to (x1_4h);
-			
-			\draw [arrow] (x2) to (x2_h);
-			\draw [arrow] (x2_h) to (x2_2h);
-			\draw [arrow] (x2_2h) to (x2_3h);
-			\draw [arrow] (x2_3h) to (x2_4h);
-			
-			\end{tikzpicture}
-		}
-		\caption{}
-	\end{subfigure}
+		\begin{subfigure}{.33\textwidth}
+			\centering
+			\resizebox{.25\textwidth}{!}{
+				\begin{tikzpicture}
+				\tikzstyle{var} = [draw, circle, minimum size=.5cm]
+				\tikzstyle{arrow} = [-latex, line width=0.5pt]
+				
+				\node [var] (x1) {$X_1$};
+				\node [var, below=0.7cm of x1] (x2) {$X_2$};
+				\node [below=0.1cm of x2] (t) {};
+				
+				\draw [arrow] (x1) to (x2);
+				\end{tikzpicture}
+			}
+			\caption{}
+		\end{subfigure}
+		\begin{subfigure}{.66\textwidth}
+			\centering
+			\resizebox{.90\textwidth}{!}{
+				\begin{tikzpicture}
+				\tikzstyle{var} = [draw, circle, minimum size=.5cm]
+				\tikzstyle{arrow} = [-latex, line width=0.5pt]
+				
+				\node [var] (x1) {};
+				\node [left=0.3cm of x1] (x1_l) {$ X_1 $};
+				\node [var, right=1cm of x1] (x1_h) {};
+				\node [var, right=1cm of x1_h] (x1_2h) {};
+				\node [var, right=1cm of x1_2h] (x1_3h) {};
+				\node [right=1cm of x1_3h] (x1_4h) {...};
+				
+				\node [var, below=1cm of x1] (x2) {};
+				\node [left=0.3cm of x2] (x2_l) {$ X_2 $};
+				\node [below=0.1cm of x2] (t) {$ t $};
+				\node [var, right=1cm of x2] (x2_h) {};
+				\node [below=0.1cm of x2_h] (t+h) {$ t+h $};
+				\node [var, right=1cm of x2_h] (x2_2h) {};
+				\node [below=0.1cm of x2_2h] (t+2h) {$ t+2h $};
+				\node [var, right=1cm of x2_2h] (x2_3h) {};
+				\node [below=0.1cm of x2_3h] (t+3h) {$ t+3h $};
+				\node [right=1cm of x2_3h] (x2_4h) {...};
+				
+				\draw [arrow] (x1) to (x2_h);
+				\draw [arrow] (x1_h) to (x2_2h);
+				\draw [arrow] (x1_2h) to (x2_3h);
+				\draw [arrow] (x1_3h) to (x2_4h);
+				
+				\draw [arrow] (x1) to (x1_h);
+				\draw [arrow] (x1_h) to (x1_2h);
+				\draw [arrow] (x1_2h) to (x1_3h);
+				\draw [arrow] (x1_3h) to (x1_4h);
+				
+				\draw [arrow] (x2) to (x2_h);
+				\draw [arrow] (x2_h) to (x2_2h);
+				\draw [arrow] (x2_2h) to (x2_3h);
+				\draw [arrow] (x2_3h) to (x2_4h);
+				
+				\end{tikzpicture}
+			}
+			\caption{}
+		\end{subfigure}
 	}
 	\caption[Two component CTBN]{Two component CTBN. (a) Network representation (b) CTBN in (a) unrolled in time as $ h\rightarrow 0 $}
 	\label{fig:ctbn_visuals}
@@ -102,18 +102,18 @@ A continuous-time Bayesian network (CTBN) is a graphical model with graph $\math
 A continuous-time Markov process (CTMP) is a continuous-time stochastic process which satisfies Markov property, namely, the probability distribution over the states at a later time is conditionally independent of the past states given the current state.\cite{Cohn2010a} \\
 Consider a CTMP X(t) over a single variable with a countable state space $ \rchi $. Then the Markov property can be written as
 \begin{equation}
-	\operatorname{Pr}\left(X(t_{k})=x_{t_{k}} \mid X(t_{k-1})=x_{t_{k-1}}, \ldots, X(t_{0})=x_{t_{0}}\right)=\operatorname{Pr}\left(X(t_{k})=x_{t_{k}} \mid X(t_{k-1})=x_{t_{k-1}}\right)
+\operatorname{Pr}\left(X(t_{k})=x_{t_{k}} \mid X(t_{k-1})=x_{t_{k-1}}, \ldots, X(t_{0})=x_{t_{0}}\right)=\operatorname{Pr}\left(X(t_{k})=x_{t_{k}} \mid X(t_{k-1})=x_{t_{k-1}}\right)
 \end{equation}
 where X(t) denotes the state of the variable at time $ t $ such that $ X(t)=x_t \in \rchi, t \geq 0$, and $ t_0<t_1<...<t_k $.\\
 A CTMP is represented by its transition intensity matrix, $ \textbf{Q} : \rchi \times \rchi \rightarrow \mathbb{R}$. In this matrix, the intensity $ q_{i} $ represents the instantaneous probability of leaving state $ x_{i} $ and $ q_{i,j} $ represents the instantaneous probability of switching from state $ x_{i} $ to $ x_{j} $, where $ x_i, x_j \in \rchi $. 
 \begin{equation}
-	\textbf{Q} = 
-	\begin{bmatrix}
-	-q_{1} & q_{1,2} & 	{\hdots}  & q_{1,n} \\
-	q_{2,1} & -q_{2} & 	{\hdots}  & q_{2,n}  \\
-	{\vdots}  & 	{\vdots}  & 	{\ddots}  & {\hdots}  \\
-	q_{n,1} &  q_{n,2} &  {\hdots} & -q_{n}
-	\end{bmatrix}
+\textbf{Q} = 
+\begin{bmatrix}
+-q_{1} & q_{1,2} &     {\hdots}  & q_{1,n} \\
+q_{2,1} & -q_{2} &     {\hdots}  & q_{2,n}  \\
+{\vdots}  &     {\vdots}  &     {\ddots}  & {\hdots}  \\
+q_{n,1} &  q_{n,2} &  {\hdots} & -q_{n}
+\end{bmatrix}
 \label{eq:Q_matrix}
 \end{equation}
 where $ q_{i} = \sum_{i \neq j} q_{i,j}$.\cite{Nodelman1995}
@@ -127,16 +127,16 @@ p_{i,j}(h)=\delta_{ij}+q_{i,j} h+o(h)
 where $ p_{i, j}(h) \equiv \operatorname{Pr}(X(t+h)=x_j\mid X(t)=x_i) $ are Markov transition functions, $ \delta_{i,j} = \delta(x_i,x_j)$ is Kronecker delta and $ o(\cdot) $ is a function decaying to zero faster than its argument such that $ \lim_{h \to 0} \frac{o(h)}{h} = 0 $.\\
 The \textit{Chapman-Kolmogorov-} or \textit{master-equation} is then derived as follows:
 \begin{align}
-	p_{j}(t) &= \operatorname{Pr}(X(t) = x_{j}) \nonumber\\
-		& =\sum_{\forall i} p_{i, j}(h) p_{i}(t-h) \nonumber \\
-	\lim_{h\rightarrow 0} p_{j}(t) 
-		& = \lim_{h\rightarrow 0} \sum_{\forall i} \left[ \delta_{ij}+q_{i,j} h+o(h)\right]  p_{i}(t-h) \nonumber \\ 
-		& = \lim_{h\rightarrow 0} p_{j}(t-h) + \lim_{h\rightarrow 0} h \sum_{\forall i} q_{i,j} p_{i}(t-h) \nonumber \\
-	\lim_{h\rightarrow 0} \frac{p_{j}(t) - p_{j}(t-h)}{h} 
-		&= \lim_{h\rightarrow 0} \sum_{\forall i} q_{i,j} p_{i}(t-h) \nonumber\\
-	\frac{d}{dt} p_{j}(t) & = \sum_{\forall i} q_{i,j} p_{i}(t)
-%		& = \sum_{\forall i \neq j}\left[  q_{i,j} p_{i}(t) - q_{j,i} p_{j}(t) \right]\nonumber
-	\label{eq:master_equation}
+p_{j}(t) &= \operatorname{Pr}(X(t) = x_{j}) \nonumber\\
+& =\sum_{\forall i} p_{i, j}(h) p_{i}(t-h) \nonumber \\
+\lim_{h\rightarrow 0} p_{j}(t) 
+& = \lim_{h\rightarrow 0} \sum_{\forall i} \left[ \delta_{ij}+q_{i,j} h+o(h)\right]  p_{i}(t-h) \nonumber \\ 
+& = \lim_{h\rightarrow 0} p_{j}(t-h) + \lim_{h\rightarrow 0} h \sum_{\forall i} q_{i,j} p_{i}(t-h) \nonumber \\
+\lim_{h\rightarrow 0} \frac{p_{j}(t) - p_{j}(t-h)}{h} 
+&= \lim_{h\rightarrow 0} \sum_{\forall i} q_{i,j} p_{i}(t-h) \nonumber\\
+\frac{d}{dt} p_{j}(t) & = \sum_{\forall i} q_{i,j} p_{i}(t)
+%        & = \sum_{\forall i \neq j}\left[  q_{i,j} p_{i}(t) - q_{j,i} p_{j}(t) \right]\nonumber
+\label{eq:master_equation}
 \end{align}
 Equation \ref{eq:master_equation} can be written in matrix form:
 \begin{equation}
@@ -192,7 +192,7 @@ p(X^{[0,T]}  \mid \textbf{Q}_{X\given U}) &=  \left(\prod_{ u}\prod_{ i} q_{i\mi
 with the sufficient statistics introduced in \cref{sec:llh_of_homo} are also conditioned on parent nodes.
 
 \subsection{The CTBN Model}
-Evidently, a homogenouos CTMP can be considered as a conditional MP whose set of parents is empty. Thus, a CTBN can be formed as a set of conditional Markov processes.\\
+Evidently, a homogeneous CTMP can be considered as a conditional MP whose set of parents is empty. Thus, a CTBN can be formed as a set of conditional Markov processes.\\
 Let S be a CTBN with graph $ \mathcal{G} = (\mathcal{V}, \mathcal{E}) $ local variables $ \mathcal{V} = \left\lbrace X_1, X_2, ..., X_N\right\rbrace  $, each with a state space $ \rchi_n $. This results in a factorizing state space for S such that $ \mathcal{S} = 
 \rchi_1 \times \rchi_2\times ...\times \rchi_N $. The joint states of the variables are denoted by $ s = (x_1, x_2, ..., x_N) \in \mathcal{S}$ where $ x_1 \in \rchi_1, ..., x_N \in \rchi_N $. The dependencies of each variable are defined as a set of its parents $ U_n = \mathrm{Par}_{\mathcal{G}}(X_n) $ with values $ U_n(t) = u_n $ such that $ u_n \in \mathcal{U}_n = ⨉_{X_m \in \mathrm{Par}_{\mathcal{G}(X_n)}} \rchi_m $. In the following, the set of all conditional transition intensity matrices are denoted as $ \textbf{\textit{Q}} = \left\lbrace Q_{X_1 \given U_1}, ..., Q_{X_N \given U_N}\right\rbrace  $.\\
 Consider a trajectory drawn from S, such that $ S^{[0, T]} = \left\lbrace X_1^{[0,T]},  X_2^{[0,T]}, ...,  X_N^{[0,T]}\right\rbrace  $. Following \autoref{eq:lh_traj_cond}, the likelihood of this trajectory can be written as follows.
@@ -208,13 +208,13 @@ It should be noted that a CTBN can also be represented by a single conditional i
 Partially observable Markov decision process (POMDP) framework provides a model of an agent which interacts with its environment but is unable to obtain certain information about its state. Instead, the agent gets an observation which is a function of the true state, e.g. noisy observations, translation. The main goal, similar to Markov decision processes (MDPs), is to learn a policy solving a task by optimizing a reward function. \\
 The problem of decision making under uncertainty can be considered in two parts for the agent. The first is to keep a belief state which summarizes past experiences, and the second is to optimize a policy $ \pi $ which will give an action based on the belief state. \cite{KAELBLING199899,Murphy2000}\\
 Consider a POMDP represented as a tuple $ (S, A, T, R, \Omega, O) $, where $ S $ is a countable set of states of the world, $ A $ is a set of actions, $ T: S \times A \rightarrow \varPi(S) $ is the state-transition function, $ R: S\times A \rightarrow \mathbb{R} $ is reward function, $ \Omega $ is set of observations and $ O:S\times A \rightarrow \varPi(\Omega)$ is the observation function. Transition function $ T $ gives probability distribution over states, given a state and action, such that $ T(s, a, s^\prime) = \operatorname{Pr}(s^\prime \mid s, a) $. Observation function $ O $ gives probability distribution over observations given a state and action, such that $ O(s^\prime, a, o) = \operatorname{Pr}(o \mid s^\prime, a) $. Reward function $ R $ gives the expected immediate reward for each action and state $ R(s,a) $.\\
-The belief state, if represented as a probability distribution over states, provides a summary over the agent's past experiences, and allows the agent to account for its uncertainty for its decisions. The policy of a POMDP agent lead to optimal behavior as a function of the agent's belief state. %Since the belief state is a probability distribution with continuous values, POMDP can be considered as continuous space belief MDP. \\
-The expected amount of future rewards upon executing a policy is defined as \textit{value function}, and used to evaluate a given policy. $ V_\pi(s) $ denotes the expected sum of reward obtained by following policy $ \pi $, starting from state $ s $.\\
-Finite-horizon model represents a problem where the agent has \textit{t} steps to take, that is given the current state of the world, the agent will make an observation and make a decision \textit{t} times. In this model, it is more likely that agent has a nonstationary policy, a policy which is a sequence of policies indexed by time. That corresponds to a behaviour at the last step to be different than the behaviour when the agent has many steps ahead. Consider the famous and well-studied tiger problem as an example. In this problem, the agent is in front of two doors, one of which has a tiger behind, the other has a reward. The agent has three actions to choose from, it can open the left door or the right door, or it can listen to obtain information. If the agent has only one step to take, then even though it is not completely certain about
+The belief state, if represented as a probability distribution over states, provides a summary over the agent's past experiences, and allows the agent to account for its uncertainty for its decisions. The policy of a POMDP agent leads to optimal behaviour as a function of the agent's belief state. %Since the belief state is a probability distribution with continuous values, POMDP can be considered as continuous space belief MDP. \\
+The expected amount of future rewards upon executing a policy is defined as \textit{value function} and used to evaluate a given policy. $ V_\pi(s) $ denotes the expected sum of reward obtained by following policy $ \pi $, starting from state $ s $.\\
+Finite-horizon model represents a problem where the agent has \textit{t} steps to take, that is given the current state of the world, the agent will make an observation and make a decision \textit{t} times. In this model, it is more likely that the agent has a nonstationary policy, a policy which is a sequence of policies indexed by time. That corresponds to a behaviour at the last step to be different from the behaviour when the agent has many steps ahead. Consider the famous and well-studied tiger problem as an example. In this problem, the agent is in front of two doors, one of which has a tiger behind, the other has a reward. The agent has three actions to choose from, it can open the left door or the right door, or it can listen to obtain information. If the agent has only one step to take, then even though it is not completely certain about
 \begin{wrapfigure}{r}{0.5\textwidth}
 	\begin{center}
 		\includegraphics[width=1\linewidth]{figures/policy_tree}
-		\caption{A policy tree of depth t representing t-step nontationary policy. Source: \cite{KAELBLING199899}}
+		\caption{A policy tree of depth t representing t-step nonstationary policy. Source: \cite{KAELBLING199899}}
 		\label{fig:policy_tree}
 	\end{center}
 	\vspace{-55pt}
@@ -228,7 +228,8 @@ V_{p}(s) &=R(s, a(p))+\gamma \cdot(\text { Expected value of the future }) \labe
 &=R(s, a(p))+\gamma \sum_{s^{\prime} \in \mathcal{S}} T\left(s, a(p), s^{\prime}\right) \sum_{o_{i} \in \Omega} O\left(s^{\prime}, a(p), o_{i}\right) V_{o_{i}(p)}\left(s^{\prime}\right) 
 \label{eq:value_of_tree}
 \end{align}
-As mentioned before, the agent is never certain about the state of the world. Therefore, the value of a policy tree starting from a belief state $ b $ is calculated as the expected value over the states.
+The value of a policy tree $ p $ starting from state $ s $ has two components, as can be seen in \autoref{eq:value_func_1}. The first component is the immediate reward, that is, the reward that the agent will get for taking action $ a(p) $ while at state $ s $. The second component is the expected future reward, discounted by $ \gamma $. This value is computed first by taking the expectation over next possible states $ s^\prime \in \mathcal{S} $, and their values. The value of a state depends on the observation agent gets, which will determine the (t-1)-step policy to be executed. Therefore, a second expectation is performed over the observations. \\
+As mentioned before, the agent is never certain about the state of the world. Therefore, the relevant value function is that of a policy tree starting from a belief state $ b $, and  calculated as the expected value over the states.
 \begin{equation}
 V_{p}(b)=\sum_{s \in \mathcal{S}} b(s) V_{p}(s)
 \label{eq:value_p_b}
@@ -236,14 +237,13 @@ V_{p}(b)=\sum_{s \in \mathcal{S}} b(s) V_{p}(s)
 \autoref{eq:value_p_b} gives the value of a policy tree starting from belief state $ b $. The optimal policy, then, is chosen as the one which has the maximum value and the optimal t-step value starting from belief state $ b $ is executing the best policy tree for that belief state.
 \begin{equation}
 V_{t}(b)=\max _{p \in \mathcal{P}} V_p(b)
+\label{eq:value_t}
 \end{equation}
 where $ \mathcal{P} $ denotes a finite set of policy trees.
-It should be noted that the value function of every policy tree $ V_p $ is liner in b.  V, is the upper surface of this collection of functions.
-So, Vt is piecewise-linear and
-convex. Fig.
-Infinite-horizon discounted model consider the value function over infinitely long trajectory of the agent. In POMDP problem, the infinite horizon discounted value function is still convex. \cite{White1980}, but it may not always be piecewise linear. However, it can be approximated by finite horizon value function for sufficiently many steps. \cite{Sawaki1978, Edward2019}\\
-%This model is more realistic and convenient than finite horizon as usually the number of steps to take is not defined. This models convergence is ensured by discount factor $ \gamma $ \\
-In the problem considered in this thesis, the agent node $ X_{3} $ cannot observe the incoming messages directly, rather a summary of them. This presents a POMDP problem. However, since the optimal policy of the agent is assumed to be given, in the following, the main focus in the POMDP framework is belief state estimation. \\
+It is noteworthy that the value function of every policy tree $ V_p $ is linear in b. As can be seen from \autoref{eq:value_t}, $ V_t $ is defined as the maximum of all $ V_p $ over the interval of b. It is the envelope of these value functions; therefore, it is piecewise-linear and convex.\\
+Infinite-horizon discounted model consider the value function over an infinitely long trajectory of the agent. In a POMDP problem, the infinite horizon discounted value function is still convex. \cite{White1980}, but it may not always be piecewise-linear. However, it can be approximated by a finite horizon value function for sufficiently many steps. \cite{Sawaki1978, Edward2019}\\
+%This model is more realistic and convenient than the finite horizon since usually the number of steps to take is not defined. This models convergence is ensured by a discount factor $ \gamma $ \\
+In the problem considered in this thesis, the agent node $ X_{3} $ cannot observe the incoming messages directly, rather a summary of them. This setting presents a POMDP problem. However, since the optimal policy of the agent is assumed to be given, in the following, the main focus in the POMDP framework is belief state estimation. \\
 In the following, update methods for belief state are introduced, where belief state refers to the posterior probability distribution over the environment states.
 
 \subsection{Exact Belief State Update}
@@ -268,11 +268,11 @@ Equation \ref{eq:discrete_belief_update} is discrete-time solution of belief sta
 \textit{Filtering problem} in statistical context, as opposed to deterministic digital filtering, refers to the inference of the conditional probability of the true state of the system at some point in time, given the history of observations. \cite{Godsill2019}\\
 Let X be a CTMP with transition intensity matrix \textbf{Q}. Assume discrete-time observations denoted by $ y_{1}=y(t_{1}), ..., y_{N}=y(t_{N}) $. The belief state can be written as:
 \begin{equation}
-	b(x_{i};t_{N}) = \operatorname{Pr}(X(t_{N}) = x_{i} \mid y_{1}, ..., y_{N})
+b(x_{i};t_{N}) = \operatorname{Pr}(X(t_{N}) = x_{i} \mid y_{1}, ..., y_{N})
 \end{equation}
 From the master equation given in \autoref{eq:master_equation}, it follows that:
 \begin{equation}
- \frac{d}{dt} b(x_{j};t)  = \sum_{\forall i} q_{i,j} \cdot b(x_{i};t)
+\frac{d}{dt} b(x_{j};t)  = \sum_{\forall i} q_{i,j} \cdot b(x_{i};t)
 \end{equation}
 The time-dependent belief state $ b(t) $ is a row vector with $ \left\lbrace b(x_{i};t)\right\rbrace_{x_{i} \in \rchi}  $.
 This posterior probability can be described by a system of ODEs:
@@ -302,8 +302,8 @@ Particle filtering is one of the most commonly used Sequential Monte Carlo (SMC)
 The key idea in particle filtering is to approximate a target distribution $ p(x) $ by a set of samples, i.e. particles, drawn from that distribution. This is achieved by sequentially updating the particles through two steps. The first step is \textit{importance sampling}. Since the target distribution is not available, the particles are generated from a \textit{proposal distribution} $ q(x) $ and weighted according to the difference between target and proposal distributions. The second step is to resample the particles using these weights with replacement.\cite{Godsill2019} \\
 Consider a problem to calculate the expectation $ \hat{f(x)} = \mathbb{E} \left[ f(x)\right] = \int f(x) p(x)dx $, and suppose p(x) is an intractable density function from which the particles cannot be sampled. Instead they are drawn from a proposal distribution q(x), which yields an empirical approximation such that
 \begin{align*}
-	x^{(i)} & \sim q(x) \\
-	q(x) & \approx \frac{1}{N} \sum_{i=1}^{N} \delta_{x^{(i)}}(x)
+x^{(i)} & \sim q(x) \\
+q(x) & \approx \frac{1}{N} \sum_{i=1}^{N} \delta_{x^{(i)}}(x)
 \end{align*}
 where $ \delta_{x^{(i)}}(x) $ is Dirac delta. The expectation in question can be written as
 \begin{align*}
@@ -316,14 +316,12 @@ In this application, the particles to represent the belief state are drawn from 
 \subsubsection{Marginalized Continuous-Time Markov Processes}
 Let S be a CTBN with local variables $ X_n $, $ n\in \left\lbrace 1,...,N \right\rbrace $, and set of conditional intensity matrices \textbf{\textit{Q}}. In the following, it is assumed that every non-diagonal entry in $ \textbf{Q}_{n\mid u} $ is Gamma distributed with shape and rate parameters, $ \alpha^n_{i,j\mid u} $ and $ \beta^n_{i,j\mid u} $.\\
 The marginal process description of S considering a single trajectory in the interval $ [0,t) $ is given as follows:
-\begin{multline}
-\operatorname{Pr}(X_n(t + h) = x_j \mid X_n(t)=x_i, U_n(t)=u, S^{[0, t)})\\
-\begin{split}
+\begin{align}
+\operatorname{Pr}(X_n(t &+ h) = x_j \mid X_n(t)=x_i, U_n(t)=u, S^{[0, t)})\\
 &= \int \operatorname{Pr}(X_n(t + h) = x_j \mid X_n(t)=x_i, U_n(t)=u, Q_{n\mid u}, S^{[0, t)})p(Q_{n\mid u})dQ_{n\mid u}\\
 &= \delta_{i,j} + \mathbb{E}[q^n_{i,j\mid u} \mid S^{[0, t]} = s^{[0, t]}]\ h + o(h),
-\end{split}
 \label{eq:marginal_CTBN}
-\end{multline}
+\end{align}
 By integrating out the intensity matrix $ Q_{n\mid u} $, the parameter is replaced by its expected value given the history of the process. It should be noted that by doing so, the process becomes parameter-free, and thus self-exciting. \\
 The derivation of the conditional expectation for marginal CTBN follows from the Bayes' rule:
 \begin{equation}
@@ -339,11 +337,11 @@ p\left(\textbf{Q} \mid S^{[0,t]}\right)=\frac{p\left(S^{[0,t]} \mid \textbf{Q}\r
 where the joint sufficient statistics of $ X_n $ over all K trajectories are denoted by  $ T_{n}[x_i\mid u] = \sum_{k=1}^{K} T_{n}^k[x_i\mid u] $ and $ M_{n}[x_i, x_j\mid u] =\sum_{k=1}^{K} M_{n}^k[x_i, x_j\mid u]$.\\
 Given independent Gamma-priors on transition intensities, the expectation in \autoref{eq:marginal_CTBN} can be evaluated as follows:
 \begin{equation}
-	\mathbb{E}\left[q_{i,j\mid u}^{n} \mid \xi_{t}\right]=\frac{\alpha^n_{i,j\mid u}+M_{n}[x_i, x_j\mid u]}{\beta^n_{i,j\mid u}+T_{n}[x_i \mid u]}
-	\label{eq:estimated_Q}
+\mathbb{E}\left[q_{i,j\mid u}^{n} \mid \xi_{t}\right]=\frac{\alpha^n_{i,j\mid u}+M_{n}[x_i, x_j\mid u]}{\beta^n_{i,j\mid u}+T_{n}[x_i \mid u]}
+\label{eq:estimated_Q}
 \end{equation}
 
-%TODO: when is this parameter updated? explain. write about the dependency problem, how is this okay?
+%TODO: when is this parameter updated? Explain. Write about the dependency problem; how is this okay?
 
 \section{Sampling Algorithms}
 \label{sec:sampling_alg}
@@ -374,7 +372,7 @@ This algorithm can also be applied to sample \textit{events} from a CTBN given t
 \end{algorithm}
 
 \subsection{Thinning Algorithm}
-Thinning algorithm is a method introduced to simulate nonhomogenous Poisson processes. \cite{Lewis1979} Later, it is adapted to sample from Hawkes processes, a self-exciting process with time-dependent intensity function. \cite{Ogaata1981, Rizoiu2017} This algorithm is used here to simulate inhomogeneous Markov process.
+Thinning algorithm is a method introduced to simulate nonhomogenous Poisson processes. \cite{Lewis1979} Later, it is adapted to sample from Hawkes processes, a self-exciting process with time-dependent intensity function. \cite{Ogaata1981, Rizoiu2017} This algorithm is used here to simulate the inhomogeneous Markov process.
 
 \begin{algorithm}[H]
 	\SetKwInOut{KwIn}{Input}

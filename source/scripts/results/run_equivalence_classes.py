@@ -24,7 +24,7 @@ def get_state(row):
 
 def run_all_data():
     path_to_data = '/home/gizem/DATA/equivalence_classes/'
-    folder_name = "ROC_6MODEL_particleFilter_SAMECLASS"
+    folder_name = "ROC_5MODEL_particleFilter_200samples_class0"
     obs_model = 'psi_3'
     path_to_exp = os.path.join(os.path.join(path_to_data, folder_name), obs_model)
     path_to_thesis = '../../docs/thesis/figures/equivalence_classes'
@@ -33,7 +33,6 @@ def run_all_data():
     phi_set = np.load('../configs/psi_set_81.npy')
 
     df_L = pd.read_csv(path_to_exp + '/llh_particleFilter.csv', index_col=0)
-    df_L = df_L[[r'$\psi_3$', r'$\psi_4$']]
     # df_L = pd.read_csv(path_to_exp + '/llh_exactUpdate.csv', index_col=0)
     dict_L = {PART_FILT: df_L}
     visualize_llh(dict_L, 200, path_to_save=path_to_thesis)

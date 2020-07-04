@@ -188,8 +188,13 @@ p(S^{[0,T]} \mid \pi, \Phi ) = p(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \prod_{x_{1}
 \end{split}
 \end{align}
 In order to avoid numerical unstability, the log-likelihood is preferred for the calculations instead of likelihood.
+\subsection{Inference under Noisy Observation Model}
+%In order to test the robustness of the inference, we added Gaussian noise drawn from $ \mathcal{N}(0, \sigma) $ to the categorical variables of the observation model $ \psi $. By doing so, we model a noisy channel behaviour, where the observation might differ from the 
+%one which would result by the true observation model. 
+%
+
 \section{Data Generation}
-The dataset contains a number of trajectories drawn from CTBN \textbf{X}. Following the notation in \cref{chap:2}, K trajectories in time interval $ [0, T] $ are denoted by $ \xi_T = \left\lbrace S^{[0,T], 1}, S^{[0,T], 2}, ..., S^{[0,T], K} \right\rbrace  $, where $ S^{[0,T],k} = \left\lbrace X_1^{[0,T],k} , X_2^{[0,T],k}, X_3^{[0,T],k}\right\rbrace $ denotes a single trajectory for all nodes. Every trajectory comprises of state transitions in the interval, and the times of these transitions. 
+The dataset contains a number of trajectories drawn from CTBN S. Following the notation in \cref{chap:2}, K trajectories in time interval $ [0, T] $ are denoted by $ \xi_T = \left\lbrace S^{[0,T], 1}, S^{[0,T], 2}, ..., S^{[0,T], K} \right\rbrace  $, where $ S^{[0,T],k} = \left\lbrace X_1^{[0,T],k} , X_2^{[0,T],k}, X_3^{[0,T],k}\right\rbrace $ denotes a single trajectory for all nodes. Every trajectory comprises of state transitions in the interval, and the times of these transitions. 
 
 \subsection{Sampling Algorithm}
 In order to sample trajectories from CTBN, two sampling algortihms introduced in \cref{sec:sampling_alg} are combined. Gillespie algorithm is used to sample from the parent nodes, $ X_1 $ and $ X_2 $, while thinning algorithm is applied to overcome the challenges that come with conditional intensity matrix of the agent, $ X_3 $. It should be noted that \cref{alg:generative_ctbn} is applicable to any nodes in a CTBN, both homogenous and conditional MPs. However, since in this setting, the intensity matrix is conditioned on the belief state and the policy, instead of directly on the parent states, a more general algorithm suitable for inhomogenous MPs, thinning algorithm, is preferred. \cref{alg:sampling} describes the procedure to draw samples using particle filtering. 
