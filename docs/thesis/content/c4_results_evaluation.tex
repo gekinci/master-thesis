@@ -68,7 +68,7 @@ X_i(0) \sim \mathcal{U} \left\lbrace 0, 1\right\rbrace  \text{ for } i \in \left
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.90\textwidth]{figures/sim_example/parent_traj}
-		\caption[A sample of parent trajectories and observation]{A sample of parent trajectories and observation. (a)-(b) A sample trajectory of parent nodes $ X_1 $ and $ X_2 $ of length $ T=5\text{s} $, (c) The trajectory of the joint parent process $ X_P $, (d) The observation trajectory resulting from $ X_P $ given in (c) and $ \psi_{\text{true}} $ given in \cref{sec:config}.}
+		\caption[Parent trajectories and observation]{A sample of parent trajectories and observation. (a)-(b) A sample trajectory of parent nodes $ X_1 $ and $ X_2 $ of length $ T=5\text{s} $, (c) The trajectory of the joint parent process $ X_P $, (d) The observation trajectory resulting from $ X_P $ given in (c) and $ \psi_{\text{true}} $ given in \cref{sec:config}.}
 		\label{fig:parent_traj}
 	\end{center}
 \end{figure}
@@ -77,7 +77,7 @@ In \autoref{fig:parent_traj}(c), the states of $ X_P $ taking values in $ \rchi_
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.9\textwidth]{figures/sim_example/belief_traj}
-		\caption{Belief state trajectories corresponding to the observations given in \autoref{fig:parent_traj}(d), comparing exact update method and particle filtering.}
+		\caption[Belief state trajectories]{Belief state trajectories corresponding to the observations given in \autoref{fig:parent_traj}(d), comparing exact update method and particle filtering.}
 		\label{fig:belief_traj}
 	\end{center}
 \end{figure}
@@ -85,7 +85,7 @@ Finally, the resulting $ Q_3 $ and the trajectory of agent are given in \autoref
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.9\textwidth]{figures/sim_example/q_traj}
-		\caption{Belief state updated by particle filter and the resulting $ Q_3 $ and $ X_3 $ trajectories.}
+		\caption[$ Q_3 $ and $ X_3 $ trajectories]{Belief state updated by particle filter and the resulting $ Q_3 $ and $ X_3 $ trajectories.}
 		\label{fig:q_traj}
 	\end{center}
 \end{figure}
@@ -93,7 +93,7 @@ As mentioned in \cref{par:bs_partFilt}, the degeneration of the particle filter 
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.90\textwidth]{figures/degenerate_pf/belief_traj}
-		\caption[A sample with degenerate particle filter]{A sample with degenerate particle filter. The unlikely observation which has caused the degeneration is highlighted in (a). It can be seen in (d) and (e) that this observation causes particle filter approximation to diverge from exact update results but it is recovered with the next observation.}
+		\caption[Degenerate particle filter]{A sample with degenerate particle filter. The unlikely observation which has caused the degeneration is highlighted in (a). It can be seen in (d) and (e) that this observation causes particle filter approximation to diverge from exact update results but it is recovered with the next observation.}
 		\label{fig:deg_partFilter}
 	\end{center}
 \end{figure}
@@ -107,7 +107,7 @@ As mentioned in \cref{sec:inf_setup}, the deterministic nature of the observatio
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.8\textwidth]{figures/equivalence_classes/llh_exactUpdate_81model}
-		\caption{Average log-likelihood $ \log p(S^{[0,T]} \mid \theta) $ over samples generated using exact belief state update, depicting the equivalence classes in the set of observation models}
+		\caption[Equivalence classes in the case of exact belief update]{Average log-likelihood $ \log p(S^{[0,T]} \mid \theta) $ over samples generated using exact belief state update, depicting the equivalence classes in the set of observation models.}
 		\label{fig:llh_exactUpdate_81model}
 	\end{center}
 \end{figure}
@@ -115,7 +115,7 @@ In order to show the validity of the equivalence in the case of particle filter,
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.8\textwidth]{figures/equivalence_classes/llh_particleFilter_sameclass}
-		\caption{Average log-likelihood $ \log p(S^{[0,T]} \mid \theta) $ over samples generated using particle filtering, where $ \psi_1 $ and $ \psi_2 $ belongs in the same class}
+		\caption[An equivalence class in the case of particle filtering]{Average log-likelihood $ \log p(S^{[0,T]} \mid \theta) $ over samples generated using particle filtering, where $ \psi_1 $ and $ \psi_2 $ belongs in the same class.}
 		\label{fig:llh_particleFilter_sameclass}
 	\end{center}
 \end{figure} 
@@ -125,14 +125,14 @@ A similar experiment is documented in \autoref{fig:llh_particle}, where exact up
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.75\textwidth]{figures/roc_analysis/roc_exactUpdate/llh_exactUpdate_psi_0}
-		\caption{Average log-likelihood $ \log p(S^{[0,T]} \mid \theta) $ with $ \psi_i \in \symbf{\psi} $ over samples generated using exact belief state update}
+		\caption[Average log-likelihood in the case of exact belief update]{Average log-likelihood $ \log p(S^{[0,T]} \mid \theta) $ with $ \psi_i \in \symbf{\psi} $ over samples generated using exact belief state update}
 		\label{fig:llh_exact}
 	\end{center}
 \end{figure}
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.75\textwidth]{figures/roc_analysis/roc_particleFilter/llh_particleFilter_psi_0}
-		\caption{Average log-likelihood $ \log p(S^{[0,T]} \mid \theta) $ with $ \psi_i \in \symbf{\psi} $ over samples generated using particle filtering}
+		\caption[Average log-likelihood in the case of particle filtering]{Average log-likelihood $ \log p(S^{[0,T]} \mid \theta) $ with $ \psi_i \in \symbf{\psi} $ over samples generated using particle filtering}
 		\label{fig:llh_particle}
 	\end{center}
 \end{figure}
@@ -144,7 +144,7 @@ Consider a binary classification problem. True positives (TP) are the samples pr
 \text{FPR} &= \frac{\text{FP}}{\text{TN} + \text{FP}} \\
 \text{P} &= \frac{\text{TP}}{\text{TP} + \text{FP}}
 \end{align}
-Receiver Operating Characteristics (ROC) curve illustrates the tradeoff between true positives and false positives, over different values of threshold for classification. \cite{Robinson2008} The area under ROC curve (AUROC) is a performance metric that shows how well the classifier can distinguish the classes. Higher AUROC metric indicates better performance, taking values in the interval [0,1]. Precision-Recall (PR) curve illustrates the relation between precision and recall, providing a metric to quantify how many of the predictions were correct. \cite{Boyd2013}\\
+Receiver Operating Characteristics (ROC) curve illustrates the tradeoff between true positives and false positives, over different values of threshold for classification \cite{Robinson2008}. The area under ROC curve (AUROC) is a performance metric that shows how well the classifier can distinguish the classes. Higher AUROC metric indicates better performance, taking values in the interval [0,1]. Precision-Recall (PR) curve illustrates the relation between precision and recall, providing a metric to quantify how many of the predictions were correct \cite{Boyd2013}.\\
 We provided the classifier with increasing number of samples for inference. This is achieved through bootstrapping a given number of trajectories, and using the mean likelihood over the bootrap batch as a new sample. The following AUROC plots shows the results over 50 trajectory generated using each obervation model as the true model. According to this, in our dataset, we have 500 trajectories, 50 from each class labelled through a vector with 10 entries, having only 1 for the true observation model and 0 for the rest. When number of trajectories is 1, each sample in the dataset considered individually. When number of trajectories is 2, within each class, 50 sample batches of size 2 are bootstrapped such that none of the batches consist of the same samples. By doing so, we keep the sample size at 50 per each class, regardless of the batch size. \\
 \autoref{fig:AUROC_class0} shows the AUROC results over 10 runs, comparing the state estimator using exact update and particle filtering. We plotted the median AUROC as a line and 25-75\% percentile as the shaded area. \autoref{fig:AUPR_class0} illustrates the AUPR in the same manner. As expected given the unbiased classifier, both metrics approach to 1 as the number of samples increases. Due to the stochasticity introduced by the particle filtering as the state estimator, the results obtained with this method show slightly lower performance. 
 %As expected given the unbiased classifier, this metric approaches to 1 as the number of samples increases. Due to the stochasticity introduced by the particle filtering as the state estimator, the results obtained with this method show slightly lower performance. 
