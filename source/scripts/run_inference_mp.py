@@ -30,8 +30,9 @@ def create_folder_tag(conf):
     n_par = conf[N_PARTICLE] if b_type == PART_FILT else ''
     seed = conf[SEED]
     obs_model = conf[OBS_MODEL][0] if conf[OBS_MODEL] else ''
+    prior = 'informative' if conf[PR_INFORM] else 'noninformative'
     tag = f'_{t_max}sec_{n_train}train_{n_test}test_{n_obs_model}model_{policy_type}Policy_{b_type}{n_par}_' \
-          f'seed{seed}_{obs_model}'
+          f'seed{seed}_{obs_model}_{prior}'
     return tag
 
 

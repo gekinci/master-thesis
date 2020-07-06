@@ -10,6 +10,7 @@ class POMDPSimulation:
         self.config = cfg
         self.POLICY_TYPE = cfg[POLICY_TYPE]
         self.BELIEF_UPDATE_METHOD = cfg[B_UPDATE_METHOD]
+        self.PRIOR_INFORMATIVE = cfg[PR_INFORM]
 
         self.parent_ctbn = CTBNSimulation(cfg)
         self.t_max = cfg[T_MAX] if cfg[T_MAX] else 20
@@ -37,7 +38,17 @@ class POMDPSimulation:
         self.initial_states = self.initialize_nodes()
         for method in self.BELIEF_UPDATE_METHOD:
             if method == PART_FILT:
-                self.belief_updater_dict[method] = ParticleFilterUpdate(self.config, self.config[GAMMA_PARAMS],
+                if self.PRIOR_INFORMATIVE:
+                    Q_params = self.config[GAMMA_PARAMS]
+                else:
+                    Q_params = {'$X_{1}$':
+                                    {'alpha': [1, 1],
+                                     'beta': [1, 1]},
+                                '$X_{2}$':
+                                    {'alpha': [1, 1],
+                                     'beta': [1, 1]}}
+
+                self.belief_updater_dict[method] = ParticleFilterUpdate(self.config, Q_params,
                                                                         self.config[N_PARTICLE], self.PSI, self.S,
                                                                         self.O)
                 self.Q_agent_dict[method] = pd.DataFrame(columns=self.S + [T_DELTA])

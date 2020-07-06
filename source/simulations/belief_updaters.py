@@ -19,6 +19,8 @@ class ParticleFilterUpdate:
         self.prev_obs = None
 
         self.Q_gamma_params = Q_params
+        self.Q_history_1 = pd.DataFrame(columns=self.S)
+        self.Q_history_2 = pd.DataFrame(columns=self.S)
         self.sampling_ctbn = CTBNSimulation(cfg)
         self.reset()
 
@@ -26,6 +28,10 @@ class ParticleFilterUpdate:
         self.sampling_ctbn.Q = {node: (np.array([[-1, 1], [1, -1]]) * (
                 np.array(self.Q_gamma_params[node]['alpha']) / np.array(self.Q_gamma_params[node]['beta']))).T for
                                 node in self.sampling_ctbn.node_list}
+        self.Q_history_1 = self.Q_history_1.append(
+            pd.DataFrame([list(self.sampling_ctbn.Q[parent_list_[0]].flatten())], columns=self.S), ignore_index=True)
+        self.Q_history_2 = self.Q_history_2.append(
+            pd.DataFrame([list(self.sampling_ctbn.Q[parent_list_[1]].flatten())], columns=self.S), ignore_index=True)
         self.particles = self.initialize_particles()
         self.weights = np.tile(1 / self.n_particle, self.n_particle)
         self.T = {key: np.zeros((self.n_particle, 2)) for key in parent_list_}
@@ -60,6 +66,7 @@ class ParticleFilterUpdate:
             self.M[node][i] += get_number_of_transitions(p, node=node)
             Q_dict[node] = (np.array([[-1, 1], [1, -1]]) * ((np.array(alpha) + np.sum(self.M[node], axis=0)) / (
                     np.array(beta) + np.sum(self.T[node], axis=0)))).T
+        # print(Q_dict)
         return Q_dict
 
     def propagate_particles(self, t):
@@ -74,7 +81,15 @@ class ParticleFilterUpdate:
                 p = p.append(p.iloc[-1], ignore_index=True)
                 p.loc[p.index[-1], TIME] = t
             new_p += [p]
-            self.sampling_ctbn.Q = self.reestimate_Q(i, p)
+            new_Q = self.reestimate_Q(i, p)
+            self.sampling_ctbn.Q = new_Q
+            if t != 0:
+                self.Q_history_1 = self.Q_history_1.append(
+                    pd.DataFrame([list(self.sampling_ctbn.Q[parent_list_[0]].flatten())], columns=self.S),
+                    ignore_index=True)
+                self.Q_history_2 = self.Q_history_2.append(
+                    pd.DataFrame([list(self.sampling_ctbn.Q[parent_list_[1]].flatten())], columns=self.S),
+                    ignore_index=True)
         return new_p
 
     def update_weights(self, obs, new_p):
@@ -161,6 +176,7 @@ class ExactUpdate:
         def helper(row):
             row[self.S] = row[self.S].values @ scipy.linalg.expm(self.T * row[T_DELTA])
             return row
+
         ind = (self.df_belief.index >= to_decimal(t)) & (self.df_belief.index <= to_decimal(t_next))
         tmp = self.df_belief.loc[ind].copy()
         if not tmp.empty:

@@ -31,6 +31,7 @@ PART_FILT = 'particleFilter'
 VANILLA_PART_FILT = 'particleFilter_van'
 EXACT = 'exactUpdate'
 N_PARTICLE = 'n_particle'
+PR_INFORM = 'prior_informative'
 
 # Column names
 TRAJ_ID = 'traj_id'
