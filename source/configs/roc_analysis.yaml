@@ -28,10 +28,12 @@ $Q_{3}$: {'0': [[-0.5, 0.5],
 observation_space: [0, 1, 2]
 action_space: [0, 1]
 obs_model:
+p_error: 0.05
 
 # "particleFilter", "exactUpdate", "particleFilter_van" in a list
 belief_update_method: ["particleFilter"]
 n_particle: 200
+prior_informative: True
 
 policy_type: detFunction  # deterministic_df, stochastic_df or detFunction (deterministic function)
 

@@ -38,8 +38,10 @@ def create_folder_tag(conf):
     n_par = conf[N_PARTICLE] if b_type == PART_FILT else ''
     seed = conf[SEED]
     obs_model = conf[OBS_MODEL][0] if conf[OBS_MODEL] else ''
-    tag = f'_{t_max}sec_{n_train}train_{n_test}test_{n_obs_model}model_{policy_type}Policy_{b_type}{n_par}_' \
-          f'seed{seed}_{obs_model}'
+    prior = 'informative' if conf[PR_INFORM] else 'noninformative'
+    p_e = conf['p_error']
+    tag = f'_error{p_e}_{t_max}sec_{n_train}train_{n_test}test_{n_obs_model}model_{policy_type}Policy_{b_type}{n_par}_' \
+          f'seed{seed}_{obs_model}_{prior}'
     return tag
 
 
@@ -161,13 +163,14 @@ if __name__ == "__main__":
     main_folder = '../_data/roc_analysis'
     config_file = '../configs/roc_analysis.yaml'
 
-    psi_set = np.load('../configs/psi_set_10.npy')
+    psi_set = np.load('../configs/psi_set_3.npy')
     n_classes = len(psi_set)
 
     with open(config_file, 'r') as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
 
     n_sample_per_class = cfg[N_TRAIN]
+    p_e = cfg['p_error']
     run_folder = create_folder_for_experiment(folder_name=main_folder, tag=create_folder_tag(cfg))
     L_list = []
 
@@ -190,6 +193,7 @@ if __name__ == "__main__":
     for i, obs_model in enumerate(psi_set):
         print('psi_', i)
         rnd_seed_run = int(i*1e6)
+        obs_model += (np.ones(obs_model.shape)*(0.5)-obs_model*1.5)*p_e
         pomdp.reset_obs_model(obs_model)
 
         psi_folder = run_folder + f'/psi_{i}'

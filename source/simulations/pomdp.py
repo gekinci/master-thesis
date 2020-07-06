@@ -42,11 +42,11 @@ class POMDPSimulation:
                     Q_params = self.config[GAMMA_PARAMS]
                 else:
                     Q_params = {'$X_{1}$':
-                                    {'alpha': [1, 1],
-                                     'beta': [1, 1]},
+                                    {'alpha': [10, 10],
+                                     'beta': [10, 10]},
                                 '$X_{2}$':
-                                    {'alpha': [1, 1],
-                                     'beta': [1, 1]}}
+                                    {'alpha': [10, 10],
+                                     'beta': [10, 10]}}
 
                 self.belief_updater_dict[method] = ParticleFilterUpdate(self.config, Q_params,
                                                                         self.config[N_PARTICLE], self.PSI, self.S,

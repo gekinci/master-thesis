@@ -9,6 +9,7 @@ from scripts.run_inference_mp import get_complete_df_Q, save_csvs, save_policy
 import yaml
 import os
 
+
 def create_folder_tag(conf):
     n_train = conf[N_TRAIN]
     n_test = conf[N_TEST]
@@ -38,6 +39,7 @@ if __name__ == "__main__":
     print(pomdp_sim.parent_ctbn.Q)
 
     np.random.seed(config[SEED])
+    np.random.seed(10)
     df_traj = pomdp_sim.sample_trajectory()
     dict_Q = pomdp_sim.Q_agent_dict
     dict_b = pomdp_sim.belief_dict
