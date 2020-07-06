@@ -77,7 +77,7 @@ def generate_dataset(pomdp_, n_samples, path_to_save, rnd_seed=0):
         dict_Q = {pomdp_.BELIEF_UPDATE_METHOD[0]: pomdp_.Q_agent_dict[pomdp_.BELIEF_UPDATE_METHOD[0]]}
 
         save_csvs(dict_b, dict_Q, path_to_csv, k, df_traj=df_traj)
-        visualize_pomdp_simulation(df_traj, dict_b, dict_Q, path_to_save=path_to_plot, tag=str(k))
+        # visualize_pomdp_simulation(df_traj, dict_b, dict_Q, path_to_save=path_to_plot, tag=str(k))
         return df_traj
 
     data_folder = path_to_save + f'/dataset'
@@ -129,8 +129,8 @@ def get_complete_df_Q(pomdp_, df_orig, traj_id, path_to_save=None):
         csv_path = os.path.join(path_to_save, 'csv')
         os.makedirs(csv_path, exist_ok=True)
         save_csvs(dict_b, dict_Q, csv_path, tag=traj_id)
-        visualize_pomdp_simulation(df_orig, dict_b, dict_Q, node_list=[r'$X_{1}$', r'$X_{2}$', r'y'],
-                                   path_to_save=path_to_save, tag=str(traj_id))
+        # visualize_pomdp_simulation(df_orig, dict_b, dict_Q, node_list=[r'$X_{1}$', r'$X_{2}$', r'y'],
+        #                            path_to_save=path_to_save, tag=str(traj_id))
     return dict_Q
 
 
@@ -244,7 +244,7 @@ if __name__ == "__main__":
         plt.ylim([0.0, 1.05])
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
-        plt.title(r'n={n}')
+        plt.title(f'n={n}')
         plt.legend(loc="lower right")
         plt.tight_layout()
         plt.savefig(run_folder + f'/AUROC_{n_sample_per_class * n_classes}samples_class{c}_llh_n{n}.pdf')
