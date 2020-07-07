@@ -19,8 +19,8 @@ class ParticleFilterUpdate:
         self.prev_obs = None
 
         self.Q_gamma_params = Q_params
-        self.Q_history_1 = pd.DataFrame(columns=self.S)
-        self.Q_history_2 = pd.DataFrame(columns=self.S)
+        self.Q_history_1 = pd.DataFrame(columns=self.S + [TIME])
+        self.Q_history_2 = pd.DataFrame(columns=self.S + [TIME])
         self.sampling_ctbn = CTBNSimulation(cfg)
         self.reset()
 
@@ -29,9 +29,11 @@ class ParticleFilterUpdate:
                 np.array(self.Q_gamma_params[node]['alpha']) / np.array(self.Q_gamma_params[node]['beta']))).T for
                                 node in self.sampling_ctbn.node_list}
         self.Q_history_1 = self.Q_history_1.append(
-            pd.DataFrame([list(self.sampling_ctbn.Q[parent_list_[0]].flatten())], columns=self.S), ignore_index=True)
+            pd.DataFrame([np.append(self.sampling_ctbn.Q[parent_list_[0]].flatten(), 0)], columns=self.S + [TIME]),
+            ignore_index=True)
         self.Q_history_2 = self.Q_history_2.append(
-            pd.DataFrame([list(self.sampling_ctbn.Q[parent_list_[1]].flatten())], columns=self.S), ignore_index=True)
+            pd.DataFrame([np.append(self.sampling_ctbn.Q[parent_list_[1]].flatten(), 0)], columns=self.S + [TIME]),
+            ignore_index=True)
         self.particles = self.initialize_particles()
         self.weights = np.tile(1 / self.n_particle, self.n_particle)
         self.T = {key: np.zeros((self.n_particle, 2)) for key in parent_list_}
@@ -83,6 +85,15 @@ class ParticleFilterUpdate:
             new_p += [p]
             new_Q = self.reestimate_Q(i, p)
             self.sampling_ctbn.Q = new_Q
+            if t != 0:
+                self.Q_history_1 = self.Q_history_1.append(
+                    pd.DataFrame([np.append(self.sampling_ctbn.Q[parent_list_[0]].flatten(), t)],
+                                 columns=self.S + [TIME]),
+                    ignore_index=True)
+                self.Q_history_2 = self.Q_history_2.append(
+                    pd.DataFrame([np.append(self.sampling_ctbn.Q[parent_list_[1]].flatten(), t)],
+                                 columns=self.S + [TIME]),
+                    ignore_index=True)
         return new_p
 
     def update_weights(self, obs, new_p):
@@ -133,14 +144,6 @@ class ParticleFilterUpdate:
             self.resample_particles()
             self.particles = [p.tail(1).reset_index(drop=True) for p in self.particles]
             self.prev_obs = obs
-
-        if t != 0:
-            self.Q_history_1 = self.Q_history_1.append(
-                pd.DataFrame([list(self.sampling_ctbn.Q[parent_list_[0]].flatten())], columns=self.S),
-                ignore_index=True)
-            self.Q_history_2 = self.Q_history_2.append(
-                pd.DataFrame([list(self.sampling_ctbn.Q[parent_list_[1]].flatten())], columns=self.S),
-                ignore_index=True)
 
 
 class ExactUpdate:

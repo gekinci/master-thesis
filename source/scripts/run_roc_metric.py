@@ -67,7 +67,7 @@ def save_policy(pomdp_, path_to_save):
 
 
 def generate_dataset(pomdp_, n_samples, path_to_save, rnd_seed=0):
-    def generate_trajectory(pomdp_, k, path_to_csv, path_to_plot):
+    def generate_trajectory(pomdp_, k, path_to_dataset):
         np.random.seed(int(rnd_seed) + k)
         # print('seed ', rnd_seed + k)
         df_traj = pomdp_.sample_trajectory()
@@ -76,16 +76,20 @@ def generate_dataset(pomdp_, n_samples, path_to_save, rnd_seed=0):
         dict_b = pomdp_.belief_dict
         dict_Q = {pomdp_.BELIEF_UPDATE_METHOD[0]: pomdp_.Q_agent_dict[pomdp_.BELIEF_UPDATE_METHOD[0]]}
 
-        save_csvs(dict_b, dict_Q, path_to_csv, k, df_traj=df_traj)
-        # visualize_pomdp_simulation(df_traj, dict_b, dict_Q, path_to_save=path_to_plot, tag=str(k))
+        hist_Q1 = pomdp_.belief_updater_dict[PART_FILT].Q_history_1
+        hist_Q1.to_csv(os.path.join(path_to_dataset, f'Q1_hist_{k}.csv'))
+        hist_Q2 = pomdp_.belief_updater_dict[PART_FILT].Q_history_2
+        hist_Q2.to_csv(os.path.join(path_to_dataset, f'Q2_hist_{k}.csv'))
+
+        save_csvs(dict_b, dict_Q, path_to_dataset, k, df_traj=df_traj)
+        # visualize_pomdp_simulation(df_traj, dict_b, dict_Q, path_to_save=path_to_dataset, tag=str(k))
         return df_traj
 
     data_folder = path_to_save + f'/dataset'
-    csv_folder = data_folder + '/csv'
-    os.makedirs(csv_folder, exist_ok=True)
+    os.makedirs(data_folder, exist_ok=True)
 
     traj_list = Parallel(n_jobs=N_TREADS)(
-        delayed(generate_trajectory)(pomdp_, traj_id, csv_folder, data_folder) for traj_id in range(1, n_samples + 1))
+        delayed(generate_trajectory)(pomdp_, traj_id, data_folder) for traj_id in range(1, n_samples + 1))
     df_all = pd.concat(traj_list)
     return df_all
 
@@ -126,9 +130,12 @@ def get_complete_df_Q(pomdp_, df_orig, traj_id, path_to_save=None):
     dict_Q = pomdp_.Q_agent_dict.copy()
 
     if path_to_save:
-        csv_path = os.path.join(path_to_save, 'csv')
-        os.makedirs(csv_path, exist_ok=True)
-        save_csvs(dict_b, dict_Q, csv_path, tag=traj_id)
+        hist_Q1 = pomdp_.belief_updater_dict[PART_FILT].Q_history_1
+        hist_Q1.to_csv(os.path.join(path_to_save, f'Q1_hist_{traj_id}.csv'))
+        hist_Q2 = pomdp_.belief_updater_dict[PART_FILT].Q_history_2
+        hist_Q2.to_csv(os.path.join(path_to_save, f'Q2_hist_{traj_id}.csv'))
+
+        save_csvs(dict_b, dict_Q, path_to_save, tag=traj_id)
         # visualize_pomdp_simulation(df_orig, dict_b, dict_Q, node_list=[r'$X_{1}$', r'$X_{2}$', r'y'],
         #                            path_to_save=path_to_save, tag=str(traj_id))
     return dict_Q
@@ -163,7 +170,7 @@ if __name__ == "__main__":
     main_folder = '../_data/roc_analysis'
     config_file = '../configs/roc_analysis.yaml'
 
-    psi_set = np.load('../configs/psi_set_3.npy')
+    psi_set = np.load('../configs/psi_set_10.npy')
     n_classes = len(psi_set)
 
     with open(config_file, 'r') as f:
