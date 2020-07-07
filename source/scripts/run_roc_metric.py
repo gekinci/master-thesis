@@ -134,24 +134,24 @@ def get_complete_df_Q(pomdp_, df_orig, traj_id, path_to_save=None):
     return dict_Q
 
 
-def run(pomdp_, psi_set, n_samp, run_folder, rnd_seed=0):
+def run(pomdp_, psi_list, n_samp, run_folder, rnd_seed=0):
     print('GENERATING DATA...')
     df_all = generate_dataset(pomdp_, n_samp, path_to_save=run_folder, rnd_seed=rnd_seed)
     df_all.to_csv(os.path.join(run_folder, 'dataset.csv'))
 
     dict_L = {m: pd.DataFrame() for m in pomdp_.BELIEF_UPDATE_METHOD}
     rnd_seed_inference = rnd_seed + int(1e3)
-    for psi_id, obs_model in enumerate(psi_set):
+    for psi_id, psi in enumerate(psi_list):
         inference_folder = run_folder + f'/inference/obs_model_{psi_id}'
         os.makedirs(inference_folder, exist_ok=True)
 
         pomdp_.reset()
-        pomdp_.reset_obs_model(obs_model)
+        pomdp_.reset_obs_model(psi)
         L = inference_per_obs_model(pomdp_, df_all, psi_id,  path_to_save=inference_folder, rnd_seed=rnd_seed_inference)
 
         for m in pomdp_.BELIEF_UPDATE_METHOD:
             dict_L[m][r'$\psi_{}$'.format(psi_id)] = [l[m] for l in L]
-        print(obs_model, {m: dict_L[m].sum()[r'$\psi_{}$'.format(psi_id)] for m in dict_L.keys()})
+        print(psi, {m: dict_L[m].sum()[r'$\psi_{}$'.format(psi_id)] for m in dict_L.keys()})
 
         for m in pomdp_.BELIEF_UPDATE_METHOD:
             dict_L[m].to_csv(os.path.join(run_folder, f'llh_{m}.csv'))
@@ -193,8 +193,8 @@ if __name__ == "__main__":
     for i, obs_model in enumerate(psi_set):
         print('psi_', i)
         rnd_seed_run = int(i*1e6)
-        obs_model += (np.ones(obs_model.shape)*(0.5)-obs_model*1.5)*p_e
-        pomdp.reset_obs_model(obs_model)
+        observation_error = obs_model + (np.ones(obs_model.shape)*(0.5)-obs_model*1.5)*p_e
+        pomdp.reset_obs_model(observation_error)
 
         psi_folder = run_folder + f'/psi_{i}'
         os.makedirs(psi_folder, exist_ok=True)
