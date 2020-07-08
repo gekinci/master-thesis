@@ -44,7 +44,7 @@ def run_deg_plot():
     for col in df_b_cols:
         for m, df in dict_b.items():
             ax[count].plot(df.index, df[col]) if m == EXACT else ax[count].step(df.index, df[col], where='post')
-        ax[count].set_ylabel(r'$b(x_{p}$' + f' = {col};t)', fontsize=label_font)
+        ax[count].set_ylabel(r'$b(x_{P}$' + f'={col};t)', fontsize=label_font)
         ax[count].set_ylim([-0.1, 1.1])
         ax[count].set_yticks([0, 0.5, 1])
         ax[count].set_yticklabels([0, 0.5, 1], fontsize=tick_font)
@@ -61,7 +61,7 @@ def run_deg_plot():
             sec.set_ylabel('  (e)', fontsize=label_font, rotation='horizontal', ha='left')
         sec.set_yticks([])
         count += 1
-    ax[1].legend(['exact update', 'particle filter'], loc='best',  fontsize=legend_font)
+    ax[2].legend(['exact update', 'marginal particle filter'], loc='best',  fontsize=legend_font)
     ax[count - 1].set_xlabel('t / s', fontsize=label_font)
     ax[count - 1].set_xticks([0, 1, 2, 3, 4, 5])
     ax[count - 1].set_xticklabels([0, 1, 2, 3, 4, 5], fontsize=tick_font)

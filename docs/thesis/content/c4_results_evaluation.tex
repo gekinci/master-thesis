@@ -73,27 +73,27 @@ X_i(0) \sim \mathcal{U} \left\lbrace 0, 1\right\rbrace  \text{ for } i \in \left
 	\end{center}
 \end{figure}
 In \autoref{fig:parent_traj}(c), the states of $ X_P $ taking values in $ \rchi_P = \rchi_1 \times \rchi_2 $ is preferred to be represented as a combination of the parent states for readibility, so that $ \rchi_P = \left\lbrace 00, 01, 10, 11\right\rbrace  $, where $ x_P \in \rchi_P $ simply corresponds to $ x_1x_2,\ x_1\in \rchi_1,\  x_2\in \rchi_2 $. \autoref{fig:parent_traj}(d) shows the observation trajectory resulting from $ X_P(t) $ and the observation model $ \psi_{true} $ given in \cref{sec:config}. \\
-\autoref{fig:belief_traj} illustrates the belief state trajectory given the observations in \autoref{fig:parent_traj}(d). For the reference, the belief state update using particle filter and exact update is given together. As can be seen from the figures, the exact update is well approximated by the particle filter.
+\autoref{fig:belief_traj} illustrates the belief state trajectory given the observations in \autoref{fig:parent_traj}(d). For the reference, the belief state update using marginal particle filter and exact update is given together. As can be seen from the figures, the exact update is well approximated by the particle filter.
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.9\textwidth]{figures/sim_example/belief_traj}
-		\caption[Belief state trajectories]{Belief state trajectories corresponding to the observations given in \autoref{fig:parent_traj}(d), comparing exact update method and particle filtering.}
+		\caption[Belief state trajectories]{Belief state trajectories corresponding to the observations given in \autoref{fig:parent_traj}(d), comparing exact update method and marginal particle filtering.}
 		\label{fig:belief_traj}
 	\end{center}
 \end{figure}
-Finally, the resulting $ Q_3 $ and the trajectory of agent are given in \autoref{fig:q_traj}. The $ Q_3 $ trajectory shown in \autoref{fig:q_traj}(b), are derived from the belief state update by particle filter which is given in \autoref{fig:q_traj}(a) using \autoref{eq:policy} and \autoref{eq:Q_3_traj}.
+Finally, the resulting $ Q_3 $ and the trajectory of agent are given in \autoref{fig:q_traj}. The $ Q_3 $ trajectory shown in \autoref{fig:q_traj}(b), are derived from the belief state update by marginal particle filter which is given in \autoref{fig:q_traj}(a) using \autoref{eq:policy} and \autoref{eq:Q_3_traj}.
 \begin{figure}[H]
 	\begin{center}
-		\includegraphics[width=.9\textwidth]{figures/sim_example/q_traj}
-		\caption[$ Q_3 $ and $ X_3 $ trajectories]{Belief state updated by particle filter and the resulting $ Q_3 $ and $ X_3 $ trajectories.}
+		\includegraphics[width=.87\textwidth]{figures/sim_example/q_traj}
+		\caption[$ Q_3 $ and $ X_3 $ trajectories]{Belief state updated by marginal particle filter and the resulting $ Q_3 $ and $ X_3 $ trajectories.}
 		\label{fig:q_traj}
 	\end{center}
 \end{figure}
-As mentioned in \cref{par:bs_partFilt}, the degeneration of the particle filter in case of an unlikely changes in observation, i.e. unanticipated transitions of parent nodes, is handled by by assigning uniform probabilities to the particles. It effectively corresponds to ignoring the rapid changes of the observation, which may cause diverging from the exact update, however, it is recovered with the next observation. \autoref{fig:deg_partFilter} provides an example of the sitution. The rapid change in question that caused particle filter method to diverge from exact update method is highlighted in \autoref{fig:deg_partFilter}(a). The particles fail to simulate this observation, and due to uniformization, the transition from 2 to 1 is ignored by the particle filter method. The divergence can be observed in \autoref{fig:deg_partFilter}(d)-(e) clearly.
+As mentioned in \cref{par:bs_partFilt}, the degeneration of the particle filter in case of an unlikely changes in observation, i.e. unanticipated transitions of parent nodes, is handled by by assigning uniform probabilities to the particles. It effectively corresponds to ignoring the rapid changes of the observation, which may cause diverging from the exact update, however, it is recovered with the next observation. \autoref{fig:deg_partFilter} provides an example of the sitution. The rapid change in question that caused particle filter method to diverge from exact update method is highlighted in \autoref{fig:deg_partFilter}(a). The particles fail to simulate this observation, and due to uniformization, the transition from 2 to 1 is ignored by the marginal particle filter method. The divergence can be observed in \autoref{fig:deg_partFilter}(d)-(e) clearly.
 \begin{figure}[H]
 	\begin{center}
-		\includegraphics[width=.90\textwidth]{figures/degenerate_pf/belief_traj}
-		\caption[Degenerate particle filter]{A sample with degenerate particle filter. The unlikely observation which has caused the degeneration is highlighted in (a). It can be seen in (d) and (e) that this observation causes particle filter approximation to diverge from exact update results but it is recovered with the next observation.}
+		\includegraphics[width=.87\textwidth]{figures/degenerate_pf/belief_traj}
+		\caption[Degenerate marginal particle filter]{A sample with degenerate marginal particle filter. The unlikely observation which has caused the degeneration is highlighted in (a). It can be seen in (d) and (e) that this observation causes particle filter approximation to diverge from exact update results but it is recovered with the next observation.}
 		\label{fig:deg_partFilter}
 	\end{center}
 \end{figure}
@@ -111,17 +111,17 @@ As mentioned in \cref{sec:inf_setup}, the deterministic nature of the observatio
 		\label{fig:llh_exactUpdate_81model}
 	\end{center}
 \end{figure}
-In order to show the validity of the equivalence in the case of particle filter, the average log-likelihoods of 200 samples given two observation models in the same class are illustrated in \autoref{fig:llh_particleFilter_sameclass}. The samples are generated with $ \psi_{\text{true}} = \psi_{0} $, and the rest of the observation models here fall in the same equivalence class as $ \psi_0 $. As can be seen from the graph, the observation models lead to so similar results to each other that they are assumed to be identical. 
+In order to show the validity of the equivalence in the case of marginal particle filter, the average log-likelihoods of 200 samples given two observation models in the same class are illustrated in \autoref{fig:llh_particleFilter_sameclass}. The samples are generated with $ \psi_{\text{true}} = \psi_{0} $, and the rest of the observation models here fall in the same equivalence class as $ \psi_0 $. As can be seen from the graph, the observation models lead to so similar results to each other that they are assumed to be identical. 
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.8\textwidth]{figures/equivalence_classes/llh_particleFilter_sameclass}
-		\caption[An equivalence class in the case of particle filtering]{Average log-likelihood $ \log p(S^{[0,T]} \mid \theta) $ over samples generated using particle filtering, where $ \psi_1 $ and $ \psi_2 $ belongs in the same class.}
+		\caption[An equivalence class in the case of marginal particle filtering]{Average log-likelihood $ \log p(S^{[0,T]} \mid \theta) $ over samples generated using marginal particle filtering, where $ \psi_1 $ and $ \psi_2 $ belongs in the same class.}
 		\label{fig:llh_particleFilter_sameclass}
 	\end{center}
 \end{figure} 
 \subsection{Learning Observation Model}
 \autoref{fig:llh_exact} illustrates the average log-likelihood over 100 samples given the observation models. The samples are generated with $ \psi_{true} = \psi_0 $ given in \cref{sec:config}, and exact update method is utilised for belief state update. As can be seen, the curves converge quicly and the true model is well separated from others. Consequently, the maximum likelihood estimation by \autoref{eq:max_llh_est} leads to the correct result. \\
-A similar experiment is documented in \autoref{fig:llh_particle}, where exact update method is replaced by particle filtering. $ \psi_0 $ denotes the observation model that has generated the dataset, and it is correctly estimated as the true model. The jump around 50 trajectories can be explained by an encounter with a highly likely parent trajectories.
+A similar experiment is documented in \autoref{fig:llh_particle}, where exact update method is replaced by marginal particle filtering. $ \psi_0 $ denotes the observation model that has generated the dataset, and it is correctly estimated as the true model. The jump around 50 trajectories can be explained by an encounter with a highly likely parent trajectories.
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.75\textwidth]{figures/roc_analysis/roc_exactUpdate/llh_exactUpdate_psi_0}
@@ -132,7 +132,7 @@ A similar experiment is documented in \autoref{fig:llh_particle}, where exact up
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.75\textwidth]{figures/roc_analysis/roc_particleFilter/llh_particleFilter_psi_0}
-		\caption[Average log-likelihood in the case of particle filtering]{Average log-likelihood $ \log p(S^{[0,T]} \mid \theta) $ with $ \psi_i \in \symbf{\psi} $ over samples generated using particle filtering}
+		\caption[Average log-likelihood in the case of marginal particle filtering]{Average log-likelihood $ \log p(S^{[0,T]} \mid \theta) $ with $ \psi_i \in \symbf{\psi} $ over samples generated using marginal particle filtering}
 		\label{fig:llh_particle}
 	\end{center}
 \end{figure}
@@ -146,7 +146,7 @@ Consider a binary classification problem. True positives (TP) are the samples pr
 \end{align}
 Receiver Operating Characteristics (ROC) curve illustrates the tradeoff between true positives and false positives, over different values of threshold for classification \cite{Robinson2008}. The area under ROC curve (AUROC) is a performance metric that shows how well the classifier can distinguish the classes. Higher AUROC metric indicates better performance, taking values in the interval [0,1]. Precision-Recall (PR) curve illustrates the relation between precision and recall, providing a metric to quantify how many of the predictions were correct \cite{Boyd2013}.\\
 We provided the classifier with increasing number of samples for inference. This is achieved through bootstrapping a given number of trajectories, and using the mean likelihood over the bootrap batch as a new sample. The following AUROC plots shows the results over 50 trajectory generated using each obervation model as the true model. According to this, in our dataset, we have 500 trajectories, 50 from each class labelled through a vector with 10 entries, having only 1 for the true observation model and 0 for the rest. When number of trajectories is 1, each sample in the dataset considered individually. When number of trajectories is 2, within each class, 50 sample batches of size 2 are bootstrapped such that none of the batches consist of the same samples. By doing so, we keep the sample size at 50 per each class, regardless of the batch size. \\
-\autoref{fig:AUROC_class0} shows the AUROC results over 10 runs, comparing the state estimator using exact update and particle filtering. We plotted the median AUROC as a line and 25-75\% percentile as the shaded area. \autoref{fig:AUPR_class0} illustrates the AUPR in the same manner. As expected given the unbiased classifier, both metrics approach to 1 as the number of samples increases. Due to the stochasticity introduced by the particle filtering as the state estimator, the results obtained with this method show slightly lower performance. 
+\autoref{fig:AUROC_class0} shows the AUROC results over 10 runs, comparing the state estimator using exact update and marginal particle filtering. We plotted the median AUROC as a line and 25-75\% percentile as the shaded area. \autoref{fig:AUPR_class0} illustrates the AUPR in the same manner. As expected given the unbiased classifier, both metrics approach to 1 as the number of samples increases. Due to the stochasticity introduced by the marginal particle filtering as the state estimator, the results obtained with this method show slightly lower performance. 
 %As expected given the unbiased classifier, this metric approaches to 1 as the number of samples increases. Due to the stochasticity introduced by the particle filtering as the state estimator, the results obtained with this method show slightly lower performance. 
 \begin{figure}[H]
 	\begin{center}
@@ -162,4 +162,5 @@ We provided the classifier with increasing number of samples for inference. This
 		\label{fig:AUPR_class0}
 	\end{center}
 \end{figure}
+\subsection{Inference with Non-informative Priors on Parent Parameters}
 \subsection{Robustness Test under Channel Noise}

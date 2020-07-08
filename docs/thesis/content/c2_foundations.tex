@@ -312,10 +312,11 @@ where $ \delta_{x^{(i)}}(x) $ is Dirac delta. The expectation in question can be
 \int f(x) \frac{p(x)}{q(x)} \left( \frac{1}{N} \sum_{i=1}^{N} \delta_{x^{(i)}}(x)\right) dx & = \frac{1}{N} \sum_{i=1}^{N}\frac{p(x^{(i)})}{q(x^{(i)})} f(x^{(i)})
 \end{align*}
 where $ w(x^{(i)}) = \frac{p(x^{(i)})}{q(x^{(i)})} $ is defined as \textit{importance weight} of a particle. Then the particles are resampled using the importance weights with replacement, which concludes one iteration of sequential updating \cite{Godsill2019}.\\
-In this application, the particles to represent the belief state are drawn from a marginalized CTBN. The algorithm for belief state update through marginal particle filtering is given in the following chapter. %TODO something like, the proposal distribution is marginalized distribution of CTBN, relate the following to the example.
+%TODO something like, the proposal distribution is marginalized distribution of CTBN, relate the following to the example.
 
 \subsubsection{Marginalized Continuous-Time Markov Processes}
-Let S be a CTBN with local variables $ X_n $, $ n\in \left\lbrace 1,...,N \right\rbrace $, and a set of conditional intensity matrices \textbf{\textit{Q}}. In the following, it is assumed that every non-diagonal entry in $ \textbf{Q}_{n\mid u} $ is Gamma distributed with shape and rate parameters, $ \alpha^n_{i,j\mid u} $ and $ \beta^n_{i,j\mid u} $.\\
+\label{sec:marg_ctbn}
+In this work, the particles to represent the belief state are drawn from a marginalized CTBN. Consider a CTBN, S, with local variables $ X_n $, $ n\in \left\lbrace 1,...,N \right\rbrace $, and a set of conditional intensity matrices \textbf{\textit{Q}}. In the following, it is assumed that every non-diagonal entry in $ \textbf{Q}_{n\mid u} $ is Gamma distributed with shape and rate parameters, $ \alpha^n_{i,j\mid u} $ and $ \beta^n_{i,j\mid u} $.\\
 The marginal process description of S considering a single trajectory in the interval $ [0,t) $ can be written as
 \begin{align}
 \operatorname{Pr}(X_n(t &+ h) = x_j \mid X_n(t)=x_i, U_n(t)=u, S^{[0, t)})\\
@@ -341,7 +342,7 @@ Given independent Gamma-priors on transition intensities, the expectation in \au
 \mathbb{E}\left[q_{i,j\mid u}^{n} \mid \xi_{t}\right]=\frac{\alpha^n_{i,j\mid u}+M_{n}[x_i, x_j\mid u]}{\beta^n_{i,j\mid u}+T_{n}[x_i \mid u]}
 \label{eq:estimated_Q}
 \end{equation}
-
+The algorithm for belief state update through marginal particle filtering is given in the following chapter. 
 %TODO: when is this parameter updated? Explain. Write about the dependency problem; how is this okay?
 
 \section{Sampling Algorithms}

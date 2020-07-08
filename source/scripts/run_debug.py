@@ -30,16 +30,15 @@ if __name__ == "__main__":
     with open('../configs/inference_mp.yaml', 'r') as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
 
-    folder_tag = create_folder_tag(config)
-    run_folder = create_folder_for_experiment(folder_name='../_data/debug', tag=folder_tag)
+    # folder_tag = create_folder_tag(config)
+    run_folder = create_folder_for_experiment(folder_name='../_data/debug')#, tag=folder_tag)
 
     # GENERATE DATA
     np.random.seed(config[SEED])
     pomdp_sim = POMDPSimulation(config)
     print(pomdp_sim.parent_ctbn.Q)
 
-    np.random.seed(config[SEED])
-    np.random.seed(10)
+    np.random.seed(1)
     df_traj = pomdp_sim.sample_trajectory()
     dict_Q = pomdp_sim.Q_agent_dict
     dict_b = pomdp_sim.belief_dict
@@ -48,8 +47,10 @@ if __name__ == "__main__":
     save_policy(pomdp_sim, run_folder)
     save_csvs(dict_b, dict_Q, run_folder, df_traj=df_traj)
     visualize_pomdp_simulation(df_traj, dict_b, dict_Q, path_to_save=run_folder, tag='')
-    pomdp_sim.belief_updater_dict[PART_FILT].Q_history_1.to_csv(run_folder+'/Q_hist_1.csv')
-    pomdp_sim.belief_updater_dict[PART_FILT].Q_history_2.to_csv(run_folder+'/Q_hist_2.csv')
+    for m in pomdp_sim.BELIEF_UPDATE_METHOD:
+        if PART_FILT in m:
+            pomdp_sim.belief_updater_dict[m].Q_history_1.to_csv(run_folder+f'/Q_hist_1_{m}.csv')
+            pomdp_sim.belief_updater_dict[m].Q_history_2.to_csv(run_folder+f'/Q_hist_2_{m}.csv')
 
     # # LIKELIHOOD OF INHOMOGENOUS PROCESS
     # llh_X3_true = llh_inhomogenous_mp(df_traj, dict_Q)

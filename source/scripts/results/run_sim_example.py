@@ -23,7 +23,7 @@ if __name__ == "__main__":
     path_to_data = '/home/gizem/DATA'
     folder_name = "sim_example"
     path_to_data = os.path.join(path_to_data, folder_name)
-    path_to_thesis = '../../docs/thesis/figures/sim_example'
+    path_to_thesis = '/home/gizem/master_thesis/docs/thesis/figures/sim_example'
 
     tick_font = 14
     label_font = 18
@@ -79,7 +79,20 @@ if __name__ == "__main__":
     b_axis = 4
     t_max = 5
     df_belief_exact = pd.read_csv(path_to_data + '/belief_exactUpdate_.csv', index_col=0)
+
     df_belief_part = pd.read_csv(path_to_data + '/belief_particleFilter_.csv', index_col=0)
+    df_b_list = []
+    for i in range(9):
+        df_b_list += [pd.read_csv(path_to_data + f'/belief_particleFilter{i}_.csv', index_col=0)]
+
+    ind_merged = df_belief_part.index.append([df.index for df in df_b_list]).sort_values().unique()
+
+    df_belief_part = df_belief_part.reindex(df_belief_part.index.union(ind_merged)).fillna(method='ffill')
+    for i in range(9):
+        df = df_b_list[i]
+        df = df.reindex(df.index.union(ind_merged)).fillna(method='ffill')
+        df_b_list[i] = df
+
     dict_b = {'exactUpdate': df_belief_exact.truncate(before=to_decimal(0), after=to_decimal(t_max)),
               'particleFilter': df_belief_part.truncate(before=to_decimal(0), after=to_decimal(t_max))}
 
@@ -87,9 +100,19 @@ if __name__ == "__main__":
 
     count = 0
     for col in df_b_cols:
-        for m, df in dict_b.items():
-            ax[count].plot(df.index, df[col]) if m == EXACT else ax[count].step(df.index, df[col], where='post')
-        ax[count].set_ylabel(r'$b(x_{p}$' + f' = {col};t)', fontsize=label_font)
+        # for m, df in dict_b.items():
+        #     ax[count].plot(df.index, df[col]) if m == EXACT else ax[count].step(df.index, df[col], where='post')
+        ax[count].plot(dict_b[EXACT].index, dict_b[EXACT][col])
+        df_col = pd.DataFrame(index=ind_merged)
+        for i in range(9):
+            df_col[i] = df_b_list[i][col]
+        df_col = df_col.quantile([0.25, 0.5, 0.75], axis=1)
+        prop_cycle = plt.rcParams['axes.prop_cycle']
+        colors = prop_cycle.by_key()['color']
+        ax[count].plot(df_col.columns.astype(float), df_col.loc[0.5], color=colors[1], label='marginal particle filter')
+        ax[count].fill_between(df_col.columns.astype(float), df_col.loc[0.25], df_col.loc[0.75], color=colors[1],
+                               alpha=0.3)
+        ax[count].set_ylabel(r'$b(x_{P}$' + f'={col};t)', fontsize=label_font)
         ax[count].set_ylim([-0.1, 1.1])
         ax[count].set_yticks([0, 0.5, 1])
         ax[count].set_yticklabels([0, 0.5, 1], fontsize=tick_font)
@@ -104,7 +127,7 @@ if __name__ == "__main__":
             sec.set_ylabel('  (d)', fontsize=label_font, rotation='horizontal', ha='left')
         sec.set_yticks([])
         count += 1
-    ax[0].legend(['exact update', 'particle filter'], loc='best', fontsize=legend_font)
+    ax[1].legend(['exact update', 'marginal particle filter'], loc='best', fontsize=legend_font)
     ax[count - 1].set_xlabel('t / s', fontsize=label_font)
     ax[count - 1].set_xticks([0, 1, 2, 3, 4, 5])
     ax[count - 1].set_xticklabels([0, 1, 2, 3, 4, 5], fontsize=tick_font)
@@ -127,8 +150,8 @@ if __name__ == "__main__":
     ax[0].set_ylim([-0.1, 1.1])
     ax[0].set_yticks([0, 0.5, 1])
     ax[0].set_yticklabels([0, 0.5, 1], fontsize=tick_font)
-    ax[0].set_ylabel(r'$b(x_{p}$' + f';t)', fontsize=label_font)
-    ax[0].legend([r'$x_{p}$=00', r'$x_{p}$=01', r'$x_{p}$=10', r'$x_{p}$=11'], fontsize=legend_font)
+    ax[0].set_ylabel(r'$b(x_{P}$' + f';t)', fontsize=label_font)
+    ax[0].legend([r'$x_{P}$=00', r'$x_{P}$=01', r'$x_{P}$=10', r'$x_{P}$=11'], fontsize=legend_font)
     sec = ax[0].secondary_yaxis(location='right')
     sec.set_ylabel('  (a)', fontsize=label_font, rotation='horizontal', ha='left')
     sec.set_yticks([])

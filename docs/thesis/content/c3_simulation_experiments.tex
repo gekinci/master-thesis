@@ -75,7 +75,7 @@ p(y_i \mid x_P) = 1 \;\wedge \;p(y_j \mid x_P) = 0 \quad \forall j \neq i .
 \end{equation} 
 $ \psi $ denotes the matrix with rows $ \left\lbrace \psi(x_P)\right\rbrace_{x_P \in \rchi_P} $.
 \subsubsection{Belief State}
-The belief state provides a summary over agents past experiences and allows the agent to take its own uncertainty into account. The belief state is formed by \textit{state estimator} (labelled as \textit{SE} in \cref{fig:POMDP_pers}) over the parent states, denoted by $  b(x_{1}, x_{2}; t) $. 
+The belief state provides a summary over agents past experiences and allows the agent to take its own uncertainty into account. The belief state is formed by the \textit{state estimator} (labelled as \textit{SE} in \cref{fig:POMDP_pers}) over the parent states, denoted by $  b(x_P; t) $. 
 \begin{equation}
 b(x_P; t) = \operatorname{Pr}( X_P(t) = x_P \mid y_{1}, ..., y_{t})
 \end{equation}
@@ -85,47 +85,47 @@ As discussed in \cref{sec:filtering_CTMC}, given the transition intensity matric
 \begin{equation}
 b(x_P; t) = \operatorname{Pr}( X_P(t) = x_{p} \mid y_{1}, ..., y_{t})
 \end{equation}
-Consider discrete-time observations from this process, denoted by $ y_{1}=y(t_{1}), ..., y_{N}=y(t_{N}) $ and time-dependent belief state $ b(t) $ as a row vector with $ \left\lbrace b(x_P;t)\right\rbrace_{x_P \in \rchi_P} $. Following \autoref{eq:b_cont} and \autoref{eq:b_jump}, the belief state update is evaluated as
+Consider discrete-time observations from this process, denoted by $ y_{1}=y(t_{1}), ..., y_{l}=y(t_{l}) $ and time-dependent belief state $ b(t) $ as a row vector with $ \left\lbrace b(x_P;t)\right\rbrace_{x_P \in \rchi_P} $. Following \autoref{eq:b_cont} and \autoref{eq:b_jump}, the belief state update is evaluated as
 \begin{equation}
 b(t) = b(0) \exp(t\textbf{Q}_P)
 \end{equation}
 with the initial condition $ b(0) $.
 The update at discrete times of observation $ y_{t} $ is
 \begin{align}
-b(x_P; t_{N}) &= Z_{N}^{-1}\ {p(y_{N} \mid X_P(t_{N})=x_P)}\ {b(x_P; t_{N}^{-})} \\ & = Z_{N}^{-1}\ \psi(x_P) \ {b(x_P; t_{N}^{-})}
+b(x_P; t_{l}) &= Z_{l}^{-1}\ {p(y_{l} \mid X_P(t_{l})=x_P)}\ {b(x_P; t_{l}^{-})} \\ & = Z_{l}^{-1}\ \psi(x_P) \ {b(x_P; t_{l}^{-})}
 \label{eq:bs_exact}
 \end{align}
-where $ Z_{N} = \sum_{x_P\in \rchi_P} \psi(x_P)\ b(x_P; t_{N}^{-}) $ is the normalization factor.
+where $ Z_{l} = \sum_{x_P\in \rchi_P} \psi(x_P)\ b(x_P; t_{l}^{-}) $ is the normalization factor.
 \paragraph*{Belief State Update Using Marginalized Particle Filter}
 \label{par:bs_partFilt}
-The assumption that full information of parent dynamics being available is unrealistic. In an environment as described above, the agent most probably doesn't have access to the parameters $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, rather may have some prior beliefs over them. Thus, in order to simulate a more realistic model and be able to marginalize out these parameters from inference problem, the joint process (introduced in previous section) is replaced with its marginalized counterpart. Using the Gamma-priors over $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $ (\autoref{eq:gamma_priors}) and sufficient statistics over the particle history, the particles are drawn from this marginalized process. With every new observation, the particles are propogated through the process, while the sufficient statistics are updated and the parameters are re-estimated after each particle using the \autoref{eq:estimated_Q}. The belief state then obtained as the distribution of states over the particles,
+The assumption that full information of parent dynamics being available is unrealistic. In an environment as described above, the agent is more likely not to have access to the parameters $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, may rather have some prior beliefs over them. Moreover, when the state estimator utilizes exact update method, these parameters are assumed to be available for the inference as well. Thus, in order to simulate a more realistic model and be able to marginalize out these parameters from inference problem, the joint parent process $ X_P $ is replaced with its marginalized counterpart. Using the Gamma-priors over $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $ (\autoref{eq:gamma_priors}) and sufficient statistics over the particle history, the particles are drawn from this marginalized process as explained in \cref{sec:marg_ctbn}. With every new observation, the particles are propogated through the marginal process, while the sufficient statistics are updated and the parameters are re-estimated after each particle using the \autoref{eq:estimated_Q}. The belief state then obtained as the distribution of states over the particles,
 \begin{equation}
-b(x_P; t) = \frac{1}{N} \sum_{i=1}^{N} \delta_{p_i(t), x_P}
+b(x_P; t) = \frac{1}{N} \sum_{i=1}^{N} \delta_{k_i(t), x_P}
 \end{equation}
 where $ N $ is the number of particles, $ k_i \in \textbf{k} $ is the set of particles, and $\delta$ is the Kronecker delta.
 
 \begin{algorithm}[H]
 	\SetKwInOut{KwIn}{Input}
 	\SetKwInOut{KwOut}{Output}
-	\KwIn{Observation $ y_{k} $ at time $ t_{k} $, set of particles $\textbf{p}^{k-1} $, estimated $ \hat{Q} $}
-	\KwOut{New set of particles $ \textbf{p}^{k} $, $ \textbf{b}^{[t_{k-1}, t_{k}]} $}
+	\KwIn{Observation $ y_{l} $ at time $ t_{l} $, set of particles $\textbf{k}^{l-1} $, estimated $ \hat{Q} $}
+	\KwOut{New set of particles $ \textbf{k}^{l} $, $ \textbf{b}^{[t_{l-1}, t_{l}]} $}
 	
 	\vspace{+4pt}
 	\begin{algorithmic}[1]
-		\FOR{$p_{m} \in \textbf{p}^{k-1}$}
-		\STATE {$p_{m} = \left\lbrace x_{m}, \hat{Q}\right\rbrace \leftarrow Propagate\ particle\ through\ marginal\ process\ from\ t_{k-1}\ to\ t_{k}$ }\\
+		\FOR{$k_{m} \in \textbf{k}^{l-1}$}
+		\STATE {$k_{m} = \left\lbrace x_{m}, \hat{Q}\right\rbrace \leftarrow Propagate\ particle\ through\ marginal\ process\ from\ t_{l-1}\ to\ t_{l}$ }\\
 		
-		\STATE {$\hat{Q} \leftarrow sufficient\ statistics\ added\ from\  p_{m}[t_{k-1}, t_{k}]$} \\
+		\STATE {$\hat{Q} \leftarrow sufficient\ statistics\ added\ from\  k_{m}[t_{l-1}, t_{l}]$} \\
 		\tcp*[h] {observation likelihood assigned as particle weight}
-		\STATE{$w_{m} \leftarrow p(y_{k} \mid X_P(t_{k})=x_{m}) $} \label{lst:weight_update}
+		\STATE{$w_{m} \leftarrow p(y_{l} \mid X_P(t_{l})=x_{m}) $} \label{lst:weight_update}
 		\ENDFOR \\
-		\tcp*[h]{belief state from $ t_{k-1} $ to $ t_{k} $}
-		\STATE{$ \textbf{b}^{[t_{k-1}, t_{k}]} \leftarrow \left\lbrace \frac{1}{N} \sum_{i=1}^{N} \delta_{p_i^{[t_{k-1}, t_{k}]} , x_P}\right\rbrace_{x_P \in \rchi_P} $}\\
+		\tcp*[h]{belief state from $ t_{l-1} $ to $ t_{l} $}
+		\STATE{$ \textbf{b}^{[t_{l-1}, t_{l}]} \leftarrow \left\lbrace \frac{1}{N} \sum_{i=1}^{N} \delta_{k_i^{[t_{l-1}, t_{l}]} , x_P}\right\rbrace_{x_P \in \rchi_P} $}\\
 		\tcp*[h]{normalize weights}
 		\STATE{$ w_{m} \leftarrow \frac{w_{m}}{\sum_{m} w_{m}}$   }\\
 		\tcp*[h]{  resample particles}
-		\FOR{$ p_{m} \in \textbf{p}_{k} $} 
-		\STATE{$ p_{m} \leftarrow Sample\ from\ p_{k}\ with\ probabilities\ w_{m}\ with\ replacement$}
+		\FOR{$ k_{m} \in \textbf{k}^{l} $} 
+		\STATE{$ k_{m} \leftarrow Sample\ from\ \textbf{k}^{l}\ with\ probabilities\ w_{m}\ with\ replacement$}
 		\ENDFOR 
 	\end{algorithmic}
 	\caption{Marginal particle filter for belief state update \cite{Studer2016}}

@@ -37,7 +37,7 @@ class POMDPSimulation:
         self.belief_dict = {}
         self.initial_states = self.initialize_nodes()
         for method in self.BELIEF_UPDATE_METHOD:
-            if method == PART_FILT:
+            if (PART_FILT in method) and (method != VANILLA_PART_FILT):
                 if self.PRIOR_INFORMATIVE:
                     Q_params = self.config[GAMMA_PARAMS]
                 else:
@@ -66,6 +66,22 @@ class POMDPSimulation:
                 self.belief_updater_dict[method] = ParticleFilterUpdate(self.config, Q_params, self.config[N_PARTICLE],
                                                                         self.PSI, self.S, self.O)
                 self.Q_agent_dict[method] = pd.DataFrame(columns=self.S + [T_DELTA])
+        for i in range(9):
+            if self.PRIOR_INFORMATIVE:
+                Q_params = self.config[GAMMA_PARAMS]
+            else:
+                Q_params = {'$X_{1}$':
+                                {'alpha': [10, 10],
+                                 'beta': [10, 10]},
+                            '$X_{2}$':
+                                {'alpha': [10, 10],
+                                 'beta': [10, 10]}}
+
+            self.belief_updater_dict[PART_FILT+f'{i}'] = ParticleFilterUpdate(self.config, Q_params,
+                                                                    self.config[N_PARTICLE], self.PSI, self.S,
+                                                                    self.O)
+            self.Q_agent_dict[PART_FILT+f'{i}'] = pd.DataFrame(columns=self.S + [T_DELTA])
+            self.BELIEF_UPDATE_METHOD += [PART_FILT+f'{i}']
 
     def reset_obs_model(self, new):
         self.PSI = new
@@ -131,7 +147,7 @@ class POMDPSimulation:
                 t_diff = np.diff(df_Q.index)
                 df_Q.loc[:, T_DELTA] = np.append(t_diff, to_decimal(self.config[TIME_INCREMENT]) - t_diff[-1]).astype(
                     float)
-            elif m == PART_FILT or m == VANILLA_PART_FILT:
+            elif PART_FILT in m:
                 df_Q = df_Q.combine_first(df_b.loc[ind, self.S].apply(helper, axis=1))
                 df_Q.index = [to_decimal(i) for i in df_Q.index]
                 df_Q.loc[:, T_DELTA] = np.append(np.diff(df_Q.index), 0).astype(float)
