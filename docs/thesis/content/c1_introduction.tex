@@ -1,12 +1,24 @@
 \chapter{Introduction}
+A paragraph goes here where somehow stochasticity, cooperation and communication is mentioned together. maybe give some examples as problems or as areas of research. Where was such problems considered before? something like that.
+
+This paper reviews recent work with probabilistic approaches to explain the behaviour of cellular networks quantitatively. It argues that, as the extracellular environment is a stochastic process, the intracellular model of processing these stochastic signals from the environment and choosing an appropriate response can only be probabilistic and has three main levels. First is to infer from the noisy signals and make a prediction of the current or future state. Second is to make a proper choice of action considering the advantages and disadvantages, given the predictions. Third is to take this action in a way that will contribute to the survival of the network.\\
+Statistical inference is presented as a possible framework to explain the mechanisms that a cell may use to interpret the state of the environment from noisy signals. Libby \textit{et al} (2007) used Bayesian inference approach to model the gene expression of a bacterium in an environment with high and low level of sugar, and showed this model is consistent with the measurements.\\
+This approach is later extended for the situations where the signal fluctuates over time, e.g. non steady-state sugar concentration. Andrews \textit{et al} (2006) proposed that the cell adopts to such environment by updating its beliefs in real-time. They modelled this decision-making mechanism as a sequential application of Bayesian inference, where the posterior probability that is inferred in the current step is used as a prior probability in the next step.\\
+Some studies also show that cells also infer future states of their environment, e.g. bacteria responding for oxygen decrease, while sensing sudden temperature increase. However, there is no work mentioned modelling this behaviour stochastically.\\
+Given the probable current and future states of the environment, the cell must decide for an optimal action/response by comparing cost and benefits of each potential response. Dekel and Alon (2005) have used Bayesian decision theory to model this process in an one-state environment and showed that the model is consistent with the observed behaviour. In the paper, it is also shown that, using the cost and benefit measurements of Dekel and Alon, the growth rate of bacterium is optimized by following the Bayes' rule. Here the optimal level of response is calculated to maximize the expected growth rate, considering the probability of states, rather than only taking the maximum likely state into account. The expected growth rate is expressed as follows:
+\begin{equation}
+\overline{\mathbf{g}}=\int d S\left[g_{low}(Z(S)) P(S, { low })+g_{ {high }}(Z(S)) P(S,{ high })\right]
+\end{equation}
+where $ Z(S) $ is level of response to signal $ S $, i.e. the sugar concentration, and $ g_{low}(Z) $ and $ g_{high}(Z) $ are the growth rate in low and high state environment with the response of Z, respectively. 
+
+This paper is a review of recent approaches to understand cellular decision-making mechanisms, focusing on information theory. With an emphasize on the stochasticity of cell's life, mutual information between the signal and the response is shown to be a suitable measure to quantify the cell's ability to infer. It is argued that if the mutual information between the signal to be inferred and the output of a signal transduction mechanism is high, only then the cell could be able to perform a high quality inference. For example, Bialek \textit{et al}, in their study of development of fruit fly, showed that the mutual information between gap gene expression and the position of nucleus is the information needed for each nucleus to determine their position in a cell. \\
+The paper also reviews recent work on sequential inference, Andrews \textit{et al} (2006), and optimal decision theory.
+
+This paper tries to explain the effect of information sharing on the cooperative optimal strategy in a stochastically fluctuating environment. A coordination game of two players is presented in a two-state environment, where the players should coordinate on the two possible actions accordingly. The optimal strategy problem in this game is solved in two different communication scenarios. In the first game scenario $ G_{p} $, the players only get individual signals from the environment, and do not communicate with each other. The communication with the environment is modelled as binary noisy channel with probability $ p $ of getting the true signal. In the second scenario $ G_{pq} $, the players also share information about the cues they get from the environment, through another binary noisy channel with probability $ q $ of sending it correctly. With game-theoretic approach, the average long-term fitness of the players is defined as the fraction of time that the players cooperatively choose the correct action weighted by the game payoffs. The strategies maximizing the long-term fitness are considered optimal, and used to investigate the influence of information sharing on this cooperative game.
 
 
 
 \section{Motivation}
-
-
-
-\section{Related Work}
 
 
 
@@ -15,3 +27,12 @@
 
 
 \section{Structure of the Thesis}
+\textbf{\cref{chap:2}} presents the theoretical background of this work. It reviews the details of continuous-time Bayesian networks and partially observable Markov decision processes, and introduces the sampling algorithms used in this work.
+
+\textbf{\cref{chap:3}} is dedicated to the details of the problem. It explains how the frameworks are utilised, and presents the algorithms used for data generation and inference.
+
+\textbf{\cref{chap:4}} presents the experimental results of the simulation and the inference.
+
+\textbf{\cref{chap:5}} discusses the results, highlights the conclusions and reviews the limitations.
+
+\textbf{\cref{chap:6}} gives suggestions for future directions and extentions to the research.
