@@ -1,3 +1,7 @@
+import os, sys, getpass
+
+sys.path.append(f'/home/{getpass.getuser()}/master_thesis/source/')
+
 from simulations.pomdp import POMDPSimulation
 from utils.constants import *
 from utils.helpers import *
@@ -7,7 +11,6 @@ from inference.sampling import *
 from scripts.run_inference_mp import get_complete_df_Q, save_csvs, save_policy
 
 import yaml
-import os
 
 
 def create_folder_tag(conf):
