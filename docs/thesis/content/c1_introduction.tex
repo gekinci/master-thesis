@@ -9,20 +9,9 @@ The influence of communication on cooperative behavior in stochastic environment
 
 \section{Motivation}
 Inspired by the examples of multi-agent systems in nature, we are interested in getting insights about communication in a system where individuals rely on the exchange of information to achieve optimal behaviour. To this end, we consider a communication problem between individuals evolving continously in time. The messages sent in the system are translated by a language model. The translations are observed by an acting agent which then solves some task in coordination with others. We assume that the agent is evolved to act optimally and that the optimal policy is given. Our goal is to infer the language model from demonstrations.\\
-As a motivating example to this work, consider the state of a cell expressed in terms of its gene activation state $ X(t) \in \{0, 1\}^{N} $, e.g.
-\begin{center}
-	\begin{math}
-	X(t)=\left(\begin{array}{c}
-	{0} \\
-	{1} \\
-	{\vdots} \\
-	{0} \\
-	{1}
-	\end{array}\right)
-	\end{math}\\
-\end{center}
-which draws a discrete valued trajectory in time $ X^{[0,T]} $. Based on this gene state, the cell may emit some message $ m_{X}(t) = \phi_{X}(X(t)) $. Let $ Z(t) $ denote some cell receiving the messages emitted by cells X, Y, then it may evolve some translation of the message $ c(t) = \phi _{Z} (m_{X}(t),m_{Y}(t)) = \phi_{Z}(\phi_{X}(X(t)), \phi_{Y}(X(t))) \equiv \psi(X(t), Y(t)) $. Given some task that Z may have to achieve in coordination with X, Y, this defines a POMDP problem. In the following we assume that the behaviour of Z has been shaped by evolution (close) to optimality. Our goal is now to infer the inter-cell language model from demonstrations. \\
-
+As a motivating example to this work, consider the state of a cell expressed in terms of its gene activation state. Based on this gene state, the cell may emit some message. Another cell, which we referred to as agent, receives a translation of the messages emitted by neighbouring cells. Given some task and corresponding optimal policy, the agent cell gauges its gene state in coordination with its neighbours.\\
+The language model can be interpreted in several ways which provides different scenarios to the problem that we consider. It can be interpreted as the communication protocol, where the individuals choose to share limited information with the population based on their states. Another perspective is that it can be considered as a noisy communication channel or a summary/aggregation imposed on the messages by the environment. 
+\pagebreak
 \section{Structure of the Thesis}
 The remainder of the thesis is structured as follows.
 
