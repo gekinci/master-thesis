@@ -293,6 +293,7 @@ def run_auc_analsis_prior(c=0, n_samples=5000, n_classes=10, n_run=10):
     ax_aupr.set_ylabel('AUPR')
     ax_aupr.set_xlabel('Number of trajectories')
     ax_aupr.legend(loc='lower right')
+    plt.tight_layout()
     fig_aupr.savefig(path_to_thesis + f'/prior_AUPR_perc_{c}.pdf')
     plt.close('all')
 
@@ -301,7 +302,7 @@ def run_auc_analsis_error(c=0, n_samples=5000, n_classes=10, n_run=10):
     path_to_thesis = '/home/gizem/master_thesis/docs/thesis/figures/roc_analysis'
     n_sample_per_class = int(n_samples / n_classes)
     df_runs = pd.DataFrame(columns=['Number of trajectories', 'AUROC', 'AUPR'])
-    for error_folder in ['ROC_10MODEL_particleFilter_500samples', 'error_0.1', 'error_0.2']:
+    for error_folder in ['ROC_10MODEL_particleFilter_500samples', 'error_0.1', 'error_0.2', 'error_0.5']:
         if error_folder == 'ROC_10MODEL_particleFilter_500samples':
             path_to_data = '/home/gizem/DATA/ROC_10MODEL_particleFilter_500samples'
         else:
@@ -364,7 +365,8 @@ def run_auc_analsis_error(c=0, n_samples=5000, n_classes=10, n_run=10):
             df_r['Number of trajectories'] = list(range(1, 31))
             df_r['AUROC'] = auroc_run
             df_r['AUPR'] = aupr_run
-            df_r[r'$p_{e}$'] = 0 if error_folder=='ROC_10MODEL_particleFilter_500samples' else error_folder.split('_')[-1]
+            df_r[r'$p_{e}$'] = 0 if error_folder == 'ROC_10MODEL_particleFilter_500samples' else \
+            error_folder.split('_')[-1]
             df_runs = df_runs.append(df_r)
     df_runs.to_csv(path_to_thesis + f'/df_auc_{c}_error.csv')
     plt.figure()
@@ -393,7 +395,7 @@ def run_auc_analsis_error(c=0, n_samples=5000, n_classes=10, n_run=10):
         else:
             method_marker = '^'
         ax_auroc.plot(df_perc_auroc.columns.astype(int), df_perc_auroc.loc[0.5], marker=method_marker, markersize=3,
-                      label=r'$p_{e}$'+f'={method}')
+                      label=r'$p_{e}$' + f'={method}')
         ax_auroc.fill_between(df_perc_auroc.columns.astype(int), df_perc_auroc.loc[0.25], df_perc_auroc.loc[0.75],
                               alpha=0.2)
         ax_aupr.plot(df_perc_aupr.columns.astype(int), df_perc_aupr.loc[0.5], marker=method_marker, markersize=3,
@@ -404,11 +406,13 @@ def run_auc_analsis_error(c=0, n_samples=5000, n_classes=10, n_run=10):
     ax_auroc.set_ylabel('AUROC')
     ax_auroc.set_xlabel('Number of trajectories')
     ax_auroc.legend(loc='lower right')
+    plt.tight_layout()
     fig_auroc.savefig(path_to_thesis + f'/error_AUROC_perc_{c}.pdf')
     # ax_aupr.set_ylim([0, 1.02])
     ax_aupr.set_ylabel('AUPR')
     ax_aupr.set_xlabel('Number of trajectories')
     ax_aupr.legend(loc='lower right')
+    plt.tight_layout()
     fig_aupr.savefig(path_to_thesis + f'/error_AUPR_perc_{c}.pdf')
     plt.close('all')
 
@@ -450,7 +454,7 @@ def run_percentile(df_run, c, path_to_save):
 if __name__ == "__main__":
     # for i in range(10):
     #     run_auc_analsis(c=i)
-    path_to_thesis = '/home/gizem/master_thesis/docs/thesis/figures/roc_analysis'
-    df_run = pd.read_csv(path_to_thesis + '/df_auc_0.csv', index_col=0)
-    run_percentile(df_run, c=0, path_to_save=path_to_thesis)
-    # run_auc_analsis()
+    # path_to_thesis = '/home/gizem/master_thesis/docs/thesis/figures/roc_analysis'
+    # df_run = pd.read_csv(path_to_thesis + '/df_auc_0.csv', index_col=0)
+    # run_percentile(df_run, c=0, path_to_save=path_to_thesis)
+    run_auc_analsis_error()

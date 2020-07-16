@@ -10,9 +10,13 @@ from utils.constants import *
 from utils.helpers import *
 
 if __name__ == '__main__':
-    path_to_data = '/home/gizem/DATA/q_convergence_noninformative1'
-    path_to_thesis = '/home/gizem/master_thesis/docs/thesis/figures/q_convergence/noninformative1'
-    csv_path_list = sorted(glob(path_to_data + '/Q_hist_2*'))
+    parent = 2
+    path_to_data = '/home/gizem/DATA/q_convergence'
+    path_to_thesis = '/home/gizem/master_thesis/docs/thesis/figures/q_convergence'
+    csv_path_list = sorted(glob(path_to_data + f'/Q_hist_{parent}*'))
+    tick_font = 14
+    label_font = 16
+    legend_font = 14
     Q1 = []
     for p in csv_path_list:
         Q1 += [pd.read_csv(p, index_col=0)]
@@ -23,7 +27,14 @@ if __name__ == '__main__':
             plt.plot(df.index, df[col])
             df[TIME].unique()
             for i in df.reset_index().groupby(by=TIME).first()['index'].values:
-                plt.axvline(i, ymin=0, ymax=2, color='orange')
-            black_line = 1.10 if col=='01' else 2.44
-            plt.axhline(black_line, xmin=-100, xmax=2700, color='black')
-            plt.savefig(path_to_thesis + f'/Q2_{col}.pdf')
+                plt.axvline(i, ymin=0, ymax=2, color='gray', alpha=0.075)
+            if parent == 1:
+                black_line = 1.117 if col == '01' else 0.836
+            else:
+                black_line = 1.10 if col == '01' else 2.445
+            plt.axhline(black_line, xmin=-100, xmax=2700, color='black', linestyle='--')
+            plt.xlabel('Number of updates', fontsize=label_font)
+            col_tag = 0 if col == '01' else 1
+            ylabel = r'$q' + f'_{col_tag}^{parent}$'
+            plt.ylabel(ylabel, fontsize=label_font)
+            plt.savefig(path_to_thesis + f'/Q{parent}_{col}.pdf')

@@ -75,10 +75,11 @@ p(y_i \mid x_P) = 1 \;\wedge \;p(y_j \mid x_P) = 0 \quad \forall j \neq i .
 \end{equation} 
 $ \psi $ denotes the matrix with rows $ \left\lbrace \psi(x_P)\right\rbrace_{x_P \in \rchi_P} $.
 \subsubsection{Belief State}
-The belief state provides a summary over agents past experiences and allows the agent to take its own uncertainty into account. The belief state is formed by the \textit{state estimator} (labelled as \textit{SE} in \cref{fig:POMDP_pers}) over the parent states, denoted by $  b(x_P; t) $. 
+The belief state provides a summary over agent's past experiences and allows the agent to take its own uncertainty into account. The belief state is formed by the \textit{state estimator} (labelled as \textit{SE} in \cref{fig:POMDP_pers}) over the parent states, denoted by $  b(x_P; t) $. 
 \begin{equation}
 b(x_P; t) = \operatorname{Pr}( X_P(t) = x_P \mid y_{1}, ..., y_{t})
 \end{equation}
+The initial belief state is assumed to be uniformly distributed, and is updated with the first observation at $ t_0 = 0 $.
 \paragraph*{Exact Belief State Update}
 \label{par:bs_exact}
 As discussed in \cref{sec:filtering_CTMC}, given the transition intensity matrices of parent nodes, $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, the continuous-time belief state update poses a filtering problem for CTMPs. This problem can be formulated according to the joint process of parents.
@@ -157,11 +158,7 @@ a(t) &= \pi(b(t))\\
 \section{Inference of Observation Model}
 \label{sec:inf_setup}
 Inference problem is considered for deterministic observation models, such that each state $ x_P \in \rchi_P $ can only be translated to one observation. Considering the number of states of parents and the observations, this results in a number of possible observation models. \\
-Consider a trajectory in the dataset, denoted by $ S^{[0,T]} = \left\lbrace X_1^{[0,T]} , X_2^{[0,T]}, X_3^{[0,T]}\right\rbrace $. The set of parameters to the system, as introduced before, is written as $  \theta = \left\lbrace  \textbf{Q}_{1}, \textbf{Q}_{2}, \textit{\textbf{Q}}_3, \pi, \psi \right\rbrace $. Given the parent trajectories, $ X_1^{[0,T]} $ and $ X_2^{[0,T]} $, the belief state and the resulting $ \textbf{Q}_3 $ trajectory is computed for each observation model. Then the likelihood of $ S^{[0,T]} $ trajectory given the parameters $ \theta $ are compared for maximum likelihood estimation.
-\begin{equation}
-\hat{\psi} = \argmax_\psi p(S^{[0,T]} \mid \theta )
-\label{eq:max_llh_est}
-\end{equation}
+Consider a trajectory in the dataset, denoted by $ S^{[0,T]} = \left\lbrace X_1^{[0,T]} , X_2^{[0,T]}, X_3^{[0,T]}\right\rbrace $. The set of parameters to the system, as introduced before, is written as $  \theta = \left\lbrace  \textbf{Q}_{1}, \textbf{Q}_{2}, \textit{\textbf{Q}}_3, \pi, \psi \right\rbrace $. Given the parent trajectories, $ X_1^{[0,T]} $ and $ X_2^{[0,T]} $, the belief state and the resulting $ \textbf{Q}_3 $ trajectory is computed for each observation model. Then the likelihood of $ S^{[0,T]} $ trajectory given the parameters $ \theta $ are used for classifiation task.
 
 \subsection{Likelihood Model}
  The likelihood of a sample trajectory $ S^{[0,T]} $ can be written as:
@@ -190,18 +187,26 @@ p(S^{[0,T]} \mid \pi, \Phi ) = p(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \prod_{x_{1}
 \end{align}
 In order to avoid numerical unstability, the log-likelihood is preferred for the calculations instead of likelihood.
 \subsection{Inference under Noisy Observation Model}
+\label{sec:noisy_robustness}
 In order to assess the robustness of the inference, we added an error probability $ p_e $ to the observation model. As explained in \cref{sec:observ_model}, the observation model $ \psi(x_P) $ is assumed to be deterministic. This corresponds to a unique translation, denoted here by $ y_\text{true} $ of each parent state $ x_P $. In the case of noisy observation model, the resulting observation might differ from the correct translation $ y_\text{true} $ with probability $ p_e $, and the erroneous translation is drawn uniformly from the remaining observation space $ y_i \in \mathcal{Y} \backslash \left\lbrace y_\text{true}\right\rbrace $. This noisy observation model is denoted by $ \psi^{p_e} $ can be considered as a noisy communication channel with error probability $ p_e $. \begin{equation}
 p(y_\text{true} \mid x_P) = 1-p_e \;\wedge \;p(y_j \mid x_P) = \frac{p_e}{|\mathcal{Y}|-1} \quad \forall y_j \neq y_\text{true}
 \label{eq:noicy_obs_model}
 \end{equation} 
 For simulation, the noisy observation model is assumed to be available to the agent, which mainly affects the agent's belief state. For exact belief state update, the noisy observation model is employed in \autoref{eq:bs_exact}. In the case of particle filtering, the weights are assigned to the particle using the noisy model (see \cref{alg:part_filter}, line \autoref{lst:weight_update}). It is noteworthy that by doing so, the degeneration of particle filter as described in \cref{par:bs_partFilt} is prevented.
-
+\subsection{Performance Metrics}
+As a measure of the performance of the classifier, we utilised area under the Reciever-Operator-Characteristic curve (AUROC) and Presition-Recall curve (AUPR). Since our setting presents a multi-class classification problem, the
+performance metrics AUROC and AUPR are evaluated as one-vs-rest.\\
+Consider a binary classification problem. True positives (TP) are the samples predicted as 1 correctly, and false positives (FP) are the samples predicted as 1 while the true label was 0. True negatives (TN) are the samples predicted as 0 correctly, and false negatives (FN) are the samples with true label 1, but predicted 0. True positive rate (TPR), also called \textit{recall} (R) or \textit{sensitivity}, is the ratio of TPs over the number of samples which are labelled as 1. False positive rate (FPR) is the ratio of FPs over the number of samples labelled as 0. The precision (P) is the ratio of TPs over the number of all the samples predicted as 1.
+\begin{align}
+\text{TPR} = \text{R} &= \frac{\text{TP}}{\text{TP} + \text{FN}} \\
+\text{FPR} &= \frac{\text{FP}}{\text{TN} + \text{FP}} \\
+\text{P} &= \frac{\text{TP}}{\text{TP} + \text{FP}}
+\end{align}
+Receiver Operating Characteristics (ROC) curve illustrates the tradeoff between true positives and false positives, over different values of threshold for classification \cite{Robinson2008}. The area under ROC curve is a performance metric that shows how well the classifier can distinguish the classes. Higher AUROC metric indicates better performance, taking values in the interval [0,1]. Precision-Recall (PR) curve illustrates the relation between precision and recall, providing a metric to quantify how many of the predictions were correct \cite{Boyd2013}.
 \section{Data Generation}
 The dataset contains a number of trajectories drawn from CTBN S. Following the notation in \cref{chap:2}, K trajectories in time interval $ [0, T] $ are denoted by $ \xi_T = \left\lbrace S^{[0,T], 1}, S^{[0,T], 2}, ..., S^{[0,T], K} \right\rbrace  $, where $ S^{[0,T],k} = \left\lbrace X_1^{[0,T],k} , X_2^{[0,T],k}, X_3^{[0,T],k}\right\rbrace $ denotes a single trajectory for all nodes. Every trajectory comprises of state transitions in the interval, and the times of these transitions. 
-
 \subsection{Sampling Algorithm}
-In order to sample trajectories from CTBN, two sampling algortihms introduced in \cref{sec:sampling_alg} are combined. Gillespie algorithm is used to sample from the parent nodes, $ X_1 $ and $ X_2 $, while thinning algorithm is applied to overcome the challenges that come with conditional intensity matrix of the agent, $ X_3 $. It should be noted that \cref{alg:generative_ctbn} is applicable to any nodes in a CTBN, both homogenous and conditional MPs. However, since in this setting, the intensity matrix is conditioned on the belief state and the policy, instead of directly on the parent states, a more general algorithm suitable for inhomogenous MPs, thinning algorithm, is preferred. \cref{alg:sampling} describes the procedure to draw samples using marginal particle filtering. 
-
+In order to sample trajectories from CTBN, two sampling algortihms introduced in \cref{sec:sampling_alg} are combined. Gillespie algorithm is used to sample from the parent nodes, $ X_1 $ and $ X_2 $, while thinning algorithm is applied to overcome the challenges that come with conditional intensity matrix of the agent, $ X_3 $. It should be noted that \cref{alg:generative_ctbn} is applicable to any nodes in a CTBN, both homogenous and conditional MPs. However, since in this setting, the intensity matrix is conditioned on the belief state and the policy, instead of directly on the parent states, a more general algorithm suitable for inhomogenous MPs, thinning algorithm, is preferred. \cref{alg:sampling} describes the procedure to draw samples using marginal particle filtering. \\
 \begin{algorithm}[H]
 	\SetKwInOut{KwIn}{Input}
 	\SetKwInOut{KwOut}{Output}

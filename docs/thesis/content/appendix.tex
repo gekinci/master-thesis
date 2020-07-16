@@ -80,8 +80,7 @@ In \autoref{eq:wolfram_line}, the integral is solved using computer algebra syst
 The equivalence classes are inherent to the problem setting and caused by two reasons. In this chapter, these reasons are explained and illustrated.
 \section*{Identical Effect on Belief State}
 \label{ap:eq_classes_same_belief}
-Some observation models fall into the same class due to their exact same effect on the belief state. An example of this situation is illustrated below. In order to show the exact equivalence, the simulations are performed belief state update using exact update method as described in \cref{par:bs_exact}. Consider the problem of calculating the likelihood of one sample $ S^{[0,T]} $ given two observation models, $ \psi_1 $ and $ \psi_2 $ given below. Given a sample of parent trajectories shown in \autoref{fig:same_belief_parents}, it is obvious that these two observation models lead to different observation trajectories as shown in \autoref{fig:same_belief_psi_0}(a) and \autoref{fig:same_belief_psi_29}(a). Nonetheless, using \autoref{eq:bs_exact}, the resulting belief state is exactly the same. This leads to the exact same trajectories for $ Q_3 $ and the likelohood of the sample given these two observation models, $ p(S^{[0,T]} \mid \psi_1 ) $ and $ p(S^{[0,T]} \mid \psi_2 ) $ end up exactly same. %TODO
-
+Some observation models fall into the same class due to their exact same effect on the belief state. An example of this situation is illustrated below. In order to show the exact equivalence, the simulations are performed belief state update using exact update method as described in \cref{par:bs_exact}. Consider the problem of calculating the likelihood of one sample $ S^{[0,T]} $ given two observation models, $ \psi_1 $ and $ \psi_2 $ given below. Given a sample of parent trajectories shown in \autoref{fig:same_belief_parents}, it is obvious that these two observation models lead to different observation trajectories as shown in \autoref{fig:same_belief_psi_0}(a) and \autoref{fig:same_belief_psi_29}(a). Nonetheless, using \autoref{eq:bs_exact}, the resulting belief state is exactly the same. This leads to the exact same trajectories for $ Q_3 $ and the likelohood of the sample given these two observation models, $ p(S^{[0,T]} \mid \psi_1 ) $ and $ p(S^{[0,T]} \mid \psi_2 ) $ end up exactly same. 
 \begin{align}
 \psi_{1} =
 \begin{bmatrix}
@@ -89,7 +88,7 @@ Some observation models fall into the same class due to their exact same effect 
 0 & 1 & 0 \\
 0 & 1 & 0 \\
 0 & 0 & 1
-\end{bmatrix} &\quad
+\end{bmatrix} &\quad \quad
 p(S^{[0,T]} \mid \psi_1 ) = -83.334 \label{eq:psi_1_0}\\
 \psi_{2} =
 \begin{bmatrix}
@@ -97,14 +96,22 @@ p(S^{[0,T]} \mid \psi_1 ) = -83.334 \label{eq:psi_1_0}\\
 1 & 0 & 0 \\
 1 & 0 & 0 \\
 0 & 0 & 1
-\end{bmatrix} &\quad
+\end{bmatrix} &\quad \quad
 p(S^{[0,T]} \mid \psi_2 ) = -83.334
 \label{eq:psi_29}
 \end{align}
-%array([[0., 1., 0.],
-%[1., 0., 0.],
-%[1., 0., 0.],
-%[0., 0., 1.]])
+Suppose $ X_P(t_0) = 00 $ and the initial belief state is $ b(t_0^-) $ is uniformly distributed. This joint parent state leads to $ y_1(t_0) = y_0 $ with observation model $ \psi_1 $, and $ y_2(t_0) = y_1 $ with $ \psi_2 $. It should be noted that in the observation model, each column corresponds to the probability of an observation given each state. Therefore, the first column of observation model can be denoted as $ c_{y_0} = \left\lbrace p(y=y_0|x_P)\right\rbrace_{x_P \in \rchi_P}  $. From \autoref{eq:bs_exact}, the new belief state is obtained as the element-wise multiplication of initial belief state $ b(t_0^-) $ and the column corresponding to the received observation.
+\begin{align}
+b_1(t_0) &= Z^{-1}\ c_{y_0} \circ b(t_0^-) = Z^{-1} \begin{bmatrix}
+1 & 0 & 0 & 0\end{bmatrix} \circ \begin{bmatrix}
+0.25 & 0.25 & 0.25 & 0.25 \end{bmatrix} = \begin{bmatrix}
+1 & 0 & 0 & 0\end{bmatrix} \\
+b_2(t_0) &= Z^{-1}\ c_{y_1} \circ b(t_0^-) = Z^{-1} \begin{bmatrix}
+1 & 0 & 0 & 0\end{bmatrix} \circ \begin{bmatrix}
+0.25 & 0.25 & 0.25 & 0.25 \end{bmatrix} = \begin{bmatrix}
+1 & 0 & 0 & 0\end{bmatrix}
+\end{align}
+where $ Z $ is the normalization factor, $ b_1(t) $ and $ b_2(t) $ are the belief states corresponding to $ \psi_1 $ and $ \psi_2 $, respectively. As can be seen, even though the observations are different, $ \psi_1 $ and $ \psi_2 $ leads to the same belief state update. This derivation can be done similarly for other state values $ X_P(t_0) $.
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.90\textwidth]{figures/equivalence_classes/same_belief/parent_traj}
@@ -138,22 +145,18 @@ For some observation model, the reason of equivalence is that even though the be
 0 & 1 & 0 \\
 0 & 1 & 0 \\
 0 & 0 & 1
-\end{bmatrix} &\quad
+\end{bmatrix} &\quad \quad
 p(S^{[0,T]} \mid \psi_1 ) = -80.648 \label{eq:psi_1_1}\\
 \psi_{2} =
 \begin{bmatrix}
 1 & 0 & 0 \\
 0 & 1 & 0 \\
 0 & 0 & 1 \\
-0 & 1 & 0
-\end{bmatrix} &\quad
+0 & 1 & 0 
+\end{bmatrix} &\quad \quad
 p(S^{[0,T]} \mid \psi_2 ) = -80.648
 \label{eq:psi_16}
 \end{align}
-%array([[1., 0., 0.],
-%[0., 1., 0.],
-%[0., 0., 1.],
-%[0., 1., 0.]])
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.90\textwidth]{figures/equivalence_classes/same_behaviour/parent_traj}
@@ -290,6 +293,13 @@ As mentioned in \cref{sec:eq_classes}, the inference problem is reduced to maxim
 
 
 \chapter{Additional Results}
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=.75\textwidth]{figures/roc_analysis/AUPR_perc_0}
+		\caption[AUPR results over increasing number of samples]{AUPR results over increasing number of samples for $ \psi_0 $-vs-rest. We plotted the median with line and the 25-75th percentile with the shaded area over 10 runs.}
+		\label{fig:AUPR_class0}
+	\end{center}
+\end{figure}
 \begin{figure}[H]
 	\begin{subfigure}{.33\textwidth}
 		\centering

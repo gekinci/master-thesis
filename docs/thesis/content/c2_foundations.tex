@@ -13,7 +13,7 @@ This chapter presents the theory applied in this thesis. First, the details of t
 		\label{fig:graph_model}
 	\end{center}
 \end{wrapfigure} 
-The communication model considered in this work is given in \cref{fig:graph_model}. The parent nodes, $X_{1}$ and $ X_{2}$, emit messages which contain information about their states. These messages are translated by an observation model, $\psi$, and an agent node, $ X_{3} $ makes a decision based on this translated message, $ y $. The main objective is to infer the observation model, given a set of trajectories of nodes.\\
+The communication model considered in this work is given in \cref{fig:graph_model}. The parent nodes, $X_{1}$ and $ X_{2}$, emit messages which contain information about their states. These messages are translated by an language/observation model, $\psi$, and an agent node, $ X_{3} $ makes a decision based on this translated message, $ y $. The main objective is to infer the observation model, given a set of trajectories of nodes.\\
 The transition models of the nodes and the dependencies between them are modelled as a continuous-time Bayesian network (CTBN), denoted by S. \\%The network S represents a stochastic process over a structured multivariate state space $ \rchi = [\rchi_1,..., \rchi_n] $. \\
 The messages that are emitted by the parent nodes $X_{1}$ and $ X_{2} $ are modelled as independent homogeneous continuous-time Markov processes $X_{i}(t)$, with state space $ \rchi_{i} = \left\lbrace x_{1}, x_{2}, ..., x_{m} \right\rbrace  $ for $ i \in \left\lbrace 1,2 \right\rbrace $.\\
 The agent node $ X_3 $ does not have direct access to the messages but observes a translation of them. The observation model is defined as the likelihood of a translation given the parent messages.
@@ -215,7 +215,7 @@ Finite-horizon model represents a problem where the agent has \textit{t} steps t
 \begin{wrapfigure}{r}{0.5\textwidth}
 	\begin{center}
 		\includegraphics[width=1\linewidth]{figures/policy_tree}
-		\caption[A policy tree]{A policy tree of depth t representing t-step nonstationary policy. Source: \cite{KAELBLING199899}}
+		\caption[A policy tree representing nonstationary policy of POMDP]{A policy tree of depth t representing t-step nonstationary policy. Source: \cite{KAELBLING199899}}
 		\label{fig:policy_tree}
 	\end{center}
 	\vspace{-40pt}
@@ -316,7 +316,7 @@ where $ w(x^{(i)}) = \frac{p(x^{(i)})}{q(x^{(i)})} $ is defined as \textit{impor
 
 \subsubsection{Marginalized Continuous-Time Markov Processes}
 \label{sec:marg_ctbn}
-In this work, the particles to represent the belief state are drawn from a marginalized CTBN. Consider a CTBN, S, with local variables $ X_n $, $ n\in \left\lbrace 1,...,N \right\rbrace $, and a set of conditional intensity matrices \textbf{\textit{Q}}. In the following, it is assumed that every non-diagonal entry in $ \textbf{Q}_{n\mid u} $ is Gamma distributed with shape and rate parameters, $ \alpha^n_{i,j\mid u} $ and $ \beta^n_{i,j\mid u} $.\\
+In this work, the particles to represent the belief state are drawn from a marginalized CTBN. Consider a CTBN, $ S $, with local variables $ X_n $, $ n\in \left\lbrace 1,...,N \right\rbrace $, and a set of conditional intensity matrices \textbf{\textit{Q}}. In the following, it is assumed that every non-diagonal entry in $ \textbf{Q}_{n\mid u} $ is Gamma distributed with shape and rate parameters, $ \alpha^n_{i,j\mid u} $ and $ \beta^n_{i,j\mid u} $.\\
 The marginal process description of S considering a single trajectory in the interval $ [0,t) $ can be written as
 \begin{align}
 \operatorname{Pr}(X_n(t &+ h) = x_j \mid X_n(t)=x_i, U_n(t)=u, S^{[0, t)})\\
@@ -336,14 +336,19 @@ p\left(\textbf{Q} \mid S^{[0,t]}\right)=\frac{p\left(S^{[0,t]} \mid \textbf{Q}\r
 \exp \left( q_{i,j\mid u}^{n} T_{n}[x_i\mid u]\right) (q_{i,j\mid u}^{n})^{M_{n}[x_i, x_j\mid u]}
 \label{eq:lh_dataset_CTBN}
 \end{align}
-where the joint sufficient statistics of $ X_n $ over all K trajectories are denoted by  $ T_{n}[x_i\mid u] = \sum_{k=1}^{K} T_{n}^k[x_i\mid u] $ and $ M_{n}[x_i, x_j\mid u] =\sum_{k=1}^{K} M_{n}^k[x_i, x_j\mid u]$.\\
+where the joint summary statistics of $ X_n $ over all $ K $ trajectories are denoted by  $ T_{n}[x_i\mid u] = \sum_{k=1}^{K} T_{n}^k[x_i\mid u] $ and $ M_{n}[x_i, x_j\mid u] =\sum_{k=1}^{K} M_{n}^k[x_i, x_j\mid u]$.\\
 Given independent Gamma-priors on transition intensities, the expectation in \autoref{eq:marginal_CTBN} can be evaluated as follows:
 \begin{equation}
 \mathbb{E}\left[q_{i,j\mid u}^{n} \mid \xi_{t}\right]=\frac{\alpha^n_{i,j\mid u}+M_{n}[x_i, x_j\mid u]}{\beta^n_{i,j\mid u}+T_{n}[x_i \mid u]}
 \label{eq:estimated_Q}
 \end{equation}
-The algorithm for belief state update through marginal particle filtering is given in the following chapter. 
-%TODO: when is this parameter updated? Explain. Write about the dependency problem; how is this okay?
+The trajectories sampled from a CTBN are conditionally independent given the intensity matrices. However, the expectation of these matrices are used to sample from the marginalized CTBN. This expectation, evaluated using \autoref{eq:estimated_Q}, depends on the summary statistics $T_{n}[x_i\mid u]$ and $M_{n}[x_i, x_j\mid u]$ from all observed trajectories up to the time of the evaluation. Therefore, in order to draw $K$ trajectories from a marginalised CTBN exactly, they have to be simulated jointly. Since this simulation is computationally infeasible, we approximated this simulation where the particles are processed one after another. The approximation can be validated rigorously using collapsed variational inference but this derivation is beyond the scope of this thesis. Our results show this validity empirically. \\
+The algorithm for belief state update through marginal particle filtering is given in \cref{chap:3}. 
+%, we would like to approximate this resulting joint distribution
+%by a set of $K$ factorising variational distributions: $\prod_k q(X^k_{[0, T]})$ such that
+%\begin{equation}
+%\min_q \mathrm{KL}\,\left(\prod_k q(X^k_{[0, T]})\mid\mid p(\{X^k_{[0, T]}\}_k)\right).
+%\end{equation}
 
 \section{Sampling Algorithms}
 \label{sec:sampling_alg}
