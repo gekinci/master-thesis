@@ -14,7 +14,8 @@
 \title{Bayesian Inference of Information Transfer in Graph-Based Continuous-Time Multi-Agent Systems} % <-- thesis title here
 \newcommand{\documenttype}{Master-Thesis} % <-- select type: "Master-Thesis", "Bachelor-Thesis", "Projektseminar", "Proseminar"
 \newcommand{\major}{Elektro- und Informationstechnik} % <-- your study program
-\newcommand{\supervisor}{Dominik Linzner} % <-- your supervisor here
+\newcommand{\supervisora}{Dipl.-Phys. Dominik Linzner}
+\newcommand{\supervisorb}{Anam Tahir, M.Sc.}  % <-- your supervisor here
 \newcommand{\submission}{21.07.2020} % <-- your submission date here
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -41,11 +42,13 @@
 	\pagestyle{plain}
 	
 	\input{content/c1_introduction.tex}
+	\newpage \ \thispagestyle{empty} \addtocounter{page}{-1}
 	\input{content/c2_foundations.tex}
 	\input{content/c3_methodology.tex}
 	\input{content/c4_results.tex}
+	\newpage \ \thispagestyle{empty} \addtocounter{page}{-1}
 	\input{content/c5_discussion_outlook.tex}
-	\bibliography{../bibtex/master_thesis}
+	\bibliography{bib_cleaned}
 	\addcontentsline{toc}{chapter}{Bibliography}
 	\appendix\input{content/appendix.tex}
 \end{document}

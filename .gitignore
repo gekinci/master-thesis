@@ -22,7 +22,4 @@ docs/thesis/*.out
 docs/thesis/*.synctex.gz
 docs/thesis/*.toc
 docs/thesis/*.lof
-docs/bibtex/others*
-docs/bibtex/books*
-docs/bibtex/Shared*
-docs/bibtex/*.bak
+docs/bibtex/

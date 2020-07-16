@@ -160,7 +160,7 @@ Consider a single transition denoted as $ d = <x_{i},x_{j},t> $, where the trans
 \begin{equation}
 p(d  \mid \textbf{Q}) = \left( q_{i}\exp(-q_{i}t) \right) \left( \frac{q_{i,j}}{q_{i}} \right)
 \end{equation}
-The likelihood of a trajectory sampled from a homogenous CTMC, denoted by $ X^{[0,T]} $, can be decomposed as the product of the likelihood of single transitions. The sufficient statistics summarizing this trajectory can be written as $ T[x_{i}] $, the total amount of time spent in state $ x_{i} $ and  $ M[x_{i}, x_{j}] $ the total number of transitions from state $ x_{i} $ to $ x_{j} $. 
+The likelihood of a trajectory sampled from a homogenous CTMC, denoted by $ X^{[0,T]} $, can be decomposed as the product of the likelihood of single transitions. The sufficient statistics summarizing this trajectory can be written as $ T[x_{i}] $, the total amount of time spent in state $ x_{i} $ and  $ M[x_{i}, x_{j}] $ the total number of transitions from state $ x_{i} $ to $ x_{j} $ \cite{Nodelman2003}. 
 \begin{align}
 M[x_i,x_j] & = \sum_{d \in X^{[0,T]}} \mathbb{1}(X(t)=x_i)\mathbb{1}(X(t+h)=x_j)\\
 T[x_i] &= \sum_{d \in X^{[0,T]}} \mathbb{1}(X(t)=x_i)
@@ -355,7 +355,6 @@ The algorithm for belief state update through marginal particle filtering is giv
 \subsection{Gillespie Algorithm for Generative CTBN}
 Gillespie algorithm is a computer-oriented Monte Carlo simulation procedure that is originally proposed to simulate the reactions of molecules in any spatially homogeneous chemical system. Such systems are regarded as Markov processes and represented via their master equations, which cannot be directly used to obtain realizations of the process. Gillespie algorithm is an efficient tool to overcome this problem \cite{Gillespie1976}.\\
 This algorithm can also be applied to sample \textit{events} from a CTBN given the transition intensity matrices, where an event refers to a transition occurring at a specific point in time. This procedure is introduced as \textit{Generative CTBN} in \cite{Nodelman1995}.
-
 
 \begin{algorithm}[H]
 	\SetKwInOut{KwIn}{Input}

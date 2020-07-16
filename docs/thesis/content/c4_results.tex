@@ -118,9 +118,9 @@ In order to show the validity of the equivalence in the case of marginal particl
 	\end{center}
 \end{figure} 
 \subsection{Learning Observation Model}
-\autoref{fig:llh_exact} illustrates the average log-likelihood over 100 samples given the observation models. The samples are generated with $ \psi_{true} = \psi_0 $ given in \cref{sec:config}, and exact update method is utilised for belief state update. As can be seen, the curves converge quicly and the true model is well separated from others. Consequently, the maximum likelihood estimation, as given below, leads to the correct result. 
+\autoref{fig:llh_exact} illustrates the average log-likelihood over 100 samples given the observation models. The samples are generated with $ \psi_{true} = \psi_0 $ given in \cref{sec:config}, and exact update method is utilised for belief state update. As can be seen, the curves converge quicly and the true model is well separated from others. Consequently, the maximum log-likelihood estimation, as given below, leads to the correct result. Here, in order to avoid numerical unstability, the log-likelihood is preferred for the calculations instead of likelihood.
 \begin{equation}
-\hat{\psi} = \argmax_\psi p(S^{[0,T]} \mid \theta )
+\hat{\psi} = \argmax_\psi \log p(S^{[0,T]} \mid \theta )
 \label{eq:max_llh_est}
 \end{equation}
 A similar experiment is documented in \autoref{fig:llh_particle}, where exact update method is replaced by marginal particle filtering. $ \psi_0 $ denotes the observation model that has generated the dataset, and it is correctly estimated as the true model. The jump around 50 trajectories can be explained by an encounter with a highly likely parent trajectories.
@@ -210,7 +210,9 @@ AUROC results for different levels of noise are given in \autoref{fig:AUROC_clas
 	\label{fig:q_convergence}
 \end{figure}
 \subsection{Estimated Intensity Matrices by Marginal Particle Filter}
-
+In marginal particle filtering, the belief state is formed over particles drawn from marginalized processes of parents as in \autoref{eq:belief_over_particles}. In order to achieve this, the intensity matrices are replaced with the expectation given in \autoref{eq:estimated_Q}. With every new observation, the particles are propagated through the marginal process and the summary statistics are updated after each particle. Gamma-priors of the parent transition intensities are given in \cref{sec:config}. \\
+In \cref{sec:simulation}, we have presented an example of sampled trajectories. \autoref{fig:parent_traj} illustrates the parent trajectories, and \autoref{fig:belief_traj} shows the belief state updated using exact method, and marginal particle filtering. For the latter, we plotted the statistics over 10 filters. \autoref{fig:q_convergence} illustrates the estimated transition intensities of those 10 particle filters. The notation on y-axis label follows the notation in \autoref{eq:Q_parents}. Each colored line illustrates one estimation from 10 particle filters shown in \autoref{fig:belief_traj}. Black dashed line marks the true values of the transition intensity. The gray lines shows the observations. Between each observation, there are 200 updates to the estimation, each coming from one particle. \\
+As can be seen from the figures, the estimations converge, although the final estimated value might be different than the true values. This can be explained by that at the early stages, an unlikely transition sampled from marginal process causes a significant change in the estimation, which in return affects the distribution that the next transitions are drawn. Such significant ripples can be seen at the early updates (0-500 updates which happens in the course of first 2-3 observations), which plays a major role on the value that the estimation converges.
 %\begin{align}
 %\textbf{Q}_i = 
 %\begin{bmatrix}
