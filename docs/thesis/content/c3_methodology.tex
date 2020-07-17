@@ -20,15 +20,15 @@ A detailed graphical model explored in this thesis is given in the \cref{fig:h_m
 \subsection{CTBN Model}
 \label{sec:exp_ctbn_model}
 The transition models of the nodes and the dependencies between them are modelled as continuous-time Bayesian network (CTBN), denoted by S with graph $ \mathcal{G} = \left( \mathcal{V}, \mathcal{E}\right) $, where $ \mathcal{V} = \left\lbrace X_1, X_2, X_3 \right\rbrace $ and $ \mathcal{E} = \left\lbrace (X_1, X_3), (X_2, X_3)\right\rbrace  $. The network S represents a stohastic process over a structured factorising state space $ \mathcal{S} = \rchi_1 \times \rchi_2 \times \rchi_3 $.\\
-The parent nodes $X_{1}$ and $ X_{2} $ emit their states as messages. The dynamics  of these nodes are modelled as independent homogeneous continuous-time Markov processes $X_{i}(t)$, with binary-valued states $ \rchi_{i} = \left\lbrace 0, 1 \right\rbrace  $ for $ i \in \left\lbrace 1,2 \right\rbrace $. These processes are defined by transition intensity matrices $ \textbf{Q}_{i} $, which are assumed to be Gamma distributed with shape and rate parameters $ \symbf{\alpha} = [\alpha_0, \alpha_1] $ and $ \symbf{\beta} = [\beta_0, \beta_1] $, respectively, and are in the following forms.
+The parent nodes $X_{1}$ and $ X_{2} $ emit their states as messages. The dynamics  of these nodes are modelled as independent homogeneous continuous-time Markov processes $X_{n}(t)$, with binary-valued states $ \rchi_{n} = \left\lbrace 0, 1 \right\rbrace  $ for $ n \in \left\lbrace 1,2 \right\rbrace $. These processes are defined by transition intensity matrices $ \textbf{Q}_{n} $, which are assumed to be Gamma distributed with shape and rate parameters $ \symbf{\alpha} = [\alpha_0, \alpha_1] $ and $ \symbf{\beta} = [\beta_0, \beta_1] $, respectively, and are in the following forms.
 \begin{align}
-\textbf{Q}_i &= 
+\textbf{Q}_n &= 
 \begin{bmatrix}
--q^i_{0} & q^i_{0} \\
-q^i_{1} &  -q^i_{1}
+-q^n_{0} & q^n_{0} \\
+q^n_{1} &  -q^n_{1}
 \end{bmatrix}
 \label{eq:Q_parents}\\
-\textbf{Q}_{i} &\sim \mathrm{Gam}(\symbf{\alpha}^i, \symbf{\beta}^i)\ \ for\ i \in \left\lbrace 1,2\right\rbrace \label{eq:gamma_priors}
+\textbf{Q}_{n} &\sim \mathrm{Gam}(\symbf{\alpha}^n, \symbf{\beta}^n)\ \ \text{for}\ n \in \left\lbrace 1,2\right\rbrace \label{eq:gamma_priors}
 \end{align}
 It should be noted that in \autoref{eq:Q_parents}, the suffixes are simplified using the fact that $ q_{i} = \sum_{i \neq j} q_{i,j}$.\\
 The agent  $ X_{3} $ is modelled as inhomogenouos continuous-time Markov process with binary states $ \rchi_{3} = \left\lbrace 0, 1 \right\rbrace  $ and set of actions $ a \in \left\lbrace a_0, a_1\right\rbrace  $, and set of transition intensity matrices which contains one matrix corresponding to each action, $ \textbf{\textit{Q}}_{3 \mid a} = \left\lbrace \textbf{Q}_{3\mid a_{0}}, \textbf{Q}_{3\mid a_{1}} \right\rbrace $.\\
@@ -205,7 +205,7 @@ Consider a binary classification problem. True positives (TP) are the samples pr
 \end{align}
 Receiver Operating Characteristics (ROC) curve illustrates the tradeoff between true positives and false positives, over different values of threshold for classification \cite{kerekes2008receiver}. The area under ROC curve is a performance metric that shows how well the classifier can distinguish the classes. Higher AUROC metric indicates better performance, taking values in the interval [0,1]. Precision-Recall (PR) curve illustrates the relation between precision and recall, providing a metric to quantify how many of the predictions were correct \cite{Boyd2013}.
 \section{Data Generation}
-The dataset contains a number of trajectories drawn from CTBN S. Following the notation in \cref{chap:2}, K trajectories in time interval $ [0, T] $ are denoted by $ \xi_T = \left\lbrace S^{[0,T], 1}, S^{[0,T], 2}, ..., S^{[0,T], K} \right\rbrace  $, where $ S^{[0,T],k} = \left\lbrace X_1^{[0,T],k} , X_2^{[0,T],k}, X_3^{[0,T],k}\right\rbrace $ denotes a single trajectory for all nodes. Every trajectory comprises of state transitions in the interval, and the times of these transitions. 
+The dataset contains a number of trajectories drawn from CTBN S. Following the notation in \cref{chap:2}, K trajectories in time interval $ [0, T] $ are denoted by $ \xi_T = \left\lbrace S^{[0,T], 1}, S^{[0,T], 2}, ..., S^{[0,T], K} \right\rbrace  $, where $ S^{[0,T],\kappa} = \left\lbrace X_1^{[0,T],\kappa} , X_2^{[0,T],\kappa}, X_3^{[0,T],\kappa}\right\rbrace $ denotes a single trajectory for all nodes. Every trajectory comprises of state transitions in the interval, and the times of these transitions. 
 \subsection{Sampling Algorithm}
 In order to sample trajectories from CTBN, two sampling algortihms introduced in \cref{sec:sampling_alg} are combined. Gillespie algorithm is used to sample from the parent nodes, $ X_1 $ and $ X_2 $, while thinning algorithm is applied to overcome the challenges that come with conditional intensity matrix of the agent, $ X_3 $. It should be noted that \cref{alg:generative_ctbn} is applicable to any nodes in a CTBN, both homogenous and conditional MPs. However, since in this setting, the intensity matrix is conditioned on the belief state and the policy, instead of directly on the parent states, a more general algorithm suitable for inhomogenous MPs, thinning algorithm, is preferred. \cref{alg:sampling} describes the procedure to draw samples using marginal particle filtering. \\
 \begin{algorithm}[H]
@@ -218,7 +218,7 @@ In order to sample trajectories from CTBN, two sampling algortihms introduced in
 		$ T_{max} $ to terminate simulation}
 	\KwOut{Sample trajectory of the network}
 	\Init{Sample $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $ from their priors\\ 
-		Initialize nodes uniformly $ X_{n}(0) = x_{i} \in \rchi_n$ \\
+		Initialize nodes uniformly $ X_{n}(0) = x_{n} \in \rchi_n$ \\
 		Initialize particles uniformly $ k^i(0) = x_{p} \in \rchi_P$\\
 		$ t=0 $}
 	

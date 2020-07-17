@@ -8,7 +8,7 @@ The experimental results are presented in this chapter. First, the parameters fo
 \label{sec:config}
 The configurations given below are used for the results presented in the following sections, if not specified otherwise.
 \begin{itemize}
-	\item Gamma priors for parent dynamics such that $ \textbf{Q}_{i} \sim \mathrm{Gam}(\symbf{\alpha}^i, \symbf{\beta}^i)$ for $i \in \left\lbrace 1,2\right\rbrace $, and $ \symbf{\alpha} = [\alpha_0, \alpha_1] $ and $ \symbf{\beta} = [\beta_0, \beta_1] $
+	\item Gamma priors for parent dynamics such that $ \textbf{Q}_{n} \sim \mathrm{Gam}(\symbf{\alpha}^n, \symbf{\beta}^n)$ for $n \in \left\lbrace 1,2\right\rbrace $, and $ \symbf{\alpha} = [\alpha_0, \alpha_1] $ and $ \symbf{\beta} = [\beta_0, \beta_1] $
 	\begin{align}
 	\symbf{\alpha}^1 = [5,10] &\quad \symbf{\beta}^1 = [5,20] \\
 	\symbf{\alpha}^2 = [10,10] &\quad \symbf{\beta}^2 = [10,5]
@@ -66,9 +66,9 @@ The configurations given below are used for the results presented in the followi
 \end{figure}
 \section{Simulation}
 \label{sec:simulation}
-The synthetic dataset is generated utilising \cref{alg:sampling}. K trajectories in time interval $ [0, T] $ are denoted by $ \xi_T = \left\lbrace S^{[0,T], 1}, S^{[0,T], 2}, ..., S^{[0,T], K} \right\rbrace  $, where $ S^{[0,T],k} = \left\lbrace X_1^{[0,T],k} , X_2^{[0,T],k}, X_3^{[0,T],k}\right\rbrace $ denotes a single trajectory for all nodes. It is noteworthy that the initial states are drawn from disrete uniform distribution.
+The synthetic dataset is generated utilising \cref{alg:sampling}. K trajectories in time interval $ [0, T] $ are denoted by $ \xi_T = \left\lbrace S^{[0,T], 1}, S^{[0,T], 2}, ..., S^{[0,T], K} \right\rbrace  $, where $ S^{[0,T],\kappa} = \left\lbrace X_1^{[0,T],\kappa} , X_2^{[0,T],\kappa}, X_3^{[0,T],\kappa}\right\rbrace $ denotes a single trajectory for all nodes. It is noteworthy that the initial states are drawn from disrete uniform distribution.
 \begin{equation}
-X_i(0) \sim \mathcal{U} \left\lbrace 0, 1\right\rbrace  \text{ for } i \in \left\lbrace 1,2,3\right\rbrace 
+X_n(0) \sim \mathcal{U} \left\lbrace 0, 1\right\rbrace  \text{ for } n \in \left\lbrace 1,2,3\right\rbrace 
 \end{equation}
 \autoref{fig:parent_traj}(a)-(b) shows an example of parent trajectories. In \autoref{fig:parent_traj}(c), the resulting trajectory of the joint parent process $ X_P $ is illustrated. As mentioned in \cref{sec:exp_ctbn_model}, this joint process over the parent nodes provides a compact representation. In \autoref{fig:parent_traj}(c), the states of $ X_P $ taking values in $ \rchi_P = \rchi_1 \times \rchi_2 $ is preferred to be represented as a combination of the parent states for readibility, so that $ \rchi_P = \left\lbrace 00, 01, 10, 11\right\rbrace  $, where $ x_P \in \rchi_P $ corresponds to $ x_1x_2,\ x_1\in \rchi_1,\  x_2\in \rchi_2 $. \autoref{fig:parent_traj}(d) shows the observation trajectory resulting from $ X_P(t) $ and the observation model $ \psi_{true} $ given in \cref{sec:config}. \\
 \autoref{fig:belief_traj} illustrates the belief state trajectory given the observations in \autoref{fig:parent_traj}(d). For the reference, the belief state update using marginal particle filter and exact update are given together. Exact update of belief state is obtained as described in \cref{sec:exact_update}, while the marginal particle filter update is the result of sequential implementation of \cref{alg:part_filter}. For marginal particle filter, we plotted the median as a line over 10 runs, and 25-75th percentile as the shaded area. As can be seen from the figures, the exact update is well approximated by the marginal particle filter.
@@ -120,7 +120,7 @@ In order to show the validity of the equivalence in the case of marginal particl
 \subsection{Learning Observation Model}
 \autoref{fig:llh_exact} illustrates the average log-likelihood over 100 samples given the observation models. The samples are generated with $ \psi_{true} = \psi_0 $ given in \cref{sec:config}, and exact update method is utilised for belief state update. As can be seen, the curves converge quicly and the true model is well separated from others. Consequently, the maximum log-likelihood estimation, as given below, leads to the correct result. Here, in order to avoid numerical unstability, the log-likelihood is preferred for the calculations instead of likelihood.
 \begin{equation}
-\hat{\psi} = \argmax_\psi \log p(S^{[0,T]} \mid \theta )
+\hat{\psi} = \argmax_\psi \left[ \log p(S^{[0,T]} \mid \theta )\right] 
 \label{eq:max_llh_est}
 \end{equation}
 A similar experiment is documented in \autoref{fig:llh_particle}, where exact update method is replaced by marginal particle filtering. $ \psi_0 $ denotes the observation model that has generated the dataset, and it is correctly estimated as the true model. The jump around 50 trajectories can be explained by an encounter with a highly likely parent trajectories.
