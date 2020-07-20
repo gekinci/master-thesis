@@ -2,7 +2,7 @@
 \chapter{Methodology}
 \label{chap:3}
 
-This chapter presents the methodology used in this thesis. First, it is explained how different frameworks, which were introduced in \cref{chap:2}, are put into use. Then, the algorithms used in data generation and inference are given in detail. The results from these experiments are presented in the succeeding chapter.
+This chapter presents the methodology used in this thesis. First, it is explained how different frameworks, which were introduced in \cref{chap:2}, are put into use. Then, the algorithms used in data generation and inference are given in detail. The results from these experiments are presented in \cref{chap:4}.
 
 \section{The Model}
 \begin{wrapfigure}{R}{0.3\textwidth}
@@ -11,7 +11,7 @@ This chapter presents the methodology used in this thesis. First, it is explaine
 	\caption{Hierarchical model.}
 	\label{fig:h_model}
 \end{wrapfigure} 
-A detailed graphical model explored in this thesis is given in the \cref{fig:h_model}. This model presents an intersection of continuous-time Bayesian network and partially observable Markov decision process frameworks. 
+A detailed graphical model explored in this thesis is given in the \cref{fig:h_model}. This model presents an intersection of CTBN and POMDP frameworks. 
 \begin{itemize}
 	\item The transition models of the nodes $ X_1, X_2$ and $ X_3 $, and the dependencies between them are modelled as CTBN.
 	\item The interaction of agent node $ X_3 $ and its environment is modelled as POMDP.
@@ -19,7 +19,7 @@ A detailed graphical model explored in this thesis is given in the \cref{fig:h_m
 
 \subsection{CTBN Model}
 \label{sec:exp_ctbn_model}
-The transition models of the nodes and the dependencies between them are modelled as continuous-time Bayesian network (CTBN), denoted by S with graph $ \mathcal{G} = \left( \mathcal{V}, \mathcal{E}\right) $, where $ \mathcal{V} = \left\lbrace X_1, X_2, X_3 \right\rbrace $ and $ \mathcal{E} = \left\lbrace (X_1, X_3), (X_2, X_3)\right\rbrace  $. The network S represents a stohastic process over a structured factorising state space $ \mathcal{S} = \rchi_1 \times \rchi_2 \times \rchi_3 $.\\
+The transition models of the nodes and the dependencies between them are modelled as CTBN, denoted by S with graph $ \mathcal{G} = \left( \mathcal{V}, \mathcal{E}\right) $, where $ \mathcal{V} = \left\lbrace 1, 2, 3 \right\rbrace $ and $ \mathcal{E} = \left\lbrace (1, 3), (2, 3)\right\rbrace  $. The state of the nodes evolve as local variables $ X_n $, $ n\in \mathcal{V} $, and each variable has a state space denoted by $ \rchi_n $. The network S represents a stohastic process over a structured factorising state space $ \mathcal{S} = \rchi_1 \times \rchi_2 \times \rchi_3 $.\\
 The parent nodes $X_{1}$ and $ X_{2} $ emit their states as messages. The dynamics  of these nodes are modelled as independent homogeneous continuous-time Markov processes $X_{n}(t)$, with binary-valued states $ \rchi_{n} = \left\lbrace 0, 1 \right\rbrace  $ for $ n \in \left\lbrace 1,2 \right\rbrace $. These processes are defined by transition intensity matrices $ \textbf{Q}_{n} $, which are assumed to be Gamma distributed with shape and rate parameters $ \symbf{\alpha} = [\alpha_0, \alpha_1] $ and $ \symbf{\beta} = [\beta_0, \beta_1] $, respectively, and are in the following forms.
 \begin{align}
 \textbf{Q}_n &= 
@@ -31,16 +31,16 @@ q^n_{1} &  -q^n_{1}
 \textbf{Q}_{n} &\sim \mathrm{Gam}(\symbf{\alpha}^n, \symbf{\beta}^n)\ \ \text{for}\ n \in \left\lbrace 1,2\right\rbrace \label{eq:gamma_priors}
 \end{align}
 It should be noted that in \autoref{eq:Q_parents}, the suffixes are simplified using the fact that $ q_{i} = \sum_{i \neq j} q_{i,j}$.\\
-The agent  $ X_{3} $ is modelled as inhomogenouos continuous-time Markov process with binary states $ \rchi_{3} = \left\lbrace 0, 1 \right\rbrace  $ and set of actions $ a \in \left\lbrace a_0, a_1\right\rbrace  $, and set of transition intensity matrices which contains one matrix corresponding to each action, $ \textbf{\textit{Q}}_{3 \mid a} = \left\lbrace \textbf{Q}_{3\mid a_{0}}, \textbf{Q}_{3\mid a_{1}} \right\rbrace $.\\
+The agent  $ X_{3} $ is modelled as inhomogenouos continuous-time Markov process with binary states $ \rchi_{3} = \left\lbrace 0, 1 \right\rbrace  $, a set of actions $ a \in \left\lbrace a_0, a_1\right\rbrace  $, and a set of transition intensity matrices which contains one matrix corresponding to each action, $ \textbf{\textit{Q}}_{3 \mid a} = \left\lbrace \textbf{Q}_{3\mid a_{0}}, \textbf{Q}_{3\mid a_{1}} \right\rbrace $.\\
 %\begin{equation}
 %\textbf{Q}_{a_k} \sim \mathrm{Gam}(\alpha_{a_k}, \beta_{a_k})
 %\end{equation}
-The dependencies are represented by set of parents for each node $ U_{n} = \mathrm{Par}_{\mathcal{G}}(X_n) $ and for the model shown in \cref{fig:h_model} can be written as follows:
+The dependencies are represented by a set of parents for each node $ U_{n} = \mathrm{Par}_{\mathcal{G}}(X_n) $ and for the model shown in \cref{fig:h_model} can be written as follows:
 \begin{align*}
 U_{1}, U_{2} & = \emptyset \\
 U_{3} & = \left\lbrace X_1, X_2 \right\rbrace 
 \end{align*}
-In order to have a compact representation of parent messages, a subsystem of S consisting of only the parent nodes, $ X_1 $ and $ X_2 $ can be considered as a single system. These two processes can be represented as a \textit{joint} process, $ X_P $, with factorising state space $ \rchi_{P} = \rchi_1 \times \rchi_2  $. The transition intensity matrix of the new joint system, $ \textbf{Q}_P $ is obtained by amalgamation operation, denoted by *, between $ \textbf{Q}_{1} $ and  $ \textbf{Q}_{2} $ (see \cref{ap:amalgamation}) \cite{Nodelman1995}.
+In order to have a compact representation of parent messages, a subsystem of S consisting of only the parent nodes $ X_1 $ and $ X_2 $ can be considered as a single system. These two processes can be represented as a \textit{joint} process, $ X_P $, with factorising state space $ \rchi_{P} = \rchi_1 \times \rchi_2  $. The transition intensity matrix of the new joint system, $ \textbf{Q}_P $ is obtained by amalgamation operation, denoted by *, between $ \textbf{Q}_{1} $ and  $ \textbf{Q}_{2} $ (see \cref{ap:amalgamation}) \cite{Nodelman1995}.
 \begin{equation}
 \textbf{Q}_P = \textbf{Q}_{1} * \textbf{Q}_{2}
 \end{equation}
@@ -51,7 +51,7 @@ In a conventional POMDP scenario, there are two problems to be addressed, one is
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.75\textwidth]{figures/POMDP_graph}
-		\caption{Closer look to agent-environment interaction from the perspective of POMDP framework.}
+		\caption{A closer look at the agent-environment interaction from the perspective of POMDP framework.}
 		\label{fig:POMDP_pers}
 	\end{center}
 \end{figure}
@@ -99,12 +99,12 @@ b(x_P; t_{l}) &= Z_{l}^{-1}\ {p(y_{l} \mid X_P(t_{l})=x_P)}\ {b(x_P; t_{l}^{-})}
 where $ Z_{l} = \sum_{x_P\in \rchi_P} \psi(x_P)\ b(x_P; t_{l}^{-}) $ is the normalization factor.
 \paragraph*{Belief State Update Using Marginalized Particle Filter}
 \label{par:bs_partFilt}
-The assumption that full information of parent dynamics being available is unrealistic. In an environment as described above, the agent is more likely not to have access to the parameters $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, may rather have some prior beliefs over them. Moreover, when the state estimator utilizes exact update method, these parameters are assumed to be available for the inference as well. Thus, in order to simulate a more realistic model and be able to marginalize out these parameters from inference problem, the joint parent process $ X_P $ is replaced with its marginalized counterpart. Using the Gamma-priors over $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $ (\autoref{eq:gamma_priors}) and sufficient statistics over the particle history, the particles are drawn from this marginalized process as explained in \cref{sec:marg_ctbn}. With every new observation, the particles are propogated through the marginal process. The processing of particles are done one after another as explained in \cref{sec:marg_ctbn}. After propagating each particle, the summary statistics are updated and the parameters are re-estimated using the \autoref{eq:estimated_Q}. The belief state then obtained as the distribution of states over the particles,
+The assumption that the complete information of parent dynamics is available is unrealistic. In an environment as described above, the agent is more likely not to have access to the parameters $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $. It may rather have some prior beliefs over them. Moreover, when the state estimator utilizes exact update method, these parameters are assumed to be available for the inference as well. Thus, in order to simulate a more realistic model and be able to marginalize out these parameters from inference problem, the joint parent process $ X_P $ is replaced with its marginalized counterpart. Using the Gamma-priors over $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $ (\autoref{eq:gamma_priors}) and sufficient statistics over the particle history, the particles are drawn from this marginalized process as explained in \cref{sec:marg_ctbn}. With every new observation, the particles are propogated through the marginal process. The processing of the particles are done one after another as explained in \cref{sec:marg_ctbn}. After propagating each particle, the summary statistics are updated and the parameters are re-estimated using the \autoref{eq:estimated_Q}. The belief state is then obtained as the distribution of states over the particles,
 \begin{equation}
-b(x_P; t) = \frac{1}{N} \sum_{i=1}^{N} \delta_{k_i(t), x_P}
+b(x_P; t) = \frac{1}{M} \sum_{m=1}^{M} \delta_{k_m(t), x_P}
 \label{eq:belief_over_particles}
 \end{equation}
-where $ N $ is the number of particles, $ k_i \in \textbf{k} $ is the set of particles, and $\delta$ is the Kronecker delta.
+where $ M $ is the number of particles, $ k_i \in \textbf{k} $ is the set of particles, and $\delta$ is the Kronecker delta.
 
 \begin{algorithm}[H]
 	\SetKwInOut{KwIn}{Input}
@@ -122,7 +122,7 @@ where $ N $ is the number of particles, $ k_i \in \textbf{k} $ is the set of par
 		\STATE{$w_{m} \leftarrow p(y_{l} \mid X_P(t_{l})=x_{m}) $} \label{lst:weight_update}
 		\ENDFOR \\
 		\tcp*[h]{belief state from $ t_{l-1} $ to $ t_{l} $}
-		\STATE{$ \textbf{b}^{[t_{l-1}, t_{l}]} \leftarrow \left\lbrace \frac{1}{N} \sum_{i=1}^{N} \delta_{k_i^{[t_{l-1}, t_{l}]} , x_P}\right\rbrace_{x_P \in \rchi_P} $}\\
+		\STATE{$ \textbf{b}^{[t_{l-1}, t_{l}]} \leftarrow \left\lbrace \frac{1}{M} \sum_{m=1}^{M} \delta_{k_m^{[t_{l-1}, t_{l}]} , x_P}\right\rbrace_{x_P \in \rchi_P} $}\\
 		\tcp*[h]{normalize weights}
 		\STATE{$ w_{m} \leftarrow \frac{w_{m}}{\sum_{m} w_{m}}$   }\\
 		\tcp*[h]{  resample particles}
@@ -133,7 +133,7 @@ where $ N $ is the number of particles, $ k_i \in \textbf{k} $ is the set of par
 	\caption{Marginal particle filter for belief state update \cite{Studer2016}}
 	\label{alg:part_filter}
 \end{algorithm}
-In \cref{alg:part_filter}, the weight update for the particles is performed on line \autoref{lst:weight_update}, based on the observation model. Given the deterministic nature of the observation model as described in \autoref{eq:det_cat_dist}, in rare cases where the observation $ y_k $ stems from an unlikely transition of parent nodes, the particles fail to simulate this transition and all of them get rejected. One possible solution to this problem would be increasing the number of particle to increase the probability of sampling unlikely transitions. However, in practice, this solution is not feasible due to computational cost. Instead, the degeneration of the particle filter is dealt with by assigning uniform probabilities to the particles, effectively ignoring the unlikely transitions. The situation is illustrated by examples from simulation in \cref{sec:simulation}.
+In \cref{alg:part_filter}, the weight update for the particles is performed on line \autoref{lst:weight_update}, based on the observation model. Given the deterministic nature of the observation model as described in \autoref{eq:det_cat_dist}, in rare cases where the observation $ y_k $ stems from an unlikely transition of parent nodes, the particles fail to simulate this transition and all of them are rejected. One possible solution to this problem would be to increase the number of particle to increase the probability of sampling unlikely transitions. However, in practice, this solution is computationally infeasible. Instead, the degeneration of the particle filter is dealt with by assigning uniform probabilities to the particles, effectively ignoring the unlikely transitions. The situation is illustrated by examples from simulation in \cref{sec:simulation}.
 
 \subsubsection{Optimal Policy}
 The optimal policy is defined using a polynomial function of belief state.
@@ -159,7 +159,7 @@ a(t) &= \pi(b(t))\\
 \section{Inference of Observation Model}
 \label{sec:inf_setup}
 Inference problem is considered for deterministic observation models, such that each state $ x_P \in \rchi_P $ can only be translated to one observation. Considering the number of states of parents and the observations, this results in a number of possible observation models. \\
-Consider a trajectory in the dataset, denoted by $ S^{[0,T]} = \left\lbrace X_1^{[0,T]} , X_2^{[0,T]}, X_3^{[0,T]}\right\rbrace $. The set of parameters to the system, as introduced before, is written as $  \theta = \left\lbrace  \textbf{Q}_{1}, \textbf{Q}_{2}, \textit{\textbf{Q}}_3, \pi, \psi \right\rbrace $. Given the parent trajectories, $ X_1^{[0,T]} $ and $ X_2^{[0,T]} $, the belief state and the resulting $ \textbf{Q}_3 $ trajectory is computed for each observation model. Then the likelihood of $ S^{[0,T]} $ trajectory given the parameters $ \theta $ are used for classifiation task.
+Consider a trajectory in the dataset, denoted by $ S^{[0,T]} = \left\lbrace X_1^{[0,T]} , X_2^{[0,T]}, X_3^{[0,T]}\right\rbrace $. The set of parameters to the system, as introduced before, is written as $  \theta = \left\lbrace  \textbf{Q}_{1}, \textbf{Q}_{2}, \textit{\textbf{Q}}_3, \pi, \psi \right\rbrace $. Given the parent trajectories, $ X_1^{[0,T]} $ and $ X_2^{[0,T]} $, the belief state and the resulting $ \textbf{Q}_3 $ trajectory are computed for each observation model. Then the likelihood of $ S^{[0,T]} $ trajectory given the parameters $ \theta $ are used for classifiation task.
 
 \subsection{Likelihood Model}
  The likelihood of a sample trajectory $ S^{[0,T]} $ can be written as:
@@ -168,7 +168,7 @@ p(S^{[0,T]} \mid \theta ) & = p(X_{1}^{[0, T]}, X_{2}^{[0, T]}, X_{3}^{[0, T]} \
 & = p(X_{3}^{[0, T]} \mid X_{1}^{[0, T]}, X_{2}^{[0, T]}, \textbf{Q}_{1}, \textbf{Q}_{2}, \textit{\textbf{Q}}_3, \pi, \psi) \ p(X_{1}^{[0, T]}\mid \textbf{Q}_{1}) \ p(X_{2}^{[0, T]}\mid \textbf{Q}_{2}) \nonumber\\ & = p(X_{3}^{[0, T]} \mid X_{1}^{[0, T]}, X_{2}^{[0, T]}, \textit{\textbf{Q}}_3, \pi, \psi) \ p(X_{1}^{[0, T]}\mid \textbf{Q}_{1}) \ p(X_{2}^{[0, T]}\mid \textbf{Q}_{2}) \nonumber\\ & = p(X_{3}^{[0, T]}\mid \textbf{Q}_{3}^{[0, T]}) \ p(X_{1}^{[0, T]}\mid \textbf{Q}_{1}) \ p(X_{2}^{[0, T]}\mid \textbf{Q}_{2}) 
 \label{eq:system_llh}
 \end{align}
-As mentioned before, it is plausible to marginalize out the parameters $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, for a more realistic model and inference. Noting that in case the belief state is updated using filtering of CTMPs (See \cref{par:bs_exact}), $ \textbf{Q}_{3}^{[0, T]} $ becomes a deterministic function of all the parameters including $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, the marginalization cannot be carried out analytically on \autoref{eq:system_llh}. On the other hand, marginal particle filtering removes this dependency on $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $ by using marginalized counterpart of CTMPs (See \cref{par:bs_partFilt}), leaving it straightforward to marginalize out the parameters on \autoref{eq:system_llh}.
+As mentioned before, it is plausible to marginalize out the parameters $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, for a more realistic model and inference. Noting that in case the belief state is updated using by filtering CTMPs (See \cref{par:bs_exact}), $ \textbf{Q}_{3}^{[0, T]} $ becomes a deterministic function of all the parameters including $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, the marginalization cannot be carried out analytically on \autoref{eq:system_llh}. On the other hand, marginal particle filtering removes this dependency on $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $ by using marginalized counterpart of CTMPs (See \cref{par:bs_partFilt}), leaving it straightforward to marginalize out the parameters on \autoref{eq:system_llh}.
 
 Marginalizing the likelihood over $ Q_{1} $ and $ Q_{2} $:
 \begin{align}
@@ -182,22 +182,22 @@ Marginalized likelihood function for binary-valued homogenous CTMP is derived in
 Plugging \autoref{eq:Marg_traj} in \autoref{eq:Marg_llh} for both $ X_{1} $ and $ X_{2} $:
 \begin{align}
 \begin{split}
-p(S^{[0,T]} \mid \pi, \Phi ) = p(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \prod_{x_{1}\in{0,1}} \frac{\beta_{x_{1}}^{\alpha_{x_{1}}}}{\Gamma(\alpha_{x_{1}})} \ (T_{x_{1}}+\beta_{x_{1}})^{M_{x_{1}} + \alpha_{x_{1}}}\ \Gamma(M_{x_{1}} + \alpha_{x_{1}})  \\  \prod_{x_{2}\in{0,1}} \frac{\beta_{x_{2}}^{\alpha_{x_{2}}}}{\Gamma(\alpha_{x_{2}})} \ (T_{x_{2}}+\beta_{x_{2}})^{M_{x_{2}} + \alpha_{x_{2}}}\ \Gamma(M_{x_{2}} + \alpha_{x_{2}})
+p(S^{[0,T]} \mid \pi, \Phi ) = p(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \prod_{x_{1}\in{0,1}} \frac{\beta_{x_{1}}^{\alpha_{x_{1}}}}{\Gamma(\alpha_{x_{1}})} \ (\Upsilon(x_{1})+\beta_{x_{1}})^{r(x_{1}) + \alpha_{x_{1}}}\ \Gamma(r(x_{1}) + \alpha_{x_{1}})  \\  \prod_{x_{2}\in{0,1}} \frac{\beta_{x_{2}}^{\alpha_{x_{2}}}}{\Gamma(\alpha_{x_{2}})} \ (\Upsilon(x_{2})+\beta_{x_{2}})^{{r(x_2)} + \alpha_{x_{2}}}\ \Gamma(r(x_2) + \alpha_{x_{2}})
 \label{eq:Marg_llh_final}
 \end{split}
 \end{align}
 
 \subsection{Inference under Noisy Observation Model}
 \label{sec:noisy_robustness}
-In order to assess the robustness of the inference, we added an error probability $ p_e $ to the observation model. As explained in \cref{sec:observ_model}, the observation model $ \psi(x_P) $ is assumed to be deterministic. This corresponds to a unique translation, denoted here by $ y_\text{true} $ of each parent state $ x_P $. In the case of noisy observation model, the resulting observation might differ from the correct translation $ y_\text{true} $ with probability $ p_e $, and the erroneous translation is drawn uniformly from the remaining observation space $ y_i \in \mathcal{Y} \backslash \left\lbrace y_\text{true}\right\rbrace $. This noisy observation model is denoted by $ \psi^{p_e} $ can be considered as a noisy communication channel with error probability $ p_e $. \begin{equation}
+In order to assess the robustness of the inference, we added an error probability $ p_e $ to the observation model. As explained in \cref{sec:observ_model}, the observation model $ \psi(x_P) $ is assumed to be deterministic. This corresponds to a unique translation, denoted here by $ y_\text{true} $, of each parent state $ x_P $. In the case of noisy observation model, the resulting observation might differ from the correct translation $ y_\text{true} $ with probability $ p_e $, and the erroneous translation is drawn uniformly from the remaining observation space $ y_i \in \mathcal{Y} \backslash \left\lbrace y_\text{true}\right\rbrace $. This noisy observation model, denoted by $ \psi^{p_e} $, can be considered as a noisy communication channel with error probability $ p_e $. \begin{equation}
 p(y_\text{true} \mid x_P) = 1-p_e \;\wedge \;p(y_j \mid x_P) = \frac{p_e}{|\mathcal{Y}|-1} \quad \forall y_j \neq y_\text{true}
 \label{eq:noicy_obs_model}
 \end{equation} 
 For simulation, the noisy observation model is assumed to be available to the agent, which mainly affects the agent's belief state. For exact belief state update, the noisy observation model is employed in \autoref{eq:bs_exact}. In the case of particle filtering, the weights are assigned to the particle using the noisy model (see \cref{alg:part_filter}, line \autoref{lst:weight_update}). It is noteworthy that by doing so, the degeneration of particle filter as described in \cref{par:bs_partFilt} is prevented.
 \subsection{Performance Metrics}
-As a measure of the performance of the classifier, we utilised area under the Reciever-Operator-Characteristic curve (AUROC) and Presition-Recall curve (AUPR). Since our setting presents a multi-class classification problem, the
+As a measure of the performance of the classifier, we utilised area under the Reciever-Operator-Characteristic curve (AUROC) and Precision-Recall curve (AUPR). Since our setting presents a multi-class classification problem, the
 performance metrics AUROC and AUPR are evaluated as one-vs-rest.\\
-Consider a binary classification problem. True positives (TP) are the samples predicted as 1 correctly, and false positives (FP) are the samples predicted as 1 while the true label was 0. True negatives (TN) are the samples predicted as 0 correctly, and false negatives (FN) are the samples with true label 1, but predicted 0. True positive rate (TPR), also called \textit{recall} (R) or \textit{sensitivity}, is the ratio of TPs over the number of samples which are labelled as 1. False positive rate (FPR) is the ratio of FPs over the number of samples labelled as 0. The precision (P) is the ratio of TPs over the number of all the samples predicted as 1.
+Consider a binary classification problem with class labels 0 and 1. True positives (TP) are the samples predicted as 1 correctly, and false positives (FP) are the samples predicted as 1 while the true label was 0. True negatives (TN) are the samples predicted as 0 correctly, and false negatives (FN) are the samples with true label 1, but predicted 0. True positive rate (TPR), also called \textit{recall} (R) or \textit{sensitivity}, is the ratio of TPs over the number of samples which are labelled as 1. False positive rate (FPR) is the ratio of FPs over the number of samples labelled as 0. The precision (P) is the ratio of TPs over the number of all the samples predicted as 1.
 \begin{align}
 \text{TPR} = \text{R} &= \frac{\text{TP}}{\text{TP} + \text{FN}} \\
 \text{FPR} &= \frac{\text{FP}}{\text{TN} + \text{FP}} \\
@@ -205,7 +205,7 @@ Consider a binary classification problem. True positives (TP) are the samples pr
 \end{align}
 Receiver Operating Characteristics (ROC) curve illustrates the tradeoff between true positives and false positives, over different values of threshold for classification \cite{kerekes2008receiver}. The area under ROC curve is a performance metric that shows how well the classifier can distinguish the classes. Higher AUROC metric indicates better performance, taking values in the interval [0,1]. Precision-Recall (PR) curve illustrates the relation between precision and recall, providing a metric to quantify how many of the predictions were correct \cite{Boyd2013}.
 \section{Data Generation}
-The dataset contains a number of trajectories drawn from CTBN S. Following the notation in \cref{chap:2}, K trajectories in time interval $ [0, T] $ are denoted by $ \xi_T = \left\lbrace S^{[0,T], 1}, S^{[0,T], 2}, ..., S^{[0,T], K} \right\rbrace  $, where $ S^{[0,T],\kappa} = \left\lbrace X_1^{[0,T],\kappa} , X_2^{[0,T],\kappa}, X_3^{[0,T],\kappa}\right\rbrace $ denotes a single trajectory for all nodes. Every trajectory comprises of state transitions in the interval, and the times of these transitions. 
+The dataset contains a number of trajectories drawn from CTBN $ S $. Following the notation in \cref{chap:2}, $ K $ trajectories in time interval $ [0, T] $ are denoted by $ \xi_T = \left\lbrace S^{[0,T], 1}, S^{[0,T], 2}, ..., S^{[0,T], K} \right\rbrace  $, where $ S^{[0,T],\kappa} = \left\lbrace X_1^{[0,T],\kappa} , X_2^{[0,T],\kappa}, X_3^{[0,T],\kappa}\right\rbrace $ denotes a single trajectory for all nodes. Every trajectory comprises of state transitions in the interval, and the times of these transitions. 
 \subsection{Sampling Algorithm}
 In order to sample trajectories from CTBN, two sampling algortihms introduced in \cref{sec:sampling_alg} are combined. Gillespie algorithm is used to sample from the parent nodes, $ X_1 $ and $ X_2 $, while thinning algorithm is applied to overcome the challenges that come with conditional intensity matrix of the agent, $ X_3 $. It should be noted that \cref{alg:generative_ctbn} is applicable to any nodes in a CTBN, both homogenous and conditional MPs. However, since in this setting, the intensity matrix is conditioned on the belief state and the policy, instead of directly on the parent states, a more general algorithm suitable for inhomogenous MPs, thinning algorithm, is preferred. \cref{alg:sampling} describes the procedure to draw samples using marginal particle filtering. \\
 \begin{algorithm}[H]

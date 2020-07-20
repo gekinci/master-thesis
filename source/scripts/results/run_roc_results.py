@@ -187,7 +187,7 @@ def run_auc_analsis(c=0, n_samples=5000, n_classes=10, n_run=10):
 
 
 def run_auc_analsis_prior(c=0, n_samples=5000, n_classes=10, n_run=10):
-    path_to_thesis = '/home/gizem/master_thesis/docs/thesis/figures/roc_analysis'
+    path_to_thesis = '/home/gizem/DATA/roc_analysis' #'/home/gizem/master_thesis/docs/thesis/figures/roc_analysis'
     n_sample_per_class = int(n_samples / n_classes)
     df_runs = pd.DataFrame(columns=['Number of trajectories', 'AUROC', 'AUPR'])
     for method in ['informative prior', 'noninformative prior']:
@@ -452,9 +452,9 @@ def run_percentile(df_run, c, path_to_save):
 
 
 if __name__ == "__main__":
-    # for i in range(10):
-    #     run_auc_analsis(c=i)
+    for i in range(10):
+        run_auc_analsis(c=i)
     # path_to_thesis = '/home/gizem/master_thesis/docs/thesis/figures/roc_analysis'
     # df_run = pd.read_csv(path_to_thesis + '/df_auc_0.csv', index_col=0)
     # run_percentile(df_run, c=0, path_to_save=path_to_thesis)
-    run_auc_analsis_error()
+    # run_auc_analsis_error()

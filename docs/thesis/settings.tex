@@ -22,6 +22,8 @@
 
 %%% bibliography %%%
 \bibliographystyle{plain}
+\usepackage{etoolbox}
+\AtBeginEnvironment{thebibliography}{\interlinepenalty=10000}
 
 %%% misc %%%
 \usepackage{blindtext}
@@ -33,6 +35,7 @@
 %%% referencing %%%
 \usepackage[bookmarks, bookmarksdepth=chapter, hidelinks]{hyperref}
 \usepackage[capitalise, noabbrev]{cleveref}
+\newcommand{\crefrangeconjunction}{-}
 \usepackage{xr}
 
 
