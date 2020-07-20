@@ -25,7 +25,7 @@ Given the observation, the agent forms a belief over the parent states that summ
 
 \section{Continuous-Time Bayesian Networks}
 \label{sec:ctbn_intro}
-Consider a directed acyclic graph denoted by $ \mathcal{G} = \left( \mathcal{V}, \mathcal{E}\right) $, where $ \mathcal{V} $ is a set of nodes and $ \mathcal{E} \subseteq \mathcal{V} \times \mathcal{V} $ is a set of edges such that $ \mathcal{E} = \left\lbrace \left( m, n\right) : m, n \in \mathcal{V} \right\rbrace $. In this graph, the parent nodes of node n are defined as the set of nodes that feed into it and denoted by $ \mathrm{Par}_{\mathcal{G}}(n) = \left\lbrace m \in \mathcal{V} : \left( m, n \right) \in \mathcal{E} \right\rbrace $. A directed acyclic graph is characterized as a Bayesian network where each node $ n \in \mathcal{V} $ respresents a random variable $ X_n $. This graph can be modelled as the joint distribution $ p(X_1, X_2, ..., X_N) $ which factors as 
+Consider a directed acyclic graph denoted by $ \mathcal{G} = \left( \mathcal{V}, \mathcal{E}\right) $, where $ \mathcal{V} $ is a set of nodes and $ \mathcal{E} \subseteq \mathcal{V} \times \mathcal{V} $ is a set of edges such that $ \mathcal{E} = \left\lbrace \left( m, n\right) : m, n \in \mathcal{V} \right\rbrace $. In this graph, the parent nodes of node $ n $ are defined as the set of nodes that feed into it and denoted by $ \mathrm{Par}_{\mathcal{G}}(n) = \left\lbrace m \in \mathcal{V} : \left( m, n \right) \in \mathcal{E} \right\rbrace $. A directed acyclic graph is characterized as a Bayesian network where each node $ n \in \mathcal{V} $ respresents a random variable $ X_n $. This graph can be modelled as the joint distribution $ p(X_1, X_2, ..., X_N) $ which factors as 
 \begin{equation}
 p(X_1, X_2, ..., X_N) = \prod_{i=1}^{N} p(X_i \mid \mathrm{Par}_{\mathcal{G}}(X_i)).
 \end{equation}
@@ -105,9 +105,9 @@ Consider a CTMP $ X(t) $ over a single variable with a countable state space $ \
 \operatorname{Pr}\left(X(t_{l})=x_{t_{l}} \mid X(t_{l-1})=x_{t_{l-1}}, \ldots, X(t_{0})=x_{t_{0}}\right)=\operatorname{Pr}\left(X(t_{l})=x_{t_{l}} \mid X(t_{l-1})=x_{t_{l-1}}\right)
 \end{equation}
 where $ X(t) $ denotes the state of the variable at time $ t $ such that $ X(t)=x_t \in \rchi,\ t \geq 0$ and $ t_0<t_1<...<t_l $.\\
-A CTMP is represented by its transition intensity matrix, $ \textbf{Q} : \rchi \times \rchi \rightarrow \mathbb{R}$. In this matrix, the intensity $ q_{i} $ represents the intensity of leaving state $ x_{i} $ and $ q_{i,j} $ represents the intensity of switching from state $ x_{i} $ to $ x_{j} $, where $ x_i, x_j \in \rchi $. 
+A CTMP is represented by its transition intensity matrix, $ Q : \rchi \times \rchi \rightarrow \mathbb{R}$. In this matrix, the intensity $ q_{i} $ represents the intensity of leaving state $ x_{i} $ and $ q_{i,j} $ represents the intensity of switching from state $ x_{i} $ to $ x_{j} $, where $ x_i, x_j \in \rchi $. The intensity matrix Q can be written in the following form:
 \begin{equation}
-\textbf{Q} = 
+Q = 
 \begin{bmatrix}
 -q_{1} & q_{1,2} &     {\hdots}  & q_{1,n} \\
 q_{2,1} & -q_{2} &     {\hdots}  & q_{2,n}  \\
@@ -120,7 +120,7 @@ where $ q_{i} = \sum_{i \neq j} q_{i,j}$ \cite{Nodelman1995}.
 
 \subsubsection{Homogenous Continuous-Time Markov Processes}
 \label{sec:homo_CTMP}
-A continuous-time Markov process is time-homogenous when the transition intensities do not depend on time. Let X(t) be a homogenous CTMP, with a countable state space $ \rchi $ and transition intensity matrix $ \textbf{Q} $. Infinitesimal transition probability from state $ x_{i} $ to $ x_{j} $ in terms of the transition intensities $ q_{i,j} $ can be written as \cite{Cohn2010a}:
+A continuous-time Markov process is time-homogenous when the transition intensities do not depend on time. Let X(t) be a homogenous CTMP, with a countable state space $ \rchi $ and transition intensity matrix $ Q $. Infinitesimal transition probability from state $ x_{i} $ to $ x_{j} $ in terms of the transition intensities $ q_{i,j} $ can be written as \cite{Cohn2010a}:
 \begin{equation}
 p_{i,j}(h)=\delta_{ij}+q_{i,j} h+o(h)
 \label{eq:Markov_trans_func}
@@ -141,11 +141,11 @@ p_{j}(t) &= \operatorname{Pr}(X(t) = x_{j}) \nonumber\\
 \end{align}
 Equation \ref{eq:master_equation} can be written in matrix form as
 \begin{equation}
-\frac{d}{dt} p(t) = p(t)\textbf{Q}
+\frac{d}{dt} p(t) = p(t)Q
 \end{equation}
 where the time-dependent probability distribution $ p(t) $ is a row vector with entries $ \left\lbrace p_{i}(t)\right\rbrace_{x_{i}\in \rchi} $. The solution of the system of ordinary differential equations (ODEs) is
 \begin{equation}
-p(t)=p(0) \exp (t\textbf{Q})
+p(t)=p(0) \exp (tQ)
 \label{eq:ode_sol}
 \end{equation}
 with initial distribution $ p(0) $.\\
@@ -159,7 +159,7 @@ Given the transition from state $ x_{i} $, the probability of landing on state $
 \label{sec:llh_of_homo}
 Consider a single transition denoted as $ d = <x_{i},x_{j},t> $, where the transition occurs from state $ x_{i} $ to $ x_{j} $ after spending t amount of time in state $ x_{i} $. The likelihood of this transition is the product of the probability of having remained in state $ x_{i} $ for duration $ t $ from \autoref{eq:f(t)_homo}, and the probability of transitioning to $ x_{j} $.
 \begin{equation}
-p(d  \mid \textbf{Q}) = \left( q_{i}\exp(-q_{i}t) \right) \left( \frac{q_{i,j}}{q_{i}} \right)
+p(d  \mid Q) = \left( q_{i}\exp(-q_{i}t) \right) \left( \frac{q_{i,j}}{q_{i}} \right)
 \end{equation}
 The likelihood of a trajectory sampled in time interval $ [0, T] $ from a homogenous CTMC, denoted by $ X^{[0,T]} $, can be decomposed as the product of the likelihood of single transitions. The summary statistics over this trajectory can be written as $ \Upsilon(x_{i}) $, the total amount of time spent in state $ x_{i}, $ and  $ r(x_{i}, x_{j}) $, the total number of transitions from state $ x_{i} $ to $ x_{j} $ \cite{Nodelman2003}. These summary statistics can be formulated as
 \begin{align}
@@ -174,35 +174,35 @@ where $ \delta $ is the Kronecker delta.
 %where $ \mathbb{1}(\cdot) $ is the indicator function.
 Then the likelihood of a trajectory $  X^{[0,T]} $ can be written as:
 \begin{align}
-p(X^{[0,T]}  \mid \textbf{Q}) &=  \prod_{d \in X^{[0,T]}} p(d \mid \textbf{Q}) \nonumber\\&=\left(\prod_{ i} q_{i}^{r(x_{i})} \exp \left(-q_{i} \Upsilon(x_{i})\right)\right)\left(\prod_{ i} \prod_{ j \neq i} \left(\frac{q_{i,j}}{q_{i}}\right)^{r(x_{i}, x_{j})}\right) \nonumber\\ & = \prod_{j \neq i}  \exp(-q_{i,j}\Upsilon(x_{i}))\ q_{i,j}^{r(x_{i},x_{j})}
+p(X^{[0,T]}  \mid Q) &=  \prod_{d \in X^{[0,T]}} p(d \mid Q) \nonumber\\&=\left(\prod_{ i} q_{i}^{r(x_{i})} \exp \left(-q_{i} \Upsilon(x_{i})\right)\right)\left(\prod_{ i} \prod_{ j \neq i} \left(\frac{q_{i,j}}{q_{i}}\right)^{r(x_{i}, x_{j})}\right) \nonumber\\ & = \prod_{j \neq i}  \exp(-q_{i,j}\Upsilon(x_{i}))\ q_{i,j}^{r(x_{i},x_{j})}
 \label{eq:lh_traj_homo}
 \end{align}
 where $ r(x_{i}) = \sum_{j \neq i} r(x_{i}, x_{j}) $ is the total number transitions leaving state $ x_{i} $.
 
 \subsubsection{Conditional Markov Processes}
 A continuous-time Markov process is \textit{time-inhomogenous} when the transition intensities change over time. In a CTBN, while every node is a Markov process, the leaf nodes are characterized as \textit{conditional} Markov processes, a type of inhomogeneous MP, where the intensities change over time, but not as a function of time rather as a function of parent states \cite{Nodelman1995}. \\
-Let X be a conditional Markov process in a graph $ \mathcal{G} $, with a set of parents $ U = \mathrm{Par}_{\mathcal{G}}(X)$. Its \textit{conditional intensity matrix} (CIM) $ \textbf{Q}_{X\given U} $ can be viewed as a set of homogenous intensity matrices $ \textbf{Q}_{X\given u} $, with entries $ q_{i,j \mid u} $ (similar to \autoref{eq:Q_matrix}), for each instantiation of parent nodes $ U(t) =u $ such that $ u \in \mathcal{U} = ⨉_{X_m \in \mathrm{Par}_{\mathcal{G}(X)}} \rchi_m $, where $ ⨉ $ denotes Cartesian product \cite{Nodelman1995}. As a result, given a trajectory of parent nodes, X has a trajectory of intensity matrix as
+Let X be a conditional Markov process in a graph $ \mathcal{G} $, with a set of parents $ U = \mathrm{Par}_{\mathcal{G}}(X)$. Its \textit{conditional intensity matrix} (CIM) $ Q_{X\given U} $ can be viewed as a set of homogenous intensity matrices $ Q_{X\given u} $, with entries $ q_{i,j \mid u} $ (similar to \autoref{eq:Q_matrix}), for each instantiation of parent nodes $ U(t) =u $ such that $ u \in \mathcal{U} = ⨉_{X_m \in \mathrm{Par}_{\mathcal{G}(X)}} \rchi_m $, where $ ⨉ $ denotes Cartesian product \cite{Nodelman1995}. As a result, given a trajectory of parent nodes, X has a trajectory of intensity matrix as
 \begin{equation}
-\textbf{Q}^{[0,T]} = [\textbf{Q}_{X\given U(t_0)}, \textbf{Q}_{X\given U(t_1)}, ..., \textbf{Q}_{X\given U(t_N)}],\ 0<t_0<...<t_N\leq T\text{.}
+Q^{[0,T]} = [Q_{X\given U(t_0)}, Q_{X\given U(t_1)}, ..., Q_{X\given U(t_N)}],\ 0<t_0<...<t_N\leq T\text{.}
 \end{equation}
 Markov transition function for a conditional MP can be written as
 \begin{align}
-\operatorname{Pr}(X(t + h) = x_j \mid X(t)=x_i, U(t)=u, \textbf{Q}_{X\given u}) = \delta(i,j) + q_{i,j \mid u} h + o(h).
+\operatorname{Pr}(X(t + h) = x_j \mid X(t)=x_i, U(t)=u, Q_{X\given u}) = \delta(i,j) + q_{i,j \mid u} h + o(h).
 \label{eq:CIM_trans_funct}
 \end{align}
 
 \paragraph*{Likelihood Function}
-Given the instantiation of its parents, the complete information on the dynamics of X is obtained. Then the likelihood of a trajectory drawn from a conditional MP $ X $ can be written similar to \autoref{eq:lh_traj_homo},
+Given the instantiation of its parents, the complete information on the dynamics of $ X $ is obtained. Then the likelihood of a trajectory drawn from a conditional MP $ X $ can be written similar to \autoref{eq:lh_traj_homo},
 \begin{align}
-p(X^{[0,T]}  \mid \textbf{Q}_{X\given U}) &=  \left(\prod_{ u}\prod_{ i} q_{i\mid u}^{r(x_{i}\mid u)} \exp \left(-q_{i\mid u} \Upsilon(x_{i}\mid u)\right)\right)\left(\prod_{ u}\prod_{ i} \prod_{ j \neq i} \left(\frac{q_{i,j\mid u}}{q_{i\mid u}}\right)^{r(x_{i}, x_{j}\mid u)}\right) \nonumber\\ & = \prod_{ u}\prod_{j\neq i}  \exp(-q_{i,j\mid u}\Upsilon(x_{i}\mid u)) \ q_{i,j\mid u}^{r(x_{i},x_{j}\mid u)}
+p(X^{[0,T]}  \mid Q_{X\given U}) &=  \left(\prod_{ u}\prod_{ i} q_{i\mid u}^{r(x_{i}\mid u)} \exp \left(-q_{i\mid u} \Upsilon(x_{i}\mid u)\right)\right)\left(\prod_{ u}\prod_{ i} \prod_{ j \neq i} \left(\frac{q_{i,j\mid u}}{q_{i\mid u}}\right)^{r(x_{i}, x_{j}\mid u)}\right) \nonumber\\ & = \prod_{ u}\prod_{j\neq i}  \exp(-q_{i,j\mid u}\Upsilon(x_{i}\mid u)) \ q_{i,j\mid u}^{r(x_{i},x_{j}\mid u)}
 \label{eq:lh_traj_cond}
 \end{align}
-where the summary statistics, $ \Upsilon(\cdot) $ and $ r(\cdot) $ introduced in  \crefrange{eq:sum_stat_ups}{eq:sum_stat_r}, are also conditioned on parent nodes.
+where the summary statistics $ \Upsilon(\cdot) $ and $ r(\cdot) $, introduced in  \crefrange{eq:sum_stat_ups}{eq:sum_stat_r}, are also conditioned on parent nodes.
 \subsection{The CTBN Model}
 Evidently, a homogeneous CTMP can be considered as a conditional MP whose set of parents is empty. Thus, a CTBN can be formed as a set of conditional Markov processes.\\
-Let S be a CTBN with graph $ \mathcal{G} = (\mathcal{V}, \mathcal{E}) $ and nodes $ \mathcal{V} = \left\lbrace 1, ..., N\right\rbrace  $. Each node represents a local variable $ X_n, \ n\in \mathcal{V} $, with a state space $ \rchi_n $. This results in factorizing state spaces for S such that $ \mathcal{S} = 
-\rchi_1 \times \rchi_2\times ...\times \rchi_N $. The joint states of the variables are denoted by $ s = (x_1, x_2, ..., x_N) \in \mathcal{S}$ where $ x_1 \in \rchi_1, ..., x_N \in \rchi_N $. The dependencies of each variable are defined as a set of its parents $ U_n = \mathrm{Par}_{\mathcal{G}}(X_n) $ with values $ U_n(t) = u_n $ such that $ u_n \in \mathcal{U}_n = ⨉_{X_m \in \mathrm{Par}_{\mathcal{G}(X_n)}} \rchi_m $. In the following, the set of all conditional transition intensity matrices are denoted as $ \textbf{\textit{Q}} = \left\lbrace Q_{X_1 \given U_1}, ..., Q_{X_N \given U_N}\right\rbrace  $.\\
-Consider a trajectory drawn from S, such that $ S^{[0, T]} = \left\lbrace X_1^{[0,T]},  X_2^{[0,T]}, ...,  X_N^{[0,T]}\right\rbrace  $. Following \autoref{eq:lh_traj_cond}, the likelihood of this trajectory can be written as
+Let $ S $ be a CTBN with graph $ \mathcal{G} = (\mathcal{V}, \mathcal{E}) $ and nodes $ \mathcal{V} = \left\lbrace 1, ..., N\right\rbrace  $. Each node represents a local variable $ X_n, \ n\in \mathcal{V} $, with a countable state space $ \rchi_n $. This results in factorizing state spaces for $ S $ such that $ \mathcal{S} = 
+\rchi_1 \times \rchi_2\times ...\times \rchi_N $. The joint states of the variables are denoted by $ s = (x_1, x_2, ..., x_N) \in \mathcal{S}$ where $ x_1 \in \rchi_1, ..., x_N \in \rchi_N $. The dependencies of each variable are defined as a set of its parents $ U_n = \mathrm{Par}_{\mathcal{G}}(X_n) $ with values $ U_n(t) = u_n $ such that $ u_n \in \mathcal{U}_n = ⨉_{X_m \in \mathrm{Par}_{\mathcal{G}(X_n)}} \rchi_m $. In the following, the set of all conditional transition intensity matrices are denoted as $ \textbf{Q} = \left\lbrace Q_{X_1 \given U_1}, ..., Q_{X_N \given U_N}\right\rbrace  $.\\
+Consider a trajectory drawn from $ S $, such that $ S^{[0, T]} = \left\lbrace X_1^{[0,T]},  X_2^{[0,T]}, ...,  X_N^{[0,T]}\right\rbrace  $. Following \autoref{eq:lh_traj_cond}, the likelihood of this trajectory can be written as
 \begin{align}
 p( S  \mid \textbf{\textit{Q}} ) = \prod_{n=1}^{N} \prod_{u \in \mathcal{U}_{n}} \prod_{x_i \in \mathcal{X}_{n}} \prod_{x_j \in \mathcal{X}_{n} \backslash x_i}
 \exp \left(q_{i,j\mid u}^{n} T_{n}(x_i\mid u)\right) (q_{i,j\mid u}^{n})^{r_{n}(x_i, x_j\mid u)}.
@@ -255,7 +255,7 @@ In the following, update methods for the belief state are introduced, where beli
 
 \subsection{Exact Belief State Update}
 \label{sec:exact_update}
-In a scenario where compact representations of the \textit{transition model}, $ T(s, a, s^{\prime})$,  and \textit{observation model}, $ \psi(s^{\prime}, a, y) $, are available, the belief state update can be obtained as \cite{KAELBLING199899}
+In a scenario where compact representations of the transition function $ T(s, a, s^{\prime})$  and observation function $ \psi(s^{\prime}, a, y) $ are available, the belief state update can be obtained as \cite{KAELBLING199899}
 \begin{align}
 b^{\prime}\left(s^{\prime}\right) &=\operatorname{Pr}\left(s^{\prime} \mid y, a, b\right) \label{eq:bu1}\\
 &=\frac{\operatorname{Pr}\left(y \mid s^{\prime}, a, b\right) \operatorname{Pr}\left(s^{\prime} \mid a, b\right)}{\operatorname{Pr}(y \mid a, b)} \label{eq:bu2}\\
@@ -264,7 +264,7 @@ b^{\prime}\left(s^{\prime}\right) &=\operatorname{Pr}\left(s^{\prime} \mid y, a,
 \label{eq:discrete_belief_update}
 \end{align}
 \crefrange{eq:bu1}{eq:bu2} are obtained following Bayes' theorem, and \crefrange{eq:bu2}{eq:bu3} follow from the law of total probability. \\
-From \autoref{eq:ode_sol}, the relation between transition model $ T $ and transition intensity matrix $ \textbf{Q} $ can be written as $ T = \exp(t\textbf{Q}) $.
+From \autoref{eq:ode_sol}, the relation between transition model $ T $ and transition intensity matrix $ Q $ can be written as $ T = \exp(tQ) $.
 It is noteworthy that the denominator in \autoref{eq:discrete_belief_update} is in the following form, 
 \begin{equation}
 \operatorname{Pr}(y \mid a, b) = \sum_{\forall s^{\prime} \in \mathcal{S}} \psi(y \mid s^{\prime}, a) \sum_{\forall s \in \mathcal{S}} T(s^{\prime}\mid s,a) b(s)
@@ -275,7 +275,7 @@ which is computationally expensive in the case of continuous state space.
 \label{sec:filtering_CTMC}
 Equation \ref{eq:discrete_belief_update} is the discrete-time solution of belief state. However, since in the model described in Section 2.1, the parent nodes are modelled as CTMPs, the environment state evolves as the state of a CTMP. Therefore, the belief over the environment states should be solved in continuous-time. This is achieved by the inference of the posterior probability of CTMP \cite{article}.\\
 A \textit{filtering problem} in statistical context refers to the inference of the conditional probability of the current state of the system at a given point in time, given the past observations \cite{Godsill2019}.\\
-Let X be a CTMP with transition intensity matrix \textbf{Q}. Assume discrete-time observations denoted by $ y_{1}=y(t_{1}), ..., y_{L}=y(t_{L}) $. The belief state can be written as:
+Let X be a CTMP with transition intensity matrix Q. Assume discrete-time observations denoted by $ y_{1}=y(t_{1}), ..., y_{L}=y(t_{L}) $. The belief state can be written as:
 \begin{equation}
 b(x_{i};t_{L}) = \operatorname{Pr}(X(t_{L}) = x_{i} \mid y_{1}, ..., y_{L})
 \end{equation}
@@ -287,11 +287,11 @@ The time-dependent belief state $ b(t) $ is a row vector with $ \left\lbrace b(x
 This posterior probability can be described by a system of ODEs:
 %TODO ODE or system of ODEs
 \begin{equation}
-\frac{db(t)}{dt} = b(t)\textbf{Q}
+\frac{db(t)}{dt} = b(t)Q
 \end{equation}
 where the initial condition $ b(0) $ is a row vector with $ \left\lbrace b(x_{i};t)\right\rbrace_{x_{i} \in \rchi} $ \cite{article}. The solution to this ODE is
 \begin{equation}
-b(t) = b(0) \exp(t\textbf{Q}).
+b(t) = b(0) \exp(tQ).
 \label{eq:b_cont}
 \end{equation}
 The belief state update at discrete times of observation $ y_{t} $ is derived as 
@@ -323,8 +323,8 @@ where $ w(x^{(m)}) = \frac{p(x^{(m)})}{q(x^{(m)})} $ is defined as \textit{impor
 
 \subsubsection{Marginalized Continuous-Time Markov Processes}
 \label{sec:marg_ctbn}
-In this work, the particles to represent the belief state are drawn from a marginalized CTBN. Consider a CTBN, $ S $, with local variables $ X_n $, $ n\in \left\lbrace 1,...,N \right\rbrace $, and a set of conditional intensity matrices \textbf{\textit{Q}}. In the following, it is assumed that every non-diagonal entry in $ \textbf{Q}_{n\mid u} $ is Gamma distributed with shape and rate parameters, $ \alpha^n_{i,j\mid u} $ and $ \beta^n_{i,j\mid u} $.\\
-The marginal process description of S considering a single trajectory in the interval $ [0,t) $ can be written as
+In this work, the particles to represent the belief state are drawn from a marginalized CTBN. Consider a CTBN, denoted by $ S $, with local variables $ X_n $, $ n\in \left\lbrace 1,...,N \right\rbrace $, and a set of conditional intensity matrices \textbf{Q}. In the following, it is assumed that every non-diagonal entry in $ Q_{n\mid u} $ is Gamma distributed with shape and rate parameters, $ \alpha^n_{i,j\mid u} $ and $ \beta^n_{i,j\mid u} $.\\
+The marginal process description of $ S $ considering a single trajectory in the interval $ [0,t) $ can be written as
 \begin{align}
 \operatorname{Pr}(X_n(t &+ h) = x_j \mid X_n(t)=x_i, U_n(t)=u, S^{[0, t)})\\
 &= \int \operatorname{Pr}(X_n(t + h) = x_j \mid X_n(t)=x_i, U_n(t)=u, Q_{n\mid u}, S^{[0, t)})p(Q_{n\mid u})dQ_{n\mid u}\\
@@ -337,19 +337,19 @@ The derivation of the conditional expectation for a marginal CTBN follows from t
 p\left(\textbf{Q} \mid S^{[0,t]}\right)=\frac{p\left(S^{[0,t]} \mid \textbf{Q}\right) p(\textbf{Q})}{p\left(S^{[0,t]}\right)}
 \label{eq:Q_bayes}
 \end{equation}
-\autoref{eq:Q_bayes}, written for single trajectory $ S^{[0,t]} $, can be extended for multiple trajectories. Consider $ K $ trajectories drawn from S, denoted by $ \xi_t = \left\lbrace S^{[0,t], 1}, S^{[0,t], 2}, ..., S^{[0,t], K} \right\rbrace  $. Since the trajectories are conditionally independent, given \textbf{Q}, using \autoref{eq:lh_CTBN} the likelihood of set $ \xi_t $ is written as,
+\autoref{eq:Q_bayes}, written for single trajectory $ S^{[0,t]} $, can be extended for multiple trajectories. Consider $ K $ trajectories drawn from $ S $, denoted by $ \xi_t = \left\lbrace S^{[0,t], 1}, S^{[0,t], 2}, ..., S^{[0,t], K} \right\rbrace  $. Since the trajectories are conditionally independent, given \textbf{Q}, using \autoref{eq:lh_CTBN} the likelihood of set $ \xi_t $ is written as,
 \begin{align}
-\operatorname{Pr}( \xi_t  \mid \textbf{\textit{Q}} ) = \prod_{n=1}^{N} \prod_{u \in \mathcal{U}_{n}} \prod_{x_i \in \mathcal{X}_{n}} \prod_{x_j \in \mathcal{X}_{n} \backslash x_i}
-\exp \left( q_{i,j\mid u}^{n} T_{n}(x_i\mid u)\right) (q_{i,j\mid u}^{n})^{r_{n}(x_i, x_j\mid u)}
+\operatorname{Pr}( \xi_t  \mid \textbf{Q} ) = \prod_{n=1}^{N} \prod_{u \in \mathcal{U}_{n}} \prod_{x_i \in \mathcal{X}_{n}} \prod_{x_j \in \mathcal{X}_{n} \backslash x_i}
+\exp \left( q_{i,j\mid u}^{n} \Upsilon_{n}(x_i\mid u)\right) (q_{i,j\mid u}^{n})^{r_{n}(x_i, x_j\mid u)}
 \label{eq:lh_dataset_CTBN}
 \end{align}
-where the joint summary statistics of $ X_n $ over all $ K $ trajectories are denoted by  $ T_{n}(x_i\mid u) = \sum_{\kappa=1}^{K} T_{n}^\kappa(x_i\mid u) $ and $ r_{n}(x_i, x_j\mid u) =\sum_{\kappa=1}^{K} r_{n}^\kappa(x_i, x_j\mid u)$.\\
+where the joint summary statistics of $ X_n $ over all $ K $ trajectories are denoted by  $ \Upsilon_{n}(x_i\mid u) = \sum_{\kappa=1}^{K} \Upsilon_{n}^\kappa(x_i\mid u) $ and $ r_{n}(x_i, x_j\mid u) =\sum_{\kappa=1}^{K} r_{n}^\kappa(x_i, x_j\mid u)$.\\
 Given independent Gamma-priors on transition intensities, the expectation in \autoref{eq:marginal_CTBN} can be evaluated as follows:
 \begin{equation}
-\mathbb{E}\left[q_{i,j\mid u}^{n} \mid \xi_{t}\right]=\frac{\alpha^n_{i,j\mid u}+r_{n}(x_i, x_j\mid u)}{\beta^n_{i,j\mid u}+T_{n}(x_i \mid u)}
+\mathbb{E}\left[q_{i,j\mid u}^{n} \mid \xi_{t}\right]=\frac{\alpha^n_{i,j\mid u}+r_{n}(x_i, x_j\mid u)}{\beta^n_{i,j\mid u}+\Upsilon_{n}(x_i \mid u)}
 \label{eq:estimated_Q}
 \end{equation}
-The trajectories sampled from a CTBN are conditionally independent given the intensity matrices. However, the expectation of these matrices are used to sample from the marginalized CTBN. This expectation, evaluated using \autoref{eq:estimated_Q}, depends on the summary statistics $T_{n}(x_i\mid u)$ and $ r_{n}(x_i, x_j\mid u)$ from all observed trajectories up to the time of the evaluation. Therefore, in order to draw $K$ trajectories from a marginalised CTBN exactly, they have to be simulated jointly. Since this simulation is computationally infeasible, we approximated this simulation where the particles are processed one after another. The approximation can be validated rigorously using collapsed variational inference but this derivation is beyond the scope of this thesis. Our results show this validity empirically. \\
+The trajectories sampled from a CTBN are conditionally independent given the intensity matrices. However, the expectation of these matrices are used to sample from the marginalized CTBN. This expectation, evaluated using \autoref{eq:estimated_Q}, depends on the summary statistics $\Upsilon_{n}(x_i\mid u)$ and $ r_{n}(x_i, x_j\mid u)$ from all observed trajectories up to the time of the evaluation. Therefore, in order to draw $K$ trajectories from a marginalised CTBN exactly, they have to be simulated jointly. Since this simulation is computationally infeasible, we approximated this simulation where the particles are processed one after another. The approximation can be validated rigorously using collapsed variational inference but this derivation is beyond the scope of this thesis. Our results show this validity empirically. \\
 The algorithm for belief state update through marginal particle filtering is given in \cref{chap:3}. 
 %, we would like to approximate this resulting joint distribution
 %by a set of $K$ factorising variational distributions: $\prod_k q(X^k_{[0, T]})$ such that
@@ -368,7 +368,7 @@ This algorithm can also be applied to sample \textit{events} from a CTBN given t
 	\SetKwInOut{KwOut}{Output}
 	\SetKwInOut{Init}{Initialize}
 	
-	\KwIn{Structure of the network with N local variables $ X_{1}, X_{2}, ..., X_{n} $ with state-space $ \rchi_n = \left\lbrace x_{1}, ..., x_{m} \right\rbrace $   \\Transition intensity matrices $ \textbf{Q}_{n} $ with entries $ q^n_{i,j}$\\$ T_{max} $ to terminate simulation}
+	\KwIn{Structure of the network with N local variables $ X_{1}, X_{2}, ..., X_{n} $ with state-space $ \rchi_n = \left\lbrace x_{1}, ..., x_{m} \right\rbrace $   \\Transition intensity matrices $ Q_{n} $ with entries $ q^n_{i,j}$\\$ T_{max} $ to terminate simulation}
 	\KwOut{Sample trajectory of the network}
 	\Init{Initialize node values $ X_{n}(0) = x_{i} \in \rchi_n$}
 	

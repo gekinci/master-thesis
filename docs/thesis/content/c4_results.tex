@@ -8,7 +8,7 @@ The experimental results are presented in this chapter. First, the parameters fo
 \label{sec:config}
 The configurations given below are used for the results presented in the following sections, if not specified otherwise.
 \begin{itemize}
-	\item Gamma priors for parent dynamics such that $ \textbf{Q}_{n} \sim \mathrm{Gam}(\symbf{\alpha}^n, \symbf{\beta}^n)$ for $n \in \left\lbrace 1,2\right\rbrace $, and $ \symbf{\alpha} = [\alpha_0, \alpha_1] $ and $ \symbf{\beta} = [\beta_0, \beta_1] $
+	\item Gamma priors for parent dynamics such that $ Q_{n} \sim \mathrm{Gam}(\symbf{\alpha}^n, \symbf{\beta}^n)$ for $n \in \left\lbrace 1,2\right\rbrace $, and $ \symbf{\alpha}^n = [\alpha^n_0, \alpha^n_1] $ and $ \symbf{\beta}^n = [\beta^n_0, \beta^n_1] $
 	\begin{align}
 	\symbf{\alpha}^1 = [5,10] &\quad \symbf{\beta}^1 = [5,20] \\
 	\symbf{\alpha}^2 = [10,10] &\quad \symbf{\beta}^2 = [10,5]
@@ -16,24 +16,24 @@ The configurations given below are used for the results presented in the followi
 	\end{align}
 	\item Transition intensity matrices of $ X_1 $ and $ X_2 $ sampled from priors given above
 	\begin{align}
-	\textbf{Q}_1 &= 
+	Q_1 &= 
 	\begin{bmatrix}
 	-1.117 & 1.117 \\
 	0.836 &  -0.836
 	\end{bmatrix} \\
-	\textbf{Q}_2 &= 
+	Q_2 &= 
 	\begin{bmatrix}
 	-1.1 & 1.1 \\
 	2.445 &  -2.445
 	\end{bmatrix}
 	\end{align}
 	\item Length of the trajectories $ T = 5\text{s} $
-	\item State space, $ \rchi_{P} = \rchi_1 \times \rchi_2 = \left\lbrace (x_1, x_2)\right\rbrace_{x_1\in \rchi_1, x_2\in \rchi_2} = \left\lbrace (0, 0), (0, 1), (1, 0),(1, 1)\right\rbrace $
-	\item Observation space, $ \mathcal{Y} = \left\lbrace 0, 1, 2 \right\rbrace $
-	\item Action space, $ \textit{A} = \left\lbrace a_{0}, a_{1} \right\rbrace = \left\lbrace 0, 1\right\rbrace $
+	\item State space $ \rchi_{P} = \rchi_1 \times \rchi_2 = \left\lbrace (x_1, x_2)\right\rbrace_{x_1\in \rchi_1, x_2\in \rchi_2} = \left\lbrace (0, 0), (0, 1), (1, 0),(1, 1)\right\rbrace $
+	\item Observation space $ \mathcal{Y} = \left\lbrace 0, 1, 2 \right\rbrace $
+	\item Action space $ \textit{A} = \left\lbrace a_{0}, a_{1} \right\rbrace = \left\lbrace 0, 1\right\rbrace $
 	\item The set of transition intensity matrices of $ X_3 $
 	\begin{align}
-	\textbf{\textit{Q}}_3 = \left\lbrace \textbf{Q}_{3\mid a_{0}}, \textbf{Q}_{3\mid a_{1}} \right\rbrace = \left\lbrace 
+	\textbf{\textit{Q}}_3 = \left\lbrace Q_{3\mid a_{0}}, Q_{3\mid a_{1}} \right\rbrace = \left\lbrace 
 	\begin{bmatrix}
 	-0.5 & 0.5 \\
 	2 &  -2
@@ -44,8 +44,8 @@ The configurations given below are used for the results presented in the followi
 	\end{bmatrix} 
 	\right\rbrace 
 	\end{align}
-	\item Number of particles, $ M = 200 $
-	\item Weights of the policy introduced in \autoref{eq:policy}, $ \textbf{w} = [0.02, 0.833, 0.778, 0.87] $
+	\item Number of particles $ M = 200 $
+	\item Weights of the policy introduced in \autoref{eq:policy} $ \textbf{w} = [0.02, 0.833, 0.778, 0.87] $
 	\item Observation model
 	$\psi_{\text{true}} =
 	\begin{bmatrix}
@@ -66,7 +66,7 @@ The configurations given below are used for the results presented in the followi
 \end{figure}
 \section{Simulation}
 \label{sec:simulation}
-The synthetic dataset is generated utilising \cref{alg:sampling}. K trajectories in time interval $ [0, T] $ are denoted by $ \xi_T = \left\lbrace S^{[0,T], 1}, S^{[0,T], 2}, ..., S^{[0,T], K} \right\rbrace  $, where $ S^{[0,T],\kappa} = \left\lbrace X_1^{[0,T],\kappa} , X_2^{[0,T],\kappa}, X_3^{[0,T],\kappa}\right\rbrace $ denotes a single trajectory for all nodes. It is noteworthy that the initial states are drawn from disrete uniform distribution.
+The synthetic dataset is generated utilising \cref{alg:sampling}. $ K $ trajectories in time interval $ [0, T] $ are denoted by $ \xi_T = \left\lbrace S^{[0,T], 1}, S^{[0,T], 2}, ..., S^{[0,T], K} \right\rbrace  $, where $ S^{[0,T],\kappa} = \left\lbrace X_1^{[0,T],\kappa} , X_2^{[0,T],\kappa}, X_3^{[0,T],\kappa}\right\rbrace $ denotes a single trajectory for all nodes. It is noteworthy that the initial states are drawn from disrete uniform distribution.
 \begin{equation}
 X_n(0) \sim \mathcal{U} \left\lbrace 0, 1\right\rbrace  \text{ for } n \in \left\lbrace 1,2,3\right\rbrace 
 \end{equation}
@@ -79,7 +79,7 @@ X_n(0) \sim \mathcal{U} \left\lbrace 0, 1\right\rbrace  \text{ for } n \in \left
 		\label{fig:belief_traj}
 	\end{center}
 \end{figure}\\
-Finally, the resulting $ Q_3 $ and the trajectory of the agent are given in \autoref{fig:q_traj}. The $ Q_3 $ trajectory shown in \autoref{fig:q_traj}(b) is derived from the belief state update by marginal particle filter which is given in \autoref{fig:q_traj}(a) using \autoref{eq:policy} and \autoref{eq:Q_3_traj}.
+Finally, the resulting $ \textbf{Q}_3 $ and the trajectory of the agent are given in \autoref{fig:q_traj}. The $ Q_3 $ trajectory shown in \autoref{fig:q_traj}(b) is derived from the belief state update by marginal particle filter which is given in \autoref{fig:q_traj}(a) using \autoref{eq:policy} and \autoref{eq:Q_3_traj}.
 \begin{figure}[t]
 	\begin{center}
 		\includegraphics[width=.9\textwidth]{figures/sim_example/q_traj}
@@ -107,8 +107,8 @@ In this section, the limitations to the classification problem are discussed and
 \end{figure}
 \subsection{Equivalence Classes}
 \label{sec:eq_classes}
-As mentioned in \cref{sec:inf_setup}, the deterministic nature of the observation model results in a number of possible observation models. The setting described in \cref{chap:3}, with configurations given in \cref{sec:config}, leads to 81 obsevation models. However, with this experimental setup and the methods, it is only possible to distinguish these observation models into 10 different classes. Due to this equivalence, the inference problem is considered only for 10 observation models, each one representing one class. The reasons of this phenomena are discussed in detail in \cref{ap:eq_classes}, together with the observation models considered in the inference problem. The set of observation model that can be classified is denoted as $ \symbf{\psi} $ in the following. \\
-\autoref{fig:llh_exactUpdate_81model} illustrates the equivalence of observation models clearly. The plot depicts the results of an experiment with 200 samples, $ |\xi_T| = 200 $, generated using the observation model $ \psi_{\text{true}} $ given in \cref{sec:config}, and the average log-likelihood of samples computed for all possible observation models. Here, the belief state is updated using exact method as described in \cref{par:bs_exact}, in order to depict the exact equivalence within one class. As can be seen, the results show the separation of the set of observation models into 10 distinct classes. The legend is removed to avoid clutter. The jump around 110 and 150 trajectories can be explained by an encounter with a sample of highly likely parent trajectories. Such encounter has the same affect on the likelihood of all observations, as can be seen from \autoref{eq:Marg_llh_final}.\\
+As mentioned in \cref{sec:inf_setup}, the deterministic nature of the observation model results in a number of possible observation models. The setting described in \cref{chap:3}, with configurations given in \cref{sec:config}, leads to 81 observation models. However, with this experimental setup and the methods, it is only possible to distinguish these observation models into 10 different classes. Due to this equivalence, the inference problem is considered only for 10 observation models, each one representing one class. The origins of this phenomena are discussed in detail in \cref{ap:eq_classes}, together with the observation models considered in the inference problem. The set of observation model that can be classified is denoted as $ \symbf{\psi} $ in the following. \\
+\autoref{fig:llh_exactUpdate_81model} illustrates the equivalence of observation models clearly. The plot depicts the results of an experiment with 200 samples, $ |\xi_T| = 200 $, generated using the observation model $ \psi_{\text{true}} $ given in \cref{sec:config}, and the average log-likelihood of samples computed for all possible observation models. Here, the belief state is updated using exact method as described in \cref{par:bs_exact}, in order to depict the exact equivalence within one class. As can be seen, the results show the separation of the set of observation models into 10 distinct classes. The legend is removed to avoid clutter. The jump around 110 and 150 trajectories can be explained by an encounter with a sample of highly likely parent trajectories. Such encounters have the same affect on the likelihood of all observations, as can be seen from \autoref{eq:Marg_llh_final}.\\
 In order to show the validity of the equivalence in the case of marginal particle filter, the average log-likelihoods of 200 samples given two observation models in the same class are illustrated in \autoref{fig:llh_particleFilter_sameclass}. The samples are generated with $ \psi_{\text{true}} = \psi_{0} $, and the rest of the observation models here fall in the same equivalence class as $ \psi_0 $. As can be seen from the graph, the observation models lead to such similar results that they are assumed to be identical. 
 \begin{figure}[t]
 	\begin{center}
@@ -118,7 +118,7 @@ In order to show the validity of the equivalence in the case of marginal particl
 	\end{center}
 \end{figure} 
 \subsection{Learning Observation Model}
-\autoref{fig:llh_exact} illustrates the average log-likelihood over 100 samples given the observation models. The samples are generated with $ \psi_{true} = \psi_0 $ given in \cref{sec:config}, and exact update method is utilised for belief state update. As can be seen, the curves converge quicly and the true model is well separated from others. Consequently, the maximum log-likelihood estimation, as given below, leads to the correct result. Here, in order to avoid numerical unstability, the log-likelihood is preferred for the calculations instead of likelihood.
+\autoref{fig:llh_exact} illustrates the average log-likelihood over 100 samples given the observation models. The samples are generated with $ \psi_{true} = \psi_0 $ given in \cref{sec:config}, and exact update method is utilised for belief state update. As can be seen, the curves converge quickly and the true model is well separated from others. Consequently, the maximum log-likelihood estimation, as given below, leads to the correct result. Here, in order to avoid numerical unstability, the log-likelihood is preferred for the calculations instead of likelihood.
 \begin{equation}
 \hat{\psi} = \argmax_\psi \left[ \log p(S^{[0,T]} \mid \theta )\right] 
 \label{eq:max_llh_est}
@@ -139,9 +139,9 @@ A similar experiment is documented in \autoref{fig:llh_particle}, where exact up
 	\end{center}
 \end{figure}
 \pagebreak
-We approach the inference problem as classification between the observation models $ \psi \in \symbf{\psi} $ given in \cref{ap:obs_set_exp}, and consider the estimated likelihood values of each sample given an observation model as the score of the sample belonging to the corresponding class. As a measure of the performance of the classifier, we utilise area under the Reciever-Operator-Characteristic curve (AUROC) and Presition-Recall curve (AUPR). Since this setting represents a multi-class classification problem, the performance metrics AUROC and AUPR are calculated as one-vs-rest. \\ %performance metric AUROC is calculated as one-vs-rest. \\ %
+We approach the inference problem as classification between the observation models $ \psi \in \symbf{\psi} $ given in \cref{ap:obs_set_exp}, and consider the estimated likelihood values of each sample given an observation model as the score of the sample belonging to the corresponding class. As a measure of the performance of the classifier, we utilise area under the Reciever-Operator-Characteristic curve (AUROC) and Precision-Recall curve (AUPR). Since this setting represents a multi-class classification problem, the performance metrics AUROC and AUPR are calculated as one-vs-rest. \\ %performance metric AUROC is calculated as one-vs-rest. \\ %
 We have provided the classifier with increasing number of samples for inference. This is achieved through bootstrapping a given number of trajectories, and using the mean likelihood over the bootstrap batch as a new sample. The following AUROC plots shows the results over 50 trajectories generated using each obervation model as the true model. According to this, in our dataset, we have 500 trajectories, 50 from each class labeled through a vector with 10 entries, having a single element equal to 1 for the true observation model and 0 for the rest. When number of trajectories is 1, each sample in the dataset is considered individually. When number of trajectories is 2, within each class, 50 sample batches of size 2 are bootstrapped such that none of the batches consist of the same samples. By doing so, we keep the sample size at 50 per class, regardless of the batch size. \\
-\autoref{fig:AUROC_class0} shows the AUROC results over 10 runs, comparing the state estimator using exact update and marginal particle filtering. We plot the median AUROC as a line and 25-75th percentile as the shaded area. The AUPR results are given in appendix \autoref{fig:AUPR_class0} in the same manner. As expected given the unbiased classifier, both metrics approach to 1 as the number of samples increases. Due to the stochasticity introduced by the marginal particle filtering as the state estimator, the results obtained with this method show slightly lower performance. 
+\autoref{fig:AUROC_class0} shows the AUROC results over 10 runs, comparing the state estimator using exact update and marginal particle filtering. We plot the median as a line and 25-75th percentile as the shaded area. The AUPR results are given in appendix \autoref{fig:AUPR_class0} in the same manner. As expected given the unbiased classifier, both metrics approach to 1 as the number of samples increases. Due to the stochasticity introduced by the marginal particle filtering as the state estimator, the results obtained with this method show slightly lower performance. 
 %As expected given the unbiased classifier, this metric approaches to 1 as the number of samples increases. Due to the stochasticity introduced by the particle filtering as the state estimator, the results obtained with this method show slightly lower performance. 
 %\begin{figure}[t]
 %	\begin{subfigure}{.5\textwidth}
@@ -211,7 +211,7 @@ AUROC results for different levels of noise are given in \autoref{fig:AUROC_clas
 \subsection{Estimated Intensity Matrices by Marginal Particle Filter}
 In marginal particle filtering, the belief state is formed over particles drawn from marginalized processes of parents as in \autoref{eq:belief_over_particles}. In order to achieve this, the intensity matrices are replaced with the expectation given in \autoref{eq:estimated_Q}. With every new observation, the particles are propagated through the marginal process and the summary statistics are updated after each particle. Gamma-priors of the parent transition intensities are given in \cref{sec:config}. \\
 In \cref{sec:simulation}, we have presented an example of sampled trajectories. \autoref{fig:parent_traj} illustrates the parent trajectories, and \autoref{fig:belief_traj} shows the belief state updated using exact method, and marginal particle filtering. For the latter, we plotted the statistics over 10 filters. \autoref{fig:q_convergence} illustrates the estimated transition intensities of those 10 particle filters. The notation on y-axis label follows the notation in \autoref{eq:Q_parents}. Each colored line illustrates one estimation from 10 particle filters shown in \autoref{fig:belief_traj}. Black dashed line marks the true values of the transition intensity. The gray lines show the observations. Between each observation, there are 200 updates to the estimation, each coming from one particle. \\
-As can be seen from the figures, the estimations converge, although the final estimated value might be different than the true values. This can be explained by the fact that at the early stages, an unlikely transition sampled from marginal process causes a significant change in the estimation, which in return affects the distribution from which the next transitions are drawn. Such significant ripples can be seen at the early updates (updates 0 to 500 in the course of first 3 observations), which play a major role on the value the estimation converges to.
+As can be seen from the figures, the estimations converge, although the final estimated value might be different than the true values. This can be explained by the fact that at the early stages, an unlikely transition sampled from marginal process causes a significant change in the estimation, which in return affects the distribution from which the next transitions are drawn. Such significant ripples can be seen at the early updates, i.e. updates 0 to 500 in the course of first 3 observations, which play a major role on the value the estimation converges to.
 %\begin{align}
 %\textbf{Q}_i = 
 %\begin{bmatrix}
