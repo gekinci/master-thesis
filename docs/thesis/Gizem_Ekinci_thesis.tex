@@ -11,11 +11,11 @@
 % author and thesis details (please adjust accordingly)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\name}{Gizem Ekinci} % <-- your name here
-\title{Bayesian Inference of Information Transfer in Graph-Based Continuous-Time Multi-Agent Systems} % <-- thesis title here
+\title{Bayesian Inference of Information Transfer in Networked Multi-Agent Systems} % <-- thesis title here
 \newcommand{\documenttype}{Master-Thesis} % <-- select type: "Master-Thesis", "Bachelor-Thesis", "Projektseminar", "Proseminar"
 \newcommand{\major}{Elektro- und Informationstechnik} % <-- your study program
-\newcommand{\supervisora}{Dipl.-Phys. Dominik Linzner}
-\newcommand{\supervisorb}{Anam Tahir, M.Sc.}  % <-- your supervisor here
+\newcommand{\supervisora}{Dominik Linzner}
+\newcommand{\supervisorb}{Anam Tahir}  % <-- your supervisor here
 \newcommand{\submission}{21.07.2020} % <-- your submission date here
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -30,25 +30,35 @@
 	
 	\pagenumbering{gobble}
 	\tableofcontents
-	\newpage
+	\newpage	
 	\setcounter{page}{1}
 	\pagenumbering{roman}
-	\input{content/list_of_symbols.tex}
 	\listoffigures
 	\addcontentsline{toc}{chapter}{List of Figures}
+	\input{content/list_of_symbols.tex}
 	\newpage
 	\setcounter{page}{1}
 	\pagenumbering{arabic}
 	\pagestyle{plain}
 	
+	\newpage \ \thispagestyle{empty} \addtocounter{page}{-1}
 	\input{content/c1_introduction.tex}
 	\newpage \ \thispagestyle{empty} \addtocounter{page}{-1}
 	\input{content/c2_foundations.tex}
+	\newpage \ \thispagestyle{empty} \addtocounter{page}{-1}
 	\input{content/c3_methodology.tex}
+	\newpage \ \thispagestyle{empty} \addtocounter{page}{-1}
 	\input{content/c4_results.tex}
 	\newpage \ \thispagestyle{empty} \addtocounter{page}{-1}
 	\input{content/c5_discussion_outlook.tex}
+
+	\appendix\input{content/appendix.tex}
+%	\newpage
+%	\setcounter{page}{1}
+%	\pagenumbering{roman}
+%	\input{content/list_of_symbols.tex}
+%	\listoffigures
+%	\addcontentsline{toc}{chapter}{List of Figures}
 	\bibliography{bib_cleaned}
 	\addcontentsline{toc}{chapter}{Bibliography}
-	\appendix\input{content/appendix.tex}
 \end{document}

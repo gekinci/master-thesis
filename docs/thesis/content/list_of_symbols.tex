@@ -1,11 +1,56 @@
+\chapter*{List of Acronyms}
+\addcontentsline{toc}{chapter}{List of Acronyms}
+\begin{tabular}{p{0.15\textwidth} p{0.85\textwidth}}
+	\textbf{AUPR} & Area under Precision-Recall curve \\
+	\textbf{AUROC} & Area under Reciever-Operator-Characteristic curve \\
+	\textbf{CIM} & Conditional intensity matrix \\
+	\textbf{CTBN} & Continuous-time Bayesian network \\
+	\textbf{CTMP} & Continuous-time Markov process \\
+	\textbf{FN} & False negative\\
+	\textbf{FP} & False positive\\
+	\textbf{FPR} & False positive rate\\
+	\textbf{MDP} & Markov decision process \\
+	\textbf{MP} & Markov process\\
+	\textbf{P} & Precision\\
+	\textbf{POMDP} & Partially observable Markov decision process\\
+	\textbf{PR} & Precision-Recall curve \\
+	\textbf{R} & Recall\\
+	\textbf{ROC} & Reciever-Operator-Characteristic curve \\
+	\textbf{SE} & State estimator\\
+	\textbf{SMC} & Sequential Monte Carlo\\
+	\textbf{TN} & True negative\\
+	\textbf{TP} & True positive\\
+	\textbf{TPR} & True positive rate\\
+\end{tabular}
+
 \chapter*{List of Symbols}
 \addcontentsline{toc}{chapter}{List of Symbols}
 
-\begin{tabular}{cp{0.6\textwidth}}
-	$ \rchi $ & state space of random variable $ X $ \\
-	$ X(t) $ & value of random variable $X$ at time t \\
-	$ X^{[0, T]} $ & discrete valued trajectory of random variable $ X $ in time interval $ [0, T] $ \\
-	$ \textbf{X}^T $ & transpose of matrix/vector \textbf{X} \\
-	$ ⨉ $ & Cartesian product \\
-	$ \mathbb{E}\left[ f(x) \right]  $ & expectation of $ f(x) $
+\begin{tabular}{c p{0.85\textwidth}}
+	\textbf{Notation} & \textbf{Description}\\
+	$ \operatorname{Pr}(\cdot) $ & Probability \\
+	$ p(\cdot) $ & Probability distribution \\
+	$ \mathrm{Gam}(\alpha, \beta)  $ & Gamma distribution with shape parameter $ \alpha $ and rate parameter $ \beta $\\
+	$ w^\intercal $ & Transpose of matrix/vector $ w $ \\
+	$ \bigtimes $ & Cartesian product \\
+	$ \mathbb{E}_{p(x)}\left[ f(x) \right]  $ & Expectation of $ f(x) $ over probability distribution $ p(x) $\\
+	$ \delta  $ & Kronecker delta\\
+	$ \mathcal{G} = (\mathcal{V}, \mathcal{E})  $ & Graph $ \mathcal{G} $ with a set of nodes $ \mathcal{V} $ and a set of edges $ \mathcal{E} $\\
+	$ \mathrm{Par}_{\mathcal{G}}(n)  $ & Parent set of node $ n $ in graph $ \mathcal{G} $ \\
+	$ X(t) $ & Value of random variable $X$ at time $ t $ \\
+	$ Q $ & Transition intensity matrix \\
+	$ \rchi $ & State space of random variable $ X $ \\
+	$ X^{[0, T]} $ & Discrete valued trajectory of random variable $ X $ in time interval $ [0, T] $ \\
+	$ \Upsilon(x_i) $ & The total amount of time spent in state $ x_i $ in a trajectory \\
+	$ r(x_i, x_j)  $ & The total number of transitions from state $ x_i $ to $ x_j $ in a trajectory \\
+	$ r(x_i)  $ & The total number of transitions leaving state $ x_i $ a trajectory \\
+	$ \psi $ & Observation model \\
+	$ y $ & Observation \\
+	$ \mathcal{Y} $ & Observation space \\
+	$ a $ & Action \\
+	$ A $ & Action space \\
+	$ b $ & Belief state \\
+	$ \pi $ & Policy \\
+	$ \xi^K_T $ & Dataset of $ K $ sample trajectories with length of $ T $\\
+	$ \textbf{k} $ & Set of particles for particle filter
 \end{tabular}\\

@@ -3,10 +3,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%% math %%%
-\usepackage{amsmath}
-\usepackage{amssymb}
 \usepackage{mathtools}
-\usepackage{unicode-math}
+\usepackage{amsfonts,amsmath,amssymb,stmaryrd}
+\usepackage{bbm}
 
 %%% fonts %%%
 \usepackage{lmodern}
@@ -27,6 +26,7 @@
 
 %%% misc %%%
 \usepackage{blindtext}
+\usepackage[titletoc]{appendix}
 
 %%% algorithms %%%
 \usepackage{algorithmic}
@@ -99,3 +99,17 @@
 	runin=false,
 	afterskip=2sp
 ]{paragraph,subparagraph}
+
+\newcommand*{\SavedOriginaladdchaptertocentry}{}
+\appto\appendixmore{%
+	\let\SavedOriginaladdchaptertocentry\addchaptertocentry
+	\renewcommand*{\addchaptertocentry}[2]{%
+		\ifstr{#1}{}{% Eintrag ohne Nummer
+			\SavedOriginaladdchaptertocentry{#1}{#2}%
+		}{% Eintrag mit Nummer
+			\SavedOriginaladdchaptertocentry{}{%
+				\string\expandafter\string\MakeUppercase\string\appendixname
+				~#1:\string\enskip{}#2}%
+		}%
+	}%
+}

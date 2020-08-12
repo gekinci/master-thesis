@@ -1,12 +1,12 @@
 %\externaldocument[-f]{c2_foundations}
-\appendix
-
+\renewcommand{\arraystretch}{.9}
+\appendixpage
 \chapter{Amalgamation Operation}
 \label{ap:amalgamation}
-A CTBN with multiple variables can be represented with a single intensity matrix. This is done by amalgamation operation. Amalgamation defines a combining operation over multiple intensity matrices and produces a single matrix for the entire system. 
+A CTBN with multiple variables can be represented with a single intensity matrix. This is done by amalgamation operation. Amalgamation defines a combining operation over multiple intensity matrices and produces a single matrix for the entire system \cite{Nodelman1995}. 
 
-\section{Amalgamation of Independent Processes}
-Consider a CTBN with graph $ \mathcal{G} = \left\lbrace \mathcal{V}, \mathcal{E} \right\rbrace $ over two variables such that $ \mathcal{V} = \left\lbrace X_1, X_2\right\rbrace $. Assume variables $ X_1 $ and $ X_2 $ are parent nodes, with intensity matrices $ \textbf{Q}_1 $ and $ \textbf{Q}_2 $, i.e. $ \mathcal{E} = \emptyset $ and $ Par_{\mathcal{G}}(X_1) = Par_{\mathcal{G}}(X_1) = \emptyset $. This CTBN can be identified as a subsytem of the CTBN model described in \cref{sec:exp_ctbn_model}. \\
+\section*{Amalgamation of Independent Processes}
+Consider a CTBN with graph $ \mathcal{G} = \left\lbrace \mathcal{V}, \mathcal{E} \right\rbrace $ over two variables such that $ \mathcal{V} = \left\lbrace X_1, X_2\right\rbrace $. Assume variables $ X_1 $ and $ X_2 $ are parent nodes, with intensity matrices $ Q_1 $ and $ Q_2 $, i.e. $ \mathcal{E} = \emptyset $ and $ Par_{\mathcal{G}}(X_1) = Par_{\mathcal{G}}(X_1) = \emptyset $. This CTBN can be identified as a subsytem of the CTBN model described in \cref{sec:exp_ctbn_model}. \\
 Analogous to \autoref{eq:Markov_trans_func}, Markov transition function for the joint process can be derived as
 \begin{align}
 	\operatorname{Pr}(X_P(t+h) = x_p^\prime\mid X_P(t) = x_p)
@@ -20,7 +20,7 @@ Analogous to \autoref{eq:Markov_trans_func}, Markov transition function for the 
 where $ x_1, x_1^\prime \in \rchi_1 $, $ x_2, x_2^\prime \in \rchi_2 $, $ x_p = (x_1, x_2), x_p^\prime = (x_1^\prime, x_2) \in \rchi_P $.\\
 Suppose the intensity matrices of $ X_1 $ and $ X_2 $ are in the form
 \begin{equation}
-\textbf{Q}_i = 
+Q_i = 
 \begin{bmatrix}
 -q^{i}_{0} & q^{i}_{0} \\
 q^{i}_{1} & -q^{i}_{1}
@@ -28,7 +28,7 @@ q^{i}_{1} & -q^{i}_{1}
 \end{equation}
 Then the intensity matrix for the joint process $ X_P $ with factorising state space $ \rchi_P = \rchi_1 \times \rchi_2 $ can be written as
 \begin{equation}
-\textbf{Q}_P = 
+Q_P = 
 \begin{bmatrix}
 -q^{2}_{0}-q^{1}_{0} & q^{2}_{0} & q^{1}_{0} & 0 \\
 q^{2}_{1} & -q^{2}_{1}-q^{1}_{0} & 0 & q^{1}_{0} \\
@@ -51,7 +51,7 @@ As it can be observed from \autoref{eq:amalgamated_q}, the transition intensitie
 
 Let $ X $ be a homogenous CTMP. For convenience, it is assumed to be binary-valued, $ \rchi = \left\lbrace x_{0}, x_{1} \right\rbrace $. The transition intensity matrix can be written in the following form:
 \begin{equation}
-\textbf{Q} = 
+Q = 
 \begin{bmatrix}
 -q_{0} & q_{0} \\
 q_{1} & -q_{1}
@@ -122,14 +122,14 @@ where $ Z $ is the normalization factor, $ b_1(t) $ and $ b_2(t) $ are the belie
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.90\textwidth]{figures/equivalence_classes/same_belief/psi_0}
-		\caption{Observation, belief state and $ \textbf{Q}_3 $ trajectories derived by $ \psi_1 $ in \autoref{eq:psi_1_0} corresponding to parent trajectories in \autoref{fig:same_belief_parents}}
+		\caption{Observation, belief state and $ Q_3 $ trajectories derived by $ \psi_1 $ in \autoref{eq:psi_1_0} corresponding to parent trajectories in \autoref{fig:same_belief_parents}}
 		\label{fig:same_belief_psi_0}
 	\end{center}
 \end{figure}
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.90\textwidth]{figures/equivalence_classes/same_belief/psi_29}
-		\caption{Observation, belief state and $ \textbf{Q}_3 $ trajectories derived by $ \psi_2 $ in \autoref{eq:psi_29} corresponding to parent trajectories in \autoref{fig:same_belief_parents}}
+		\caption{Observation, belief state and $ Q_3 $ trajectories derived by $ \psi_2 $ in \autoref{eq:psi_29} corresponding to parent trajectories in \autoref{fig:same_belief_parents}}
 		\label{fig:same_belief_psi_29}
 	\end{center}
 \end{figure}
@@ -167,21 +167,20 @@ p(S^{[0,T]} \mid \psi_2 ) = -80.648
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.90\textwidth]{figures/equivalence_classes/same_behaviour/psi_0}
-		\caption{Observation, belief state and $ \textbf{Q}_3 $ trajectories derived by $ \psi_1 $ in \autoref{eq:psi_1_1} corresponding to parent trajectories in \autoref{fig:same_behaviour_parents}}
+		\caption{Observation, belief state and $ Q_3 $ trajectories derived by $ \psi_1 $ in \autoref{eq:psi_1_1} corresponding to parent trajectories in \autoref{fig:same_behaviour_parents}}
 		\label{fig:same_behaviour_psi_0}
 	\end{center}
 \end{figure}
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.90\textwidth]{figures/equivalence_classes/same_behaviour/psi_16}
-		\caption{Observation, belief state and $ \textbf{Q}_3 $ trajectories derived by $ \psi_2 $ in \autoref{eq:psi_16} corresponding to parent trajectories in \autoref{fig:same_behaviour_parents}}
+		\caption{Observation, belief state and $ Q_3 $ trajectories derived by $ \psi_2 $ in \autoref{eq:psi_16} corresponding to parent trajectories in \autoref{fig:same_behaviour_parents}}
 		\label{fig:same_behaviour_psi_16}
 	\end{center}
 \end{figure}
 
-\section{Observation Models in Experiments}
-\label{ap:obs_set_exp}
-As mentioned in \cref{sec:eq_classes}, the inference problem is reduced to maximum likelihood estimation between 10 classes. One observation model is picked as representative of each class and considered for the inference problem. These observation models are given below. This set of observation models are referred to as $ \symbf{\psi} $.
+\section*{Observation Models in Experiments}
+As mentioned in \cref{sec:eq_classes}, the inference problem is reduced to maximum likelihood estimation between 10 classes. We have selected one observation model as representative of each class and considered for the inference problem. The representative observation models are given below. This set of observation models are referred to as $ \boldsymbol{\psi} $.
 \begin{align}
 \psi_{\text{true}} = \psi_{0} &=
 \begin{bmatrix}
@@ -289,6 +288,7 @@ As mentioned in \cref{sec:eq_classes}, the inference problem is reduced to maxim
 0 & 0 & 1 \\
 0 & 1 & 0
 \end{bmatrix}
+\label{eq:obs_set_exp}
 \end{align}
 
 
@@ -296,14 +296,14 @@ As mentioned in \cref{sec:eq_classes}, the inference problem is reduced to maxim
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.75\textwidth]{figures/roc_analysis/AUPR_perc_0}
-		\caption[AUPR results over increasing number of samples]{AUPR results over increasing number of samples for $ \psi_0 $-vs-rest. We plotted the median with line and the 25-75th percentile with the shaded area over 10 runs.}
+		\caption[AUPR results over increasing number of samples]{AUPR results over increasing number of samples for $ \psi_0 $-vs-rest. We plot the median with a line and the 25-75th percentile with the shaded area over 10 runs.}
 		\label{fig:AUPR_class0}
 	\end{center}
 \end{figure}
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=.75\textwidth]{figures/roc_analysis/error_AUPR_perc_0}
-		\caption[AUPR results over increasing number of samples with different error probability $ p_e $]{AUPR results over increasing number of samples for $ \psi_0 $-vs-rest. We plotted the median with lines and the 25-75\% percentile with the shaded area over 10 runs. The performance deteriorates as the noise increases, however, with the increasing number of trajectories the metric converges to 1, showing the robustness.}
+		\caption[AUPR results over increasing number of samples with different error probability $ p_e $]{AUPR results over increasing number of samples for $ \psi_0 $-vs-rest. We plot the median with a line and the 25-75th percentile with the shaded area over 10 runs. The legend shows the value of error probability $ p_e $. The performance deteriorates as the noise increases, however, with the increasing number of trajectories the metric approaches to 1.}
 		\label{fig:AUPR_class0_error}
 	\end{center}
 \end{figure}
