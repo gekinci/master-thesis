@@ -1,0 +1,33 @@
+\begin{thebibliography}{1}
+
+\bibitem{Perkins2009a}
+T.~J. Perkins and P.~S. Swain, ``Strategies for cellular decision-making,''
+  {\em Molecular systems biology}, vol.~5, no.~1, p.~326, 2009.
+
+\bibitem{huang_pauleve_zechner_unger_hansen_koeppl_2016}
+L.~Huang, L.~Pauleve, C.~Zechner, M.~Unger, A.~S. Hansen, and H.~Koeppl,
+  ``Supporting information for reconstructing dynamic molecular states from
+  single-cell time series,'' Aug 2016.
+
+\bibitem{Nodelman1995}
+U.~Nodelman, C.~R. Shelton, and D.~Koller, ``{Continuous time Bayesian
+  networks},'' in {\em Proceedings of the 18th Conference in Uncertainty in
+  Artificial Intelligence}, pp.~378--387, 2002.
+
+\bibitem{Studer2016}
+L.~Studer, L.~Paulev{\'e}, C.~Zechner, M.~Reumann, M.~R. Mart{\'\i}nez, and
+  H.~Koeppl, ``{Marginalized continuous time Bayesian networks for network
+  reconstruction from incomplete observations},'' in {\em Proceedings of the
+  30th Conference on ArtificialIntelligence (AAAI 2016)}, pp.~2051--2057, 2016.
+
+\bibitem{Nodelman2003}
+U.~Nodelman, C.~R. Shelton, and D.~Koller, ``{Learning continuous time Bayesian
+  networks},'' in {\em Proceedings of the 19th Conference in Uncertainty in
+  Artificial Intelligence}, pp.~451--458, 2003.
+
+\bibitem{Foerster2016}
+J.~Foerster, I.~A. Assael, N.~De~Freitas, and S.~Whiteson, ``Learning to
+  communicate with deep multi-agent reinforcement learning,'' in {\em Advances
+  in neural information processing systems}, pp.~2137--2145, 2016.
+
+\end{thebibliography}

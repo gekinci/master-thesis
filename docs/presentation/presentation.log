@@ -1,4 +1,4 @@
-This is LuaTeX, Version 1.10.0 (TeX Live 2019/Debian)  (format=lualatex 2020.6.25)  12 AUG 2020 18:06
+This is LuaTeX, Version 1.10.0 (TeX Live 2019/Debian)  (format=lualatex 2020.6.25)  19 AUG 2020 00:33
  restricted system commands enabled.
 **presentation.tex
 (./presentation.tex
@@ -48,7 +48,7 @@ Inserting `luaotfload.aux.set_capheight' at position 3 in `luaotfload.patch_font
 '.
 Inserting `luaotfload.rewrite_fontname' at position 4 in `luaotfload.patch_font'
 .
-luaotfload | main : initialization completed in 0.048 seconds
+luaotfload | main : initialization completed in 0.055 seconds
 (/home/gizem/texmf/tex/latex/tuda-ci/tudabeamer.cls
 Document Class: tudabeamer 2020/07/02 2.11 
 (/usr/share/texlive/texmf-dist/tex/latex/l3packages/l3keys2e/l3keys2e.sty
@@ -2347,9 +2347,6 @@ Package luatex.def Info: bcs_logo.jpg  used on input line 101.
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}</home/gizem/texmf/tex/latex/
 tuda-ci/tuda_logo.pdf><./bcs_logo.JPG>]
-
-LaTeX Warning: Citation `Perkins2009a' on page 2 undefined on input line 142.
-
 LaTeX Font Info:    Font shape `TU/Roboto(0)/m/n' will be
 (Font)              scaled to size 17.28pt on input line 142.
 LaTeX Font Info:    Font shape `TU/Roboto(0)/m/it' will be
@@ -2364,270 +2361,213 @@ File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
 Package luatex.def Info: bcs_logo.jpg  used on input line 142.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
-[2
+ [2
 
 ]
-<figures/h_model.jpg, id=36, 266.49562pt x 658.71094pt>
-File: figures/h_model.jpg Graphic file (type jpg)
-<use figures/h_model.jpg>
-Package luatex.def Info: figures/h_model.jpg  used on input line 171.
-(luatex.def)             Requested size: 65.28561pt x 161.37051pt.
 LaTeX Font Info:    Font shape `TU/Roboto(0)/bx/n' will be
-(Font)              scaled to size 9.0pt on input line 171.
+(Font)              scaled to size 9.0pt on input line 201.
 LaTeX Font Info:    Font shape `TU/Roboto(0)/bx/it' will be
-(Font)              scaled to size 9.0pt on input line 171.
+(Font)              scaled to size 9.0pt on input line 201.
+LaTeX Font Info:    Font shape `TU/Roboto(0)/bx/n' will be
+(Font)              scaled to size 8.0pt on input line 201.
 File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 171.
+Package luatex.def Info: bcs_logo.jpg  used on input line 201.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
  [3
 
-<./figures/h_model.JPG>]
-File: figures/h_model.jpg Graphic file (type jpg)
-<use figures/h_model.jpg>
-Package luatex.def Info: figures/h_model.jpg  used on input line 194.
-(luatex.def)             Requested size: 65.28561pt x 161.37051pt.
+]
+LaTeX Font Info:    Font shape `TU/Roboto(0)/m/n' will be
+(Font)              scaled to size 8.0pt on input line 264.
+LaTeX Font Info:    Font shape `TU/Roboto(0)/m/it' will be
+(Font)              scaled to size 8.0pt on input line 264.
 File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 194.
+Package luatex.def Info: bcs_logo.jpg  used on input line 264.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
  [4
 
 ]
-
-LaTeX Warning: Citation `article' on page 5 undefined on input line 214.
-
-
-LaTeX Warning: Citation `Nodelman1995' on page 5 undefined on input line 214.
-
-LaTeX Font Info:    Font shape `TU/Roboto(0)/m/n' will be
-(Font)              scaled to size 8.0pt on input line 214.
-LaTeX Font Info:    Font shape `TU/Roboto(0)/m/it' will be
-(Font)              scaled to size 8.0pt on input line 214.
 File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 214.
+Package luatex.def Info: bcs_logo.jpg  used on input line 310.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
-[5
+ [5
 
 ]
-
-LaTeX Warning: Citation `article' on page 6 undefined on input line 225.
-
 File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 225.
+Package luatex.def Info: bcs_logo.jpg  used on input line 323.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
-[6
+ [6
 
 ]
-LaTeX Font Info:    Font shape `TU/Roboto(0)/bx/it' will be
-(Font)              scaled to size 10.0pt on input line 239.
-LaTeX Font Info:    Font shape `TU/Roboto(0)/bx/n' will be
-(Font)              scaled to size 8.0pt on input line 239.
 File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 239.
+Package luatex.def Info: bcs_logo.jpg  used on input line 344.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
  [7
 
 ]
-
-LaTeX Warning: Citation `Nodelman1995' on page 8 undefined on input line 260.
-
+LaTeX Font Info:    Font shape `TU/RobotoMono(0)/m/n' will be
+(Font)              scaled to size 10.0pt on input line 370.
 File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 260.
+Package luatex.def Info: bcs_logo.jpg  used on input line 370.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
-[8
+ [8
 
 ]
-
-LaTeX Warning: Citation `Nodelman2014' on page 9 undefined on input line 278.
-
 File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 278.
+Package luatex.def Info: bcs_logo.jpg  used on input line 405.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
-[9
+ [9
 
 ]
-
-LaTeX Warning: Citation `Perez-Ocon2000' on page 10 undefined on input line 294.
-
-
 File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 294.
+Package luatex.def Info: bcs_logo.jpg  used on input line 423.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
+
 [10
 
 ]
+LaTeX Font Info:    Font shape `TU/Roboto(0)/bx/it' will be
+(Font)              scaled to size 10.0pt on input line 437.
 File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 308.
+Package luatex.def Info: bcs_logo.jpg  used on input line 437.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
  [11
 
 ]
-File: bcs_logo.jpg Graphic file (type jpg)
-<use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 424.
-(luatex.def)             Requested size: 528.77422pt x 414.94923pt.
- [12
+<figures/parent_traj.pdf, id=127, 867.24pt x 505.89pt>
+File: figures/parent_traj.pdf Graphic file (type pdf)
+<use figures/parent_traj.pdf>
+Package luatex.def Info: figures/parent_traj.pdf  used on input line 448.
+(luatex.def)             Requested size: 223.3995pt x 130.32031pt.
+<figures/belief_traj.pdf, id=128, 867.24pt x 578.16pt>
+File: figures/belief_traj.pdf Graphic file (type pdf)
+<use figures/belief_traj.pdf>
+Package luatex.def Info: figures/belief_traj.pdf  used on input line 448.
+(luatex.def)             Requested size: 195.47787pt x 130.32031pt.
 
-]
-<figures/trajectory_plot.png, id=110, 462.528pt x 346.896pt>
-File: figures/trajectory_plot.png Graphic file (type png)
-<use figures/trajectory_plot.png>
-Package luatex.def Info: figures/trajectory_plot.png  used on input line 436.
-(luatex.def)             Requested size: 191.13391pt x 143.35168pt.
-<figures/b_Q_plot.png, id=111, 462.528pt x 346.896pt>
-File: figures/b_Q_plot.png Graphic file (type png)
-<use figures/b_Q_plot.png>
-Package luatex.def Info: figures/b_Q_plot.png  used on input line 436.
-(luatex.def)             Requested size: 173.7581pt x 130.32031pt.
+Overfull \hbox (7.6333pt too wide) in paragraph at lines 448--448
+[][]  
+ []
+
 File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 436.
+Package luatex.def Info: bcs_logo.jpg  used on input line 448.
+(luatex.def)             Requested size: 528.77422pt x 414.94923pt.
+[12
+
+<./figures/parent_traj.pdf><./figures/belief_traj.pdf>]
+<figures/q_traj.pdf, id=212, 867.24pt x 433.62pt>
+File: figures/q_traj.pdf Graphic file (type pdf)
+<use figures/q_traj.pdf>
+Package luatex.def Info: figures/q_traj.pdf  used on input line 457.
+(luatex.def)             Requested size: 304.0811pt x 152.03815pt.
+File: bcs_logo.jpg Graphic file (type jpg)
+<use bcs_logo.jpg>
+Package luatex.def Info: bcs_logo.jpg  used on input line 457.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
  [13
 
-<./figures/trajectory_plot.png><./figures/b_Q_plot.png>]
-<figures/llh_.png, id=119, 462.528pt x 346.896pt>
-File: figures/llh_.png Graphic file (type png)
-<use figures/llh_.png>
-Package luatex.def Info: figures/llh_.png  used on input line 472.
-(luatex.def)             Requested size: 217.62204pt x 163.2158pt.
+<./figures/q_traj.pdf>]
+<figures/llh_exactUpdate_81model.pdf, id=257, 462.528pt x 346.896pt>
+File: figures/llh_exactUpdate_81model.pdf Graphic file (type pdf)
+<use figures/llh_exactUpdate_81model.pdf>
+Package luatex.def Info: figures/llh_exactUpdate_81model.pdf  used on input line
+ 471.
+(luatex.def)             Requested size: 173.7581pt x 130.32031pt.
+<figures/llh_particleFilter_sameclass.pdf, id=258, 462.528pt x 346.896pt>
+File: figures/llh_particleFilter_sameclass.pdf Graphic file (type pdf)
+<use figures/llh_particleFilter_sameclass.pdf>
+Package luatex.def Info: figures/llh_particleFilter_sameclass.pdf  used on input
+ line 471.
+(luatex.def)             Requested size: 173.7581pt x 130.32031pt.
 File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 472.
+Package luatex.def Info: bcs_logo.jpg  used on input line 471.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
+ [14
 
-[14
-
-<./figures/llh_.png>]
-<figures/AUROC_100samples_class0_llh_n2.png, id=126, 462.528pt x 346.896pt>
-File: figures/AUROC_100samples_class0_llh_n2.png Graphic file (type png)
-<use figures/AUROC_100samples_class0_llh_n2.png>
-Package luatex.def Info: figures/AUROC_100samples_class0_llh_n2.png  used on inp
-ut line 487.
+<./figures/llh_exactUpdate_81model.pdf><./figures/llh_particleFilter_sameclass.p
+df>]
+<figures/AUROC_perc_0.pdf, id=353, 462.528pt x 346.896pt>
+File: figures/AUROC_perc_0.pdf Graphic file (type pdf)
+<use figures/AUROC_perc_0.pdf>
+Package luatex.def Info: figures/AUROC_perc_0.pdf  used on input line 488.
 (luatex.def)             Requested size: 217.62204pt x 163.2158pt.
 File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 487.
+Package luatex.def Info: bcs_logo.jpg  used on input line 488.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
  [15
 
-<./figures/AUROC_100samples_class0_llh_n2.png>]
+<./figures/AUROC_perc_0.pdf>]
+<figures/error_AUROC_perc_0.pdf, id=403, 462.528pt x 346.896pt>
+File: figures/error_AUROC_perc_0.pdf Graphic file (type pdf)
+<use figures/error_AUROC_perc_0.pdf>
+Package luatex.def Info: figures/error_AUROC_perc_0.pdf  used on input line 504.
 
-LaTeX Warning: Citation `Studer2016' on page 16 undefined on input line 508.
-
+(luatex.def)             Requested size: 217.62204pt x 163.2158pt.
 File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 508.
+Package luatex.def Info: bcs_logo.jpg  used on input line 504.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
-[16
+ [16
+
+<./figures/error_AUROC_perc_0.pdf>]
+File: bcs_logo.jpg Graphic file (type jpg)
+<use bcs_logo.jpg>
+Package luatex.def Info: bcs_logo.jpg  used on input line 516.
+(luatex.def)             Requested size: 528.77422pt x 414.94923pt.
+ [17
 
 ]
-LaTeX Font Info:    Font shape `TU/RobotoMono(0)/m/n' will be
-(Font)              scaled to size 10.0pt on input line 534.
-
-
-LaTeX Warning: Citation `Studer2016' on page 17 undefined on input line 534.
-
-File: bcs_logo.jpg Graphic file (type jpg)
-<use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 534.
-(luatex.def)             Requested size: 528.77422pt x 414.94923pt.
-[17
-
-]
-<figures/multi-agent.jpg, id=148, 550.30594pt x 163.3603pt>
-File: figures/multi-agent.jpg Graphic file (type jpg)
-<use figures/multi-agent.jpg>
-Package luatex.def Info: figures/multi-agent.jpg  used on input line 549.
-(luatex.def)             Requested size: 174.09497pt x 51.6806pt.
-File: bcs_logo.jpg Graphic file (type jpg)
-<use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 549.
-(luatex.def)             Requested size: 528.77422pt x 414.94923pt.
- [18
-
-<./figures/multi-agent.JPG>]
-No file presentation.bbl.
 File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
 Package luatex.def Info: bcs_logo.jpg  used on input line 557.
+(luatex.def)             Requested size: 528.77422pt x 414.94923pt.
+ [18
+
+] (./presentation.bbl)
+Overfull \vbox (4.61674pt too high) detected at line 565
+ []
+
+File: bcs_logo.jpg Graphic file (type jpg)
+<use bcs_logo.jpg>
+Package luatex.def Info: bcs_logo.jpg  used on input line 565.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
 [19
 
 ]
 LaTeX Font Info:    Font shape `TU/Roboto(0)/m/n' will be
-(Font)              scaled to size 24.88pt on input line 563.
+(Font)              scaled to size 24.88pt on input line 571.
 File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 563.
+Package luatex.def Info: bcs_logo.jpg  used on input line 571.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
  [20
 
 ]
-<figures/AUROC_100samples_class0_llh_n1.png, id=164, 462.528pt x 346.896pt>
-File: figures/AUROC_100samples_class0_llh_n1.png Graphic file (type png)
-<use figures/AUROC_100samples_class0_llh_n1.png>
-Package luatex.def Info: figures/AUROC_100samples_class0_llh_n1.png  used on inp
-ut line 582.
-(luatex.def)             Requested size: 113.81085pt x 76.8202pt.
-<figures/AUROC_100samples_class0_llh_n5.png, id=165, 462.528pt x 346.896pt>
-File: figures/AUROC_100samples_class0_llh_n5.png Graphic file (type png)
-<use figures/AUROC_100samples_class0_llh_n5.png>
-Package luatex.def Info: figures/AUROC_100samples_class0_llh_n5.png  used on inp
-ut line 582.
-(luatex.def)             Requested size: 113.81085pt x 76.8202pt.
-File: figures/AUROC_100samples_class0_llh_n2.png Graphic file (type png)
-<use figures/AUROC_100samples_class0_llh_n2.png>
-Package luatex.def Info: figures/AUROC_100samples_class0_llh_n2.png  used on inp
-ut line 582.
-(luatex.def)             Requested size: 113.81085pt x 76.8202pt.
-<figures/AUROC_100samples_class0_llh_n10.png, id=166, 462.528pt x 346.896pt>
-File: figures/AUROC_100samples_class0_llh_n10.png Graphic file (type png)
-<use figures/AUROC_100samples_class0_llh_n10.png>
-Package luatex.def Info: figures/AUROC_100samples_class0_llh_n10.png  used on in
-put line 582.
-(luatex.def)             Requested size: 113.81085pt x 76.8202pt.
-<figures/AUROC_100samples_class0_llh_n4.png, id=167, 462.528pt x 346.896pt>
-File: figures/AUROC_100samples_class0_llh_n4.png Graphic file (type png)
-<use figures/AUROC_100samples_class0_llh_n4.png>
-Package luatex.def Info: figures/AUROC_100samples_class0_llh_n4.png  used on inp
-ut line 582.
-(luatex.def)             Requested size: 113.81085pt x 76.8202pt.
-<figures/AUROC_100samples_class0_llh_n20.png, id=168, 462.528pt x 346.896pt>
-File: figures/AUROC_100samples_class0_llh_n20.png Graphic file (type png)
-<use figures/AUROC_100samples_class0_llh_n20.png>
-Package luatex.def Info: figures/AUROC_100samples_class0_llh_n20.png  used on in
-put line 582.
-(luatex.def)             Requested size: 113.81085pt x 76.8202pt.
 File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 582.
+Package luatex.def Info: bcs_logo.jpg  used on input line 577.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
  [21
 
-<./figures/AUROC_100samples_class0_llh_n1.png><./figures/AUROC_100samples_class0
-_llh_n5.png><./figures/AUROC_100samples_class0_llh_n10.png><./figures/AUROC_100s
-amples_class0_llh_n4.png><./figures/AUROC_100samples_class0_llh_n20.png>]
-<figures/test_likelihood.png, id=180, 462.528pt x 346.896pt>
-File: figures/test_likelihood.png Graphic file (type png)
-<use figures/test_likelihood.png>
-Package luatex.def Info: figures/test_likelihood.png  used on input line 589.
-(luatex.def)             Requested size: 213.40063pt x 156.48814pt.
+]
 File: bcs_logo.jpg Graphic file (type jpg)
 <use bcs_logo.jpg>
-Package luatex.def Info: bcs_logo.jpg  used on input line 589.
+Package luatex.def Info: bcs_logo.jpg  used on input line 619.
 (luatex.def)             Requested size: 528.77422pt x 414.94923pt.
  [22
 
-<./figures/test_likelihood.png>]
+]
 \tf@nav=\write7
 
 \openout7 = presentation.nav
@@ -2637,31 +2577,28 @@ Package luatex.def Info: bcs_logo.jpg  used on input line 589.
 \tf@snm=\write9
 
 \openout9 = presentation.snm
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 591.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 591.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 691.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 691.
  (./presentation.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 591.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 591.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 691.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 691.
 Package rerunfilecheck Info: File `presentation.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-
-
-LaTeX Warning: There were undefined references.
-
 )
 
 Here is how much of LuaTeX's memory you used:
- 42830 strings out of 494291
+ 42809 strings out of 494291
  125171,1144653 words of node,token memory allocated
- 2829 words of node memory still in use:
-   79 hlist, 12 vlist, 14 rule, 10 local_par, 67 glue, 9 kern, 18 penalty, 10 gl
-yph, 175 attribute, 83 glue_spec, 98 attribute_list, 4 write, 30 pdf_colorstack,
- 3 pdf_setmatrix, 3 pdf_save, 3 pdf_restore nodes
-   avail lists: 1:1,2:1447,3:381,4:150,5:334,6:39,7:2427,8:92,9:650,10:24,11:157
-,12:1
- 44094 multiletter control sequences out of 65536+600000
- 173 fonts using 25570207 bytes
- 97i,19n,130p,1018b,1098s stack positions out of 5000i,500n,10000p,200000b,100000s
+ 11234 words of node memory still in use:
+   226 hlist, 25 vlist, 28 rule, 18 disc, 19 local_par, 89 math, 357 glue, 33 ke
+rn, 56 penalty, 327 glyph, 621 attribute, 83 glue_spec, 321 attribute_list, 4 wr
+ite, 24 pdf_literal, 50 pdf_colorstack, 2 pdf_setmatrix, 2 pdf_save, 2 pdf_resto
+re nodes
+   avail lists: 2:2725,3:843,4:136,5:322,6:32,7:3032,8:87,9:703,10:24,11:273,12:
+1
+ 44188 multiletter control sequences out of 65536+600000
+ 185 fonts using 26480511 bytes
+ 97i,19n,130p,991b,1121s stack positions out of 5000i,500n,10000p,200000b,100000s
 </usr/share/texlive/texmf-dist/fonts/opentype/google/roboto/RobotoMono-Regular.o
 tf></usr/share/texlive/texmf-dist/fonts/opentype/public/xcharter/XCharter-Roman.
 otf></usr/share/texlive/texmf-dist/fonts/opentype/google/roboto/Roboto-BoldItali
@@ -2676,21 +2613,22 @@ exmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-di
 st/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts
 /type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
 ublic/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
-sfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.p
-fb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/
-share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/tex
-live/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/typ
-e1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-sy9.pfb>
-Output written on presentation.pdf (22 pages, 1090880 bytes).
+sfonts/cm/cmmib10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr1
+2.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></u
+sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/
+texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam7.pfb>
+Output written on presentation.pdf (22 pages, 1880266 bytes).
 
-PDF statistics: 291 PDF objects out of 1000 (max. 8388607)
- 196 compressed objects within 2 object streams
- 48 named destinations out of 1000 (max. 131072)
+PDF statistics: 606 PDF objects out of 1000 (max. 8388607)
+ 305 compressed objects within 4 object streams
+ 54 named destinations out of 1000 (max. 131072)
  16 words of extra memory for PDF output out of 10000 (max. 100000000)
 
