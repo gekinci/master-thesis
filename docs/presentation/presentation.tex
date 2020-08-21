@@ -173,17 +173,17 @@ colorframetitle=false,%Akzentfarbe auch im Frametitle
 }
 \column{.8\linewidth}
 \begin{itemize}
-	\item $ X_{1} $ and $ X_{2} $ homogenous continuous-time Markov processes with $ Q_{1} $ and $ Q_{2} $ transition intensity matrices
+	\item $ X_{1} $ and $ X_{2} $ homogeneous continuous-time Markov processes with $ Q_{1} $ and $ Q_{2} $ transition intensity matrices
 	\vspace{-5pt}
 	\begin{equation}
-	Q_{n} \sim \mathrm{Gam}(\boldsymbol{\alpha}_{n}, \beta_{n})
+	Q_{n} \sim \mathrm{Gam}(\boldsymbol{\alpha}_{n}, \boldsymbol{\beta}_{n}) \nonumber
 	\end{equation}
 	\item $X_{3} $ conditional continuous-time Markov process  with set of actions $ a \in \left\lbrace a_{0}, a_{1}\right\rbrace  $ and set of transition intensity matrices $ \textbf{\textit{Q}}_{3} = \left\lbrace Q_{3\mid a_{0}}, Q_{3\mid a_{1}} \right\rbrace  $
 	%		\vspace{-0.1cm}
 	%		\begin{equation}
 	%		Q_{a} \sim \mathrm{Gam}(\alpha_{a}, \beta_{a})
 	%		\end{equation}
-	\item $ X_P $: joint process of $ X_1 $ and $ X_2 $, with factorising state space $ \rchi_{P} = \rchi_1 \times \rchi_2 $
+	\item $ X_P $: joint process of $ X_1 $ and $ X_2 $, with factorizing state space $ \rchi_{P} = \rchi_1 \times \rchi_2 $
 	%		\vspace{-0.1cm}
 	%		\begin{equation}
 	%			Q_P = Q_{1} * Q_{2}
@@ -339,12 +339,12 @@ where $ Z_{L} = \sum_{x_{P}\in \rchi_P} p(y_{L} \mid x_{P})\ b(x_{P}; t_{L}^{-})
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Conditional Intensity Marginalization}
+\begin{frame}{Transition Intensity Marginalization}
 \framesubtitle{over $ Q_{1} $ and $ Q_{2} $}
 \begin{itemize}
 \item Given the priors and sample trajectory, the intensity matrices can be replaced by estimates. \cite{Studer2016}
 \begin{itemize}
-\item $Q_{n}$ with non-diagonal entries $ q^{n}_{i, j}\sim Gam(\alpha^{n}_{i, j}, \beta^{n}_{i, j}),\ \ n \in \left\lbrace 1,2\right\rbrace $
+\item $Q_{n}$ with non-diagonal entries $ q^{n}_{i, j}\sim \mathrm{Gam}(\alpha^{n}_{i, j}, \beta^{n}_{i, j}),\ \ n \in \left\lbrace 1,2\right\rbrace $
 \item $X_{n}^{[0,T]}$ with summary statistics $ \Upsilon_{n}(x_i) $ and $ r_{n}(x_i,x_j) $, where $ \Upsilon_{n}(x_i) $ is the total time spent in state $ x_i $, $\ r_{n}(x_i,x_j) $ is the number of transitions from state $ x_i $ to state $ x_j $
 \begin{align}
 p(X_n^{[0,T]}  \mid Q) &=\left(\prod_{ i} q_{i}^{r_n(x_{i})} \exp \left(-q_{i} \Upsilon_n(x_{i})\right)\right)\left(\prod_{ i} \prod_{ j \neq i} \left(\frac{q_{i,j}}{q_{i}}\right)^{r_n(x_{i}, x_{j})}\right) \nonumber\\ & = \prod_{j \neq i}  \exp(-q_{i,j}\Upsilon_n(x_{i}))\ q_{i,j}^{r_n(x_{i},x_{j})}
@@ -352,7 +352,7 @@ p(X_n^{[0,T]}  \mid Q) &=\left(\prod_{ i} q_{i}^{r_n(x_{i})} \exp \left(-q_{i} \
 \end{align}
 \item Using Bayes' rule and the likelihood of trajectory in Eq.\autoref{eq:lh_traj_homo}, the estimates can be evaluated analytically as follows:
 \begin{equation}
-E\left[ q^{n}_{i,j} | X_n^{[0,T]}\right]=\frac{\alpha^{n}_{i,j}+r_{n}(x_i, x_j)}{\beta^{n}_{i, j}+\Upsilon_{n}(x_i)}
+\mathbb{E}\left[ q^{n}_{i,j} | X_n^{[0,T]}\right]=\frac{\alpha^{n}_{i,j}+r_{n}(x_i, x_j)}{\beta^{n}_{i, j}+\Upsilon_{n}(x_i)}
 \label{eq:Q_estimate}
 \end{equation}
 \end{itemize}
@@ -448,16 +448,19 @@ p(S^{[0,T]} \mid \pi, \Phi ) = p(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \prod_{x_{1}
 %	\end{bmatrix} $
 %\end{columns}
 \begin{itemize}
-\item Identical effect on the belief state
-\item Identical effect on the behaviour
+	\item Although we have 81 observation models, we can separate them to only 10 classes.
+	\item This is caused by either identical effect on the belief state or on the behavior.
 \end{itemize}
-\vspace{+2pt}
+\vspace{+5pt}
 \centering
-\begin{tabular}{cc}
 \includegraphics[height=0.6\textheight]{figures/llh_exactUpdate_81model}
-&
-\includegraphics[height=0.6\textheight]{figures/llh_particleFilter_sameclass}
-\end{tabular}
+%\begin{tabular}{cc}
+%Exact update\\over all observation models\\
+%\includegraphics[height=0.6\textheight]{figures/llh_exactUpdate_81model}
+%&
+%Marginal particle filtering\\over 5 obs model from same equivalence class\\
+%\includegraphics[height=0.6\textheight]{figures/llh_particleFilter_sameclass}
+%\end{tabular}
 \end{frame}
 
 
@@ -469,9 +472,13 @@ p(S^{[0,T]} \mid \pi, \Phi ) = p(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \prod_{x_{1}
 \includegraphics[width=\linewidth]{figures/AUROC_perc_0}
 \column{.5\linewidth}
 \begin{itemize}
-\item The estimated likelihood values of each sample given an observation model as the score of the sample belonging to the corresponding class
-\item Provided the classifier with increasing number of samples for inference
-\item Through bootstrapping a given number of trajectories, and using the mean likelihood over the bootstrap batch as a new sample
+	\item For the classification problem, we obtain the posterior probabilities from the estimated likelihoods and uniform prior.
+	\item We train the classifiers with a given number of trajectories, through bootstrapping.
+	\item With increasing number of trajectories, AUROC approaches to 1.
+	
+%\item The estimated likelihood values of each sample given an observation model as the score of the sample belonging to the corresponding class
+%\item Provided the classifier with increasing number of samples for inference
+%\item Through bootstrapping a given number of trajectories, and using the mean likelihood over the bootstrap batch as a new sample
 %	\item The plots show the median with a line and the 25-75th percentile with the shaded area over 10 runs.
 \end{itemize}
 \end{columns}
@@ -499,6 +506,7 @@ p(S^{[0,T]} \mid \pi, \Phi ) = p(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \prod_{x_{1}
 \item A realistic system is achieved using particle filtering with marginalized CTBN. Given Gamma-priors of $ Q_1 $ and $ Q_2 $, the exact update method is well approximated by the marginal particle filter.
 \item In classification, the marginal particle filter yields a slightly lower performance. Nevertheless, in both methods, as the number of samples increases, the metric approaches to 1.
 \item The performance decreases as the noise introduced to the true observation model increases. With the increasing number of trajectories, the metric converges to 1, showing robustness.
+\item The main limitation is equivalence classes.
 \end{itemize}
 \end{frame}
 
@@ -508,7 +516,7 @@ p(S^{[0,T]} \mid \pi, \Phi ) = p(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \prod_{x_{1}
 \begin{itemize}
 \item Eliminate the equivalence classes
 \begin{itemize}
-\item Joint inference of observation model and policy, i.e. function approximation
+\item Joint inference of observation model and policy
 \end{itemize}
 \item Application of the model and solution approach to a more complex
 environment to evaluate the performance further
@@ -557,11 +565,11 @@ to the success or failure of the agents in Foerster's multi-step MNIST game \cit
 Thank you!
 \end{frame}
 
-
-\begin{frame}[c]{}
-\centering \Huge
-Backup!
-\end{frame}
+%
+%\begin{frame}[c]{}
+%\centering \Huge
+%Backup!
+%\end{frame}
 
 \begin{frame}{Parameters}
 \framesubtitle{Parameters}
@@ -601,8 +609,116 @@ $\textbf{\textit{Q}}_{3} = \left\lbrace
 \boldsymbol{\alpha}^2 = [10,10] &\quad \boldsymbol{\beta}^2 = [10,5] \nonumber
 \end{align}
 \item Number of particles $ M = 200 $
+\item True observation model for the results\vspace{+4pt}\\
+$ \psi = 
+\begin{bmatrix} \vspace{-3pt}
+1 & 0 & 0 \\  \vspace{-3pt}
+0 & 1 & 0 \\  \vspace{-3pt}
+0 & 1 & 0 \\  \vspace{-2pt}
+0 & 0 & 1
+\end{bmatrix} $
+
 \end{itemize}
 \end{columns}
+\end{frame}
+
+
+\begin{frame}{Equivalence Classes}
+\begin{itemize}
+	\item Marginal particle filtering over 5 observation model from same equivalence class
+\end{itemize}
+\centering
+\includegraphics[height=0.6\textheight]{figures/llh_particleFilter_sameclass}
+\end{frame}
+
+
+\begin{frame}{Equivalence Classes}
+\framesubtitle{Identical Effect on Belief State}
+%\begin{itemize}
+%	\item Marginal particle filtering over 5 observation model from same equivalence class
+%\end{itemize}
+%\hspace{-10pt}
+	\begin{columns}
+	\column{.5\textwidth}
+	$ \psi_1 = 
+	\begin{bmatrix} \vspace{-3pt}
+	1 & 0 & 0 \\  \vspace{-3pt}
+	0 & 1 & 0 \\  \vspace{-3pt}
+	0 & 1 & 0 \\  \vspace{-2pt}
+	0 & 0 & 1
+	\end{bmatrix} $\\
+	\includegraphics[height=0.5\textheight]{figures/same_belief/psi_0}
+	\column{.5\textwidth}
+	$ \psi_{2} =
+	\begin{bmatrix}\vspace{-3pt}
+		0 & 1 & 0 \\\vspace{-3pt}
+		1 & 0 & 0 \\\vspace{-3pt}
+		1 & 0 & 0 \\\vspace{-2pt}
+		0 & 0 & 1
+	\end{bmatrix} $\\
+	\includegraphics[height=0.5\textheight]{figures/same_belief/psi_29}
+	\end{columns}
+\end{frame}
+
+
+\begin{frame}{Equivalence Classes}
+\framesubtitle{Identical Effect on Behaviour}
+%\begin{itemize}
+%	\item Marginal particle filtering over 5 observation model from same equivalence class
+%\end{itemize}
+	\begin{columns}
+	\column{.5\textwidth}
+	$ \psi_1 = 
+	\begin{bmatrix} \vspace{-3pt}
+	1 & 0 & 0 \\  \vspace{-3pt}
+	0 & 1 & 0 \\  \vspace{-3pt}
+	0 & 1 & 0 \\  \vspace{-2pt}
+	0 & 0 & 1
+	\end{bmatrix} $\\
+	\includegraphics[height=0.5\textheight]{figures/same_behaviour/psi_0}
+	\column{.5\textwidth}
+	$ \psi_{2} =
+	\begin{bmatrix}\vspace{-3pt}
+	1 & 0 & 0 \\\vspace{-3pt}
+	0 & 1 & 0 \\\vspace{-3pt}
+	0 & 0 & 1 \\\vspace{-2pt}
+	0 & 1 & 0 
+	\end{bmatrix} $\\
+	\includegraphics[height=0.5\textheight]{figures/same_behaviour/psi_16}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Marginal Particle Filter}
+\vspace{-5pt}
+\scalebox{0.7}{\begin{minipage}{1.5\textwidth}
+		\begin{algorithm}[H]
+			\SetKwInOut{KwIn}{Input}
+			\SetKwInOut{KwOut}{Output}
+			\KwIn{Observation $ y_{l} $ at time $ t_{l} $, set of particles $\textbf{k}^{l-1} $, estimated $ \hat{Q} $}
+			\KwOut{New set of particles $ \textbf{k}^{l} $, $ \textbf{b}^{[t_{l-1}, t_{l}]} $}
+			
+			\begin{algorithmic}[1]
+				\FOR{$k_{m} \in \textbf{k}^{l-1}$}
+				\STATE {$k_{m} = \left\lbrace x_{m}, \hat{Q}\right\rbrace \leftarrow Propagate\ particle\ through\ marginal\ process\ from\ t_{l-1}\ to\ t_{l}$ }\\
+				
+				\STATE {$\hat{Q} \leftarrow sufficient\ statistics\ added\ from\  k_{m}[t_{l-1}, t_{l}]$} \\
+				\tcp*[h] {observation likelihood assigned as particle weight}
+				\STATE{$w_{m} \leftarrow p(y_{l} \mid X_P(t_{l})=x_{m}) $} \label{lst:weight_update}
+				\ENDFOR \\
+				\tcp*[h]{belief state from $ t_{l-1} $ to $ t_{l} $}
+				\STATE{$ \textbf{b}^{[t_{l-1}, t_{l}]} \leftarrow \left\lbrace \frac{1}{M} \sum_{m=1}^{M} \delta_{k_m^{[t_{l-1}, t_{l}]} , x_P}\right\rbrace_{x_P \in \rchi_P} $}\\
+				\tcp*[h]{normalize weights}
+				\STATE{$ w_{m} \leftarrow \frac{w_{m}}{\sum_{m} w_{m}}$   }\\
+				\tcp*[h]{  resample particles}
+				\FOR{$ k_{m} \in \textbf{k}^{l} $} 
+				\STATE{$ k_{m} \leftarrow Sample\ from\ \textbf{k}^{l}\ with\ probabilities\ w_{m}\ with\ replacement$}
+				\ENDFOR 
+			\end{algorithmic}
+			\caption{Marginal particle filter for belief state update \cite{Studer2016}}
+			\label{alg:part_filter}
+		\end{algorithm}
+\end{minipage}}
 \end{frame}
 
 
@@ -645,99 +761,7 @@ where $ T[x] $ is the total time spent in state x, $ M[x,x'] $ is the number of 
 \end{frame}
 
 
-\begin{frame}{Marginal Particle Filter}
-\begin{itemize}
-\vspace{-5pt}
-\item Given a prior distribution over states, the particles are initialized $ \textbf{p}^{0} $.
-\end{itemize}
-\scalebox{1}{\begin{algorithm}[H]
-\KwIn{Measurement data $ y_{k} $ at time $ t_{k} $, set of particles $ \textbf{p}^{k-1} $}
-\KwResult{New set of particles $ \textbf{p}^{k} $, representing $ b(t_{k}) $}
-\vspace{+4pt}
-\begin{algorithmic}[1]
-\FOR{$p_{m} \in \textbf{p}^{k-1}$}
-\STATE {$p_{m} = \left\lbrace x_{m}, \textbf{T}_{m}, \textbf{M}_{m}\right\rbrace \leftarrow Propagate\ particle\ through\ marginal\ process\ model\ from\ t_{k-1}\ to\ t_{k}$ }
-\STATE{$w_{m} \leftarrow p(y_{k} \mid X(t_{k})=x_{m}) $} 
-\tcp*[h] {observation likelihood}
-\ENDFOR
-\STATE{$ w_{m} \leftarrow \frac{w_{m}}{\sum_{m} w_{m}}$} \tcp*[h]{normalize weights}
-\FOR{$ p_{m} \in \textbf{p}_{k} $} 
-\STATE{$ p_{m} \leftarrow Sample\ from\ p_{k}\ with\ probabilities\ w_{m}\ with\ replacement$}
-\ENDFOR
-\end{algorithmic}
-\caption{Marginal particle filter\cite{Studer2016}}
-\label{alg:seq}
-\end{algorithm}}
-\end{frame}
 
-
-%%\begin{frame}{Likelihood model of the communication system}
-%%\begin{itemize}
-%%	\item Marginalizing the likelihood over $ Q_{1} $ and $ Q_{2} $:
-%%	\begin{equation}
-%%	\begin{split}
-%%	P(\textit{D} \mid \pi, \phi ) & = 	\int \int P(\textit{D} \mid \theta ) \ P(Q_{1}) \ P(Q_{2}) \ dQ_{1}dQ_{2} \\ & = \int \int P(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \ P(X_{1}^{[0, T]}\mid Q_{1}) \ P(X_{2}^{[0, T]}\mid Q_{2}) \ P(Q_{1}) \ P(Q_{2})\ dQ_{1}d\textbf{Q}_{2} \\ & = P(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \int  P(X_{1}^{[0, T]}\mid Q_{1}) \ P(Q_{1}) \ dQ_{1} \int P(X_{2}^{[0, T]}\mid Q_{2})\ P(Q_{2})\ dQ_{2}
-%%	\label{eq:Marg_llh}
-%%	\end{split}
-%%	\end{equation}
-%%\end{itemize}
-%%\end{frame}
-%
-%%
-%%\begin{frame}{Likelihood model of the communication system}
-%%\framesubtitle{Marginal probability of a trajectory of homogenous Markov Process}
-%%\begin{itemize}
-%%	\item 	Let X be a homogenous binary-valued Markov process.
-%%	\item The transition intensity matrix Q can be written in the following form for convenience,
-%%	\begin{equation}
-%%		Q = 
-%%		\begin{pmatrix}
-%%		-q_{0} & q_{0} \\
-%%		q_{1} & -q_{1}
-%%		\end{pmatrix}
-%%	\end{equation}
-%%	where the transition intensities $ q_{0} $ and $ q_{1} $ are gamma-distributed with parameters $ \alpha_{0}$, $ \beta_{0} $ and $ \alpha_{1} $, $ \beta_{1} $, respectively.
-%%\end{itemize}
-%%\end{frame}
-%
-%
-%%\begin{frame}[shrink=20]{Likelihood model of the communication system}
-%%\framesubtitle{Marginal probability of a trajectory of homogenous Markov Process}
-%%\vspace{-0.5cm}
-%%	\begin{equation}
-%%	\begin{split}
-%%	P(X^{[0, T]}) & = \int  P(X^{[0, T]}\mid Q)P(Q) dQ \\ & = \int_{0}^{\infty} \left( \prod_{x} \exp(-q_{x}T_{x}) \prod_{x'} q_{xx'}^{M[x, x']}\right) \frac{\beta_{xx'}^{\alpha_{xx'}}{q_{xx'}^{\alpha_{xx'}-1}}\exp(-\beta_{xx'}q_{xx'})}{\Gamma(\alpha_{xx'})} \ dq_{xx'} \\ & = \prod_{x\in{0,1}}\int_{0}^{\infty} q_{x}^{M_{x}} \ \exp(-q_{x}T_{x}) \  \frac{\beta_{x}^{\alpha_{x}} \ q_{x}^{\alpha_{x}-1}\ \exp(-\beta_{x}q_{x})}{\Gamma(\alpha_{x})} \ dq_{x} \\ & = \prod_{x\in{0,1}} \frac{\beta_{x}^{\alpha_{x}}}{\Gamma(\alpha_{x})} \int_{0}^{\infty} q_{x}^{M_{x} + \alpha_{x} -1} \ \exp(-q_{x}(T_{x}+\beta_{x})) \ dq_{x} \\ & = \prod_{x\in{0,1}} \frac{\beta_{x}^{\alpha_{x}}}{\Gamma(\alpha_{x})} \left( -(T_{x}+\beta_{x})^{M_{x} + \alpha_{x}}\ \Gamma(M_{x} + \alpha_{x}, \ q_{x}(T_{x}+\beta_{x})) \right) \Big|_0^\infty  \\ & = \prod_{x\in{0,1}} \frac{\beta_{x}^{\alpha_{x}}}{\Gamma(\alpha_{x})} \left( (T_{x}+\beta_{x})^{M_{x} + \alpha_{x}}\ \Gamma(M_{x} + \alpha_{x}) \right)
-%%	\label{eq:Marg_traj}
-%%	\end{split}
-%%	\end{equation}
-%%	where $ T_{x} $, the amount of time spent in state x, $ M[x,x'] $ the number of transitions from state x to x' and  $ M[x] = \sum_{x\neq x'}M[x,x'] $.
-%%\end{frame}
-%
-%%
-%%\begin{frame}{Likelihood model}
-%%\framesubtitle{Overall system}
-%%\begin{itemize}
-%%	\item Plugging Eq.\ref{eq:Marg_traj} in Eq.\ref{eq:Marg_llh} for both $ X_{1} $ and $ X_{2} $:
-%%	\begin{align}
-%%	\begin{split}
-%%	P(\textit{D} \mid \pi, \phi ) = P(X_{3}^{[0, T]}\mid Q_{3}^{[0, T]}) \prod_{x_{1}\in{0,1}} \frac{\beta_{x_{1}}^{\alpha_{x_{1}}}}{\Gamma(\alpha_{x_{1}})} \ (T_{x_{1}}+\beta_{x_{1}})^{M_{x_{1}} + \alpha_{x_{1}}}\ \Gamma(M_{x_{1}} + \alpha_{x_{1}})  \\  \prod_{x_{2}\in{0,1}} \frac{\beta_{x_{2}}^{\alpha_{x_{2}}}}{\Gamma(\alpha_{x_{2}})} \ (T_{x_{2}}+\beta_{x_{2}})^{M_{x_{2}} + \alpha_{x_{2}}}\ \Gamma(M_{x_{2}} + \alpha_{x_{2}})
-%%	\label{eq:Marg_llh_final}
-%%	\end{split}
-%%	\end{align}
-%%\end{itemize}
-%%\end{frame}
-%%
-
-%\begin{frame}{Exact Belief State Update}
-%\framesubtitle{Filtering CTMPs}
-%\begin{itemize}
-%	\item The belief update at discrete times of observation $ y_{t} $
-%	\begin{align}
-%	b(x_{1}, x_{2}; t) & = P( X_{1}(t) = x_{1},  X_{2}(t) = x_{2}\mid y_{1}, ..., y_{t}) \nonumber\\ & = \frac{P(y_{1}, ..., y_{t}, X_{1}(t) = x_{1},  X_{2}(t) = x_{2})}{P(y_{1}, ..., y_{t})}  \nonumber\\ & = \frac{P(y_{t} \mid y_{1}, ..., y_{t-1}, X_{1}(t) = x_{1},  X_{2}(t) = x_{2})}{P(y_{t} \mid y_{1}, ..., y_{t-1})} \frac{P(y_{1}, ..., y_{t-1}, X_{1}(t) = x_{1},  X_{2}(t) = x_{2})}{P(y_{1}, ..., y_{t-1})}  \nonumber\\ & = Z_{t}^{-1} \ P(y_{t} \mid x_{1}, x_{2})\ P( X_{1}(t) = x_{1},  X_{2}(t) = x_{2}\mid y_{1}, ..., y_{t-1})  \nonumber\\ & = Z_{t}^{-1}\ \textcolor[rgb]{0.16,0.32,0.75}{P(y_{t} \mid x_{1}, x_{2})}\ \textcolor[rgb]{0.8,0,0}{b(x_{1}, x_{2}; t^{-})}
-%	\end{align}
-%	where $ Z_{t} = \sum_{x_{1}, x_{2}\in X} P(y_{t} \mid x_{1}, x_{2})\ b(x_{1}, x_{2}; t^{-}) $ is the normalization factor \cite{huang_pauleve_zechner_unger_hansen_koeppl_2016}.
-%\end{itemize}
-%\end{frame}
 
 
 \end{document}

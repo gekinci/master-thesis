@@ -2,5 +2,6 @@
 \beamer@slide {eq:lh_traj_homo}{8}
 \beamer@slide {eq:Q_estimate}{8}
 \beamer@slide {eq:Marg_llh_final}{10}
-\beamer@slide {homo_llh}{23}
-\beamer@slide {alg:seq}{24}
+\beamer@slide {lst:weight_update}{24}
+\beamer@slide {alg:part_filter}{24}
+\beamer@slide {homo_llh}{26}
