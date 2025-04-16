@@ -1,1 +1,1 @@
-# master_thesis
+# Bayesian Inference of Information Transfer in Networked Multi-Agent Systems
